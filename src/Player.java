@@ -22,7 +22,7 @@ public class Player {
 
     private static Shader shader;
 
-    private static float scale = 10f;
+    private static float scale = 1f;
 
     public Player(Vector3f position, Camera camera, Shader shader) {
         this.position = position;

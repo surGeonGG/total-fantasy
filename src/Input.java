@@ -40,18 +40,18 @@ public class Input {
 
 
         if (glfwGetKey(windowID, GLFW_KEY_A) == GL_TRUE) {
-            camera.addPosition(new Vector3f(2f, 0f, 0f));
+            camera.addPosition(new Vector3f(-0.004f*camera.getPosition().z, 0f, 0f));
         }
         if (glfwGetKey(windowID, GLFW_KEY_D) == GL_TRUE) {
-            camera.addPosition(new Vector3f(-2f, 0f, 0f));
+            camera.addPosition(new Vector3f(0.004f*camera.getPosition().z, 0f, 0f));
 
         }
         if (glfwGetKey(windowID, GLFW_KEY_S) == GL_TRUE) {
-            camera.addPosition(new Vector3f(0f, 2f, 0f));
+            camera.addPosition(new Vector3f(0f, -0.004f*camera.getPosition().z, 0f));
 
         }
         if (glfwGetKey(windowID, GLFW_KEY_W) == GL_TRUE) {
-            camera.addPosition(new Vector3f(0f, -2f, 0f));
+            camera.addPosition(new Vector3f(0f, 0.004f*camera.getPosition().z, 0f));
         }
 
         if (glfwGetKey(windowID, GLFW_KEY_KP_ADD) == GL_TRUE) {

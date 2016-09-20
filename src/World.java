@@ -88,9 +88,9 @@ public class World {
         moistureC = new float[MESHSIZE*XMESHES-1][MESHSIZE*XMESHES-1];
         heatC = new float[MESHSIZE*XMESHES-1][MESHSIZE*XMESHES-1];
 
-        makeImage(elevation, false);
-        makeImage(moisture, true);
-        makeImage(heat, true);
+       // makeImage(elevation, false);
+        //makeImage(moisture, true);
+       // makeImage(heat, true);
 
         for (int i = 0; i < centers.length; i++) {
             for (int j = 0; j < centers[i].length; j++) {
