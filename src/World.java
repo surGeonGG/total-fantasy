@@ -1,5 +1,6 @@
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.lwjgl.nuklear.NkContext;
 import org.lwjgl.nuklear.NkPanel;
 import org.lwjgl.opengl.GL11;
 
@@ -7,6 +8,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Random;
+
+import static org.lwjgl.nuklear.Nuklear.*;
 
 
 public class World {
@@ -38,6 +41,7 @@ public class World {
     private static Mesh[][] meshes;
 
     public World(Main main) {
+
         frame.getContentPane().setLayout(new FlowLayout());
 
         this.main = main;
@@ -62,12 +66,11 @@ public class World {
             }
         }
 
-        player = new Player(new Vector3f(0,0,0), camera, shader);
+        player = new Player(new Vector3f(300,300,0), camera, shader);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-
-
+        
         
     }
 

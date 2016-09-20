@@ -1,8 +1,8 @@
 
-import org.lwjgl.nuklear.*;
+import Gui.Gui;
 import org.lwjgl.opengl.GL;
 
-import static org.lwjgl.nuklear.Nuklear.*;
+import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 
@@ -12,7 +12,7 @@ public class Main {
 
     public static final float min = -1.0f, max = 1.0f;
 
-    public static final int WIDTH = 1600, HEIGHT = 1024;
+    public static final int WINDOW_WIDTH = 1000, WINDOW_HEIGHT = WINDOW_WIDTH - WINDOW_WIDTH/4;
 
     private static Camera camera;
 
@@ -24,23 +24,25 @@ public class Main {
 
     private static Window window;
 
+    private static Gui gui;
+
     private static int fps = 0;
 
 
     public Main() {
-
-
 
         if (!glfwInit()) {
             System.err.println("GLFW failed to initialize");
             System.exit(1);
         }
 
-        window = new Window(WIDTH, HEIGHT, "Game");
+        window = new Window(WINDOW_WIDTH, WINDOW_HEIGHT, "Game");
 
-        camera = new Camera(WIDTH, HEIGHT);
+        camera = new Camera(WINDOW_WIDTH, WINDOW_HEIGHT);
 
+        gui = new Gui(WINDOW_WIDTH, WINDOW_HEIGHT);
 
+        gui.run(window.getWindowID());
 
         GL.createCapabilities();
         glEnable(GL_TEXTURE_2D);
@@ -48,7 +50,11 @@ public class Main {
 
         shader = new Shader("shader");
 
-        glClearColor(0, 0, 0, 1);
+        float r = 139/256f;
+        float g = 121/256f;
+        float b = 94/256f;
+
+        glClearColor(r, g, b, 1);
 
         world = new World(this);
 
@@ -67,11 +73,13 @@ public class Main {
             if (delta >= 1/60) {
                 update();
                 render();
+                gui.render();
                 window.swapBuffers();
 
                 delta2 += delta;
                 delta = 0;
                 fps++;
+
             }
             if (delta2 >= 1000) {
                 delta2 = 0;
@@ -80,9 +88,12 @@ public class Main {
             }
         }
 
-        window.destroy();
-        glfwTerminate();
+        gui.nk_glfw3_shutdown();
 
+        glfwFreeCallbacks(window.getWindowID());
+        glfwTerminate();
+        glfwSetErrorCallback(null).free();
+        window.destroy();
     }
 
 
@@ -123,8 +134,8 @@ public class Main {
 
     public static World getWorld() {return world; }
 
-    public static int getWIDTH() { return WIDTH; }
+    public static int getWIDTH() { return WINDOW_WIDTH; }
 
-    public static int getHEIGHT() { return HEIGHT; }
+    public static int getHEIGHT() { return WINDOW_HEIGHT; }
 
 }

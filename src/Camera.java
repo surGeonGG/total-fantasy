@@ -20,7 +20,7 @@ public class Camera {
 
         aspectRatio = width / height;
 
-        position = new Vector3f(-300, -300, -500f);
+        position = new Vector3f(-300, -300, -100f);
         projection = new Matrix4f();
 
         float y_scale = (float) ((float) 1/Math.tan(Math.toRadians(FOV/2f)));

@@ -15,7 +15,7 @@ public class SimplexNoiseGenerator {
 
         new SimplexNoise(seed);
         float[][] tempMap = new float[XCORNERS][YCORNERS];
-        int freq = 2;
+        float freq = 1.5f;
         for(int x = 0; x < XCORNERS; x++) {
             for(int y = 0; y < YCORNERS; y++) {
                 float nx = (float) x/XCORNERS, ny = (float) y/YCORNERS;
