@@ -35,14 +35,7 @@ class Sidebar {
             NkPanel layout = NkPanel.mallocStack(stack);
             NkRect rect = NkRect.mallocStack(stack);
 
-            if ( nk_begin(
-                    ctx,
-                    layout,
-                    "Demo",
-                    nk_rect(x, y, 200, WINDOW_HEIGHT, rect),
-                    NK_WINDOW_BORDER
-            ) ) {
-
+            if ( nk_begin(ctx, layout, "Demo", nk_rect(x, y, 200, WINDOW_HEIGHT, rect), NK_WINDOW_BORDER)) {
 
                 nk_layout_row_static(ctx, 30, 80, 1);
                 if ( nk_button_label(ctx, "button") )
