@@ -236,7 +236,7 @@ public class Gui {
 
         sidebar.layout(ctx, -1, -1, WINDOW_WIDTH, WINDOW_HEIGHT);
         textArea.layout(ctx, 198, -1, WINDOW_WIDTH, WINDOW_HEIGHT);
-        lowerBar.layout(ctx, 198, WINDOW_HEIGHT-198, WINDOW_WIDTH, WINDOW_HEIGHT);
+        lowerBar.layout(ctx, 148, WINDOW_HEIGHT-98, WINDOW_WIDTH, WINDOW_HEIGHT);
 
         try ( MemoryStack stack = stackPush() ) {
             FloatBuffer bg = stack.mallocFloat(4);
