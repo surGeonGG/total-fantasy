@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<events>
+	<event id="1">
+		<text>An old man comes up to you and hands you a bar of soap. "You need this more than I do." </text>
+		<received>#{LongSword}</received>
+	</event>
+</events>

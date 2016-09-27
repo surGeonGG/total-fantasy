@@ -54,6 +54,12 @@ public class Gui {
                 .flip();
     }
 
+    private static Main.Main main;
+
+    private static Sidebar sidebar = new Sidebar();
+    private static TextArea textArea = new TextArea();
+    private static LowerBar lowerBar = new LowerBar();
+
     private final ByteBuffer ttf;
 
     private long windowID;
@@ -79,12 +85,12 @@ public class Gui {
     private int uniform_tex;
     private int uniform_proj;
 
-    private final Sidebar sidebar = new Sidebar();
-    private final TextArea textArea = new TextArea();
-    private final LowerBar lowerBar = new LowerBar();
 
 
-    public Gui(int WINDOW_WIDTH, int WINDOW_HEIGHT) {
+    private static NkColor.Buffer table;
+
+
+    public Gui(int WINDOW_WIDTH, int WINDOW_HEIGHT, Main.Main main) {
         try {
             this.ttf = ioResourceToByteBuffer("res/fonts/MODERNE SANS.ttf", 160 * 1024);
         } catch (IOException e) {
@@ -93,40 +99,42 @@ public class Gui {
 
         this.WINDOW_WIDTH = WINDOW_WIDTH;
         this.WINDOW_HEIGHT = WINDOW_HEIGHT;
+
+        table = NkColor.create(NK_COLOR_COUNT);
+
+        nk_rgba(70, 70, 70, 255, table.get(NK_COLOR_TEXT));
+        nk_rgba(175, 175, 175, 255, table.get(NK_COLOR_WINDOW));
+        nk_rgba(175, 175, 175, 255, table.get(NK_COLOR_HEADER));
+        nk_rgba(0, 0, 0, 255, table.get(NK_COLOR_BORDER));
+        nk_rgba(185, 185, 185, 255, table.get(NK_COLOR_BUTTON));
+        nk_rgba(170, 170, 170, 255, table.get(NK_COLOR_BUTTON_HOVER));
+        nk_rgba(160, 160, 160, 255, table.get(NK_COLOR_BUTTON_ACTIVE));
+        nk_rgba(150, 150, 150, 255, table.get(NK_COLOR_TOGGLE));
+        nk_rgba(120, 120, 120, 255, table.get(NK_COLOR_TOGGLE_HOVER));
+        nk_rgba(175, 175, 175, 255, table.get(NK_COLOR_TOGGLE_CURSOR));
+        nk_rgba(190, 190, 190, 255, table.get(NK_COLOR_SELECT));
+        nk_rgba(175, 175, 175, 255, table.get(NK_COLOR_SELECT_ACTIVE));
+        nk_rgba(190, 190, 190, 255, table.get(NK_COLOR_SLIDER));
+        nk_rgba(80, 80, 80, 255, table.get(NK_COLOR_SLIDER_CURSOR));
+        nk_rgba(70, 70, 70, 255, table.get(NK_COLOR_SLIDER_CURSOR_HOVER));
+        nk_rgba(60, 60, 60, 255, table.get(NK_COLOR_SLIDER_CURSOR_ACTIVE));
+        nk_rgba(175, 175, 175, 255, table.get(NK_COLOR_PROPERTY));
+        nk_rgba(150, 150, 150, 255, table.get(NK_COLOR_EDIT));
+        nk_rgba(0, 0, 0, 255, table.get(NK_COLOR_EDIT_CURSOR));
+        nk_rgba(175, 175, 175, 255, table.get(NK_COLOR_COMBO));
+        nk_rgba(160, 160, 160, 255, table.get(NK_COLOR_CHART));
+        nk_rgba(45, 45, 45, 255, table.get(NK_COLOR_CHART_COLOR));
+        nk_rgba( 255, 0, 0, 255, table.get(NK_COLOR_CHART_COLOR_HIGHLIGHT));
+        nk_rgba(180, 180, 180, 255, table.get(NK_COLOR_SCROLLBAR));
+        nk_rgba(140, 140, 140, 255, table.get(NK_COLOR_SCROLLBAR_CURSOR));
+        nk_rgba(150, 150, 150, 255, table.get(NK_COLOR_SCROLLBAR_CURSOR_HOVER));
+        nk_rgba(160, 160, 160, 255, table.get(NK_COLOR_SCROLLBAR_CURSOR_ACTIVE));
+        nk_rgba(180, 180, 180, 255, table.get(NK_COLOR_TAB_HEADER));
+
+
     }
 
     public void run(long windowID) {
-        /*
-        GLFWErrorCallback.createPrint().set();
-        if ( !glfwInit() )
-            throw new IllegalStateException("Unable to initialize glfw");
-
-        glfwDefaultWindowHints();
-        glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-        if ( Platform.get() == Platform.MACOSX )
-            glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
-        glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
-
-
-        glfwMakeContextCurrent(win);
-        GLCapabilities caps = GL.createCapabilities();
-        Callback debugProc = GLUtil.setupDebugMessageCallback();
-
-        if ( caps.OpenGL43 )
-            glDebugMessageControl(GL_DEBUG_SOURCE_API, GL_DEBUG_TYPE_OTHER, GL_DEBUG_SEVERITY_NOTIFICATION, (IntBuffer)null, false);
-        else if ( caps.GL_KHR_debug ) {
-            KHRDebug.glDebugMessageControl(
-                    KHRDebug.GL_DEBUG_SOURCE_API,
-                    KHRDebug.GL_DEBUG_TYPE_OTHER,
-                    KHRDebug.GL_DEBUG_SEVERITY_NOTIFICATION,
-                    (IntBuffer)null,
-                    false
-            );
-        } else if ( caps.GL_ARB_debug_output )
-            glDebugMessageControlARB(GL_DEBUG_SOURCE_API_ARB, GL_DEBUG_TYPE_OTHER_ARB, GL_DEBUG_SEVERITY_LOW_ARB, (IntBuffer)null, false);*/
 
         this.windowID = windowID;
 
@@ -234,9 +242,11 @@ public class Gui {
     public void render() {
         nk_glfw3_new_frame();
 
-        sidebar.layout(ctx, -1, -1, WINDOW_WIDTH, WINDOW_HEIGHT);
-        textArea.layout(ctx, 198, -1, WINDOW_WIDTH, WINDOW_HEIGHT);
-        lowerBar.layout(ctx, 148, WINDOW_HEIGHT-98, WINDOW_WIDTH, WINDOW_HEIGHT);
+        sidebar.layout(ctx, -1, -1, WINDOW_WIDTH, WINDOW_HEIGHT, main.getPlayer());
+        textArea.layout(ctx, 150, -1, WINDOW_WIDTH, WINDOW_HEIGHT);
+        lowerBar.layout(ctx, 150, WINDOW_HEIGHT-98, WINDOW_WIDTH, WINDOW_HEIGHT);
+
+        nk_style_from_table(ctx, table);
 
         try ( MemoryStack stack = stackPush() ) {
             FloatBuffer bg = stack.mallocFloat(4);
@@ -247,7 +257,6 @@ public class Gui {
             glfwGetWindowSize(windowID, width, height);
             glViewport(0, 0, width.get(0), height.get(0));
 
-           // glClearColor(bg.get(0), bg.get(1), bg.get(2), bg.get(3));
         }
 
         nk_glfw3_render(NK_ANTI_ALIASING_ON, MAX_VERTEX_BUFFER, MAX_ELEMENT_BUFFER);
@@ -298,7 +307,7 @@ public class Gui {
         if ( glGetProgrami(prog, GL_LINK_STATUS) != GL_TRUE )
             throw new IllegalStateException();
 
-        uniform_tex = glGetUniformLocation(prog, "Texture");
+        uniform_tex = glGetUniformLocation(prog, "Main.Texture");
         uniform_proj = glGetUniformLocation(prog, "ProjMtx");
         int attrib_pos = glGetAttribLocation(prog, "Position");
         int attrib_uv = glGetAttribLocation(prog, "TexCoord");
@@ -608,4 +617,16 @@ public class Gui {
         ALLOCATOR.mfree().free();
     }
 
+
+    public Sidebar getSidebar() {
+        return sidebar;
+    }
+
+    public TextArea getTextArea() {
+        return textArea;
+    }
+
+    public LowerBar getLowerBar() {
+        return lowerBar;
+    }
 }

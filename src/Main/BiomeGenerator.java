@@ -1,15 +1,17 @@
+package Main;
+
 public class BiomeGenerator {
 
-    public static String generateBiome(float elevation, float moisture, float heat, boolean isWater, boolean isCoast) {
+    public static String generateBiome(float elevation, float moisture, float heat, boolean isLake, boolean isRiver) {
 
         if (elevation < 0) {
             /*if (heat > 0.99 && elevation > -0.4) return "ICE";*/
             return "OCEAN";
-        } else if (isWater) {
-            if (elevation < 0.1) return "MARSH";
-            if (elevation > 0.8) return "ICE";
+        } else if (isLake) {
             return "LAKE";
-        } else if (isCoast) {
+        } else if (isRiver) {
+            return "RIVER";
+        } else if (elevation < 0.02) {
             return "BEACH";
         /*} else if (heat > 0.90) {
             return "SNOW";*/

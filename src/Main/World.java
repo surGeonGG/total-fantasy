@@ -1,15 +1,12 @@
+package Main;
+
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-import org.lwjgl.nuklear.NkContext;
-import org.lwjgl.nuklear.NkPanel;
-import org.lwjgl.opengl.GL11;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Random;
-
-import static org.lwjgl.nuklear.Nuklear.*;
 
 
 public class World {
@@ -32,11 +29,9 @@ public class World {
 
     private static Center[][] centers;
 
-    public static final int XMESHES = 10, YMESHES = 10,  MESHSIZE = 64, MESHSIZEC = MESHSIZE-1;
+    public static final int XMESHES = 5, YMESHES = 5,  MESHSIZE = 64, MESHSIZEC = MESHSIZE-1;
 
     private static int meshCorners, meshCenters;
-
-    private static Player player;
 
     private static Mesh[][] meshes;
 
@@ -54,24 +49,22 @@ public class World {
         meshCenters = (MESHSIZEC) * (MESHSIZEC);
 
         corners = new Corner[MESHSIZE*XMESHES][MESHSIZE*YMESHES];
+
         centers = new Center[MESHSIZE*XMESHES-1][MESHSIZE*YMESHES-1];
+
         meshes = new Mesh[XMESHES][YMESHES];
         
         buildNoise();
         for (int i = 0; i < YMESHES; i++) {
             for (int j = 0; j < XMESHES; j++) {
-                /*meshes[i][j] = buildMesh(i, j);*/
-                meshes[i][j] = new Mesh(corners, centers, i, j);
+                meshes[j][i] = new Mesh(corners, centers, j, i);
 
             }
         }
 
-        player = new Player(new Vector3f(300,300,0), camera, shader);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        
-        
     }
 
     private static void buildNoise() {
@@ -88,9 +81,9 @@ public class World {
         moistureC = new float[MESHSIZE*XMESHES-1][MESHSIZE*XMESHES-1];
         heatC = new float[MESHSIZE*XMESHES-1][MESHSIZE*XMESHES-1];
 
-       // makeImage(elevation, false);
-        //makeImage(moisture, true);
-       // makeImage(heat, true);
+       makeImage(elevation, false);
+       makeImage(moisture, true);
+       makeImage(heat, true);
 
         for (int i = 0; i < centers.length; i++) {
             for (int j = 0; j < centers[i].length; j++) {
@@ -105,16 +98,90 @@ public class World {
                 corners[i][j].setElevation(elevation[i][j]);
                 corners[i][j].setMoisture(moisture[i][j]);
                 corners[i][j].setHeat(heat[i][j]);
-                corners[i][j].setBiome(biomeGenerator.generateBiome(corners[i][j].getElevation(), corners[i][j].getMoisture(), corners[i][j].getHeat(), false, false));
+
             }
         }
+
         for (int i = 0; i < centers.length; i++) {
             for (int j = 0; j < centers[i].length; j++) {
                 centers[i][j] = new Center();
                 centers[i][j].setElevation(elevationC[i][j]);
                 centers[i][j].setMoisture(moistureC[i][j]);
                 centers[i][j].setHeat(heat[i][j]);
-                centers[i][j].setBiome(biomeGenerator.generateBiome(centers[i][j].getElevation(), centers[i][j].getMoisture(), centers[i][j].getHeat(), false, false));
+
+            }
+        }
+
+        for (int i = 0; i < corners.length; i++) {
+            for (int j = 0; j < corners[i].length; j++) {
+
+                if (j > 0)
+                    corners[i][j].setNorth(corners[i][j-1]);
+                if (i < corners.length-1)
+                    corners[i][j].setEast(corners[i+1][j]);
+                if (j < corners[i].length-1)
+                    corners[i][j].setSouth(corners[i][j+1]);
+                if (i > 0)
+                    corners[i][j].setWest(corners[i-1][j]);
+
+                if (i > 0 && j > 0)
+                    corners[i][j].setNw(centers[i-1][j-1]);
+                if (i < centers.length-1 && j > 0)
+                    corners[i][j].setNe(centers[i][j-1]);
+                if (i > 0 && j < centers[0].length-1)
+                    corners[i][j].setSw(centers[i-1][j]);
+                if (i < centers.length-1 && j < centers[0].length-1)
+                    corners[i][j].setSe(centers[i][j]);
+
+                /*corners[i][j].setBiome(biomeGenerator.generateBiome(corners[i][j].getElevation(),
+                        corners[i][j].getMoisture(), corners[i][j].getHeat(), corners[i][j].isLake(), corners[i][j].isRiver()));*/
+
+            }
+        }
+
+        for (int i = 0; i < centers.length; i++) {
+            for (int j = 0; j < centers[i].length; j++) {
+                if (j > 0)
+                    centers[i][j].setNorth(centers[i][j-1]);
+                if (i < centers.length-1)
+                    centers[i][j].setEast(centers[i+1][j]);
+                if (j < centers[i].length-1)
+                    centers[i][j].setSouth(centers[i][j+1]);
+                if (i > 0)
+                    centers[i][j].setWest(centers[i-1][j]);
+
+                centers[i][j].setNw(corners[i][j]);
+                centers[i][j].setNe(corners[i][j+1]);
+                centers[i][j].setSw(corners[i+1][j]);
+                centers[i][j].setSe(corners[i+1][j+1]);
+
+               /* centers[i][j].setBiome(biomeGenerator.generateBiome(centers[i][j].getElevation(),
+                        centers[i][j].getMoisture(), centers[i][j].getHeat(), centers[i][j].isLake(), centers[i][j].isRiver()));*/
+
+            }
+        }
+
+        for (int i = 0; i < centers.length; i+=11) {
+            for (int j = 0; j < centers[i].length; j+=11) {
+                if (i > 0 && j > 0) {
+                    centers[i][j].createRiver(false);
+
+                }
+            }
+        }
+
+       for (int i = 0; i < corners.length; i++) {
+            for (int j = 0; j < corners[i].length; j++) {
+                corners[i][j].setBiome(biomeGenerator.generateBiome(corners[i][j].getElevation(),
+                        corners[i][j].getMoisture(), corners[i][j].getHeat(), corners[i][j].isLake(), corners[i][j].isRiver()));
+            }
+        }
+
+        for (int i = 0; i < centers.length; i++) {
+            for (int j = 0; j < centers[i].length; j++) {
+
+                 centers[i][j].setBiome(biomeGenerator.generateBiome(centers[i][j].getElevation(),
+                        centers[i][j].getMoisture(), centers[i][j].getHeat(), centers[i][j].isLake(), centers[i][j].isRiver()));
             }
         }
     }
@@ -125,9 +192,9 @@ public class World {
 
     private static void makeImage(float[][] map, boolean isClamped) {
 
-        BufferedImage img = new BufferedImage(map.length, map[1].length, BufferedImage.TYPE_INT_RGB);
+        BufferedImage img = new BufferedImage(map.length, map[0].length, BufferedImage.TYPE_INT_RGB);
 
-        float[][] tempMap = new float[map.length][map[1].length];
+        float[][] tempMap = new float[map.length][map[0].length];
 
         for (int i = 0; i < map.length; i++) {
             for (int j = 0; j < map[i].length; j++) {
@@ -182,22 +249,25 @@ public class World {
                 shader.bind();
 
                 Matrix4f projection = new Matrix4f();
-                Matrix4f tile_pos = new Matrix4f().translate(new Vector3f(MESHSIZEC*j, MESHSIZEC*i, 0));
+                Matrix4f rotation = new Matrix4f();
+                Matrix4f tile_pos = new Matrix4f().translate(new Vector3f(MESHSIZEC*i, MESHSIZEC*j, 0));
                 camera.getProjection().mul(tile_pos, projection);
+                camera.getRotation().mul(tile_pos, rotation);
 
                 shader.setUniform("projectionMatrix", projection);
+                shader.setUniform("rotationMatrix", rotation);
                 meshes[i][j].render();
-
             }
         }
         shader.setUniform("projectionMatrix", camera.getProjection());
-        //borders.renderBorders();
-
-        player.render();
     }
 
-    public static Player getPlayer() {
-        return player;
+    public static Corner[][] getCorners() {
+        return corners;
+    }
+
+    public static Center[][] getCenters() {
+        return centers;
     }
 }
 

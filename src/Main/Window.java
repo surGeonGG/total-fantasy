@@ -1,36 +1,18 @@
+package Main;
+
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GLUtil;
 import org.lwjgl.system.MemoryUtil;
-import org.lwjgl.glfw.GLFWErrorCallback;
-import org.lwjgl.nuklear.*;
 import org.lwjgl.opengl.*;
-import org.lwjgl.stb.*;
 import org.lwjgl.system.Callback;
-import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.Platform;
 
-import java.io.IOException;
 import java.nio.*;
 
-import static nuklear.IOUtil.*;
-import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.nuklear.Nuklear.*;
 import static org.lwjgl.opengl.ARBDebugOutput.*;
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL12.*;
-import static org.lwjgl.opengl.GL13.*;
-import static org.lwjgl.opengl.GL14.*;
-import static org.lwjgl.opengl.GL15.*;
-import static org.lwjgl.opengl.GL20.*;
-import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.opengl.GL43.*;
-import static org.lwjgl.stb.STBTruetype.*;
-import static org.lwjgl.system.MemoryStack.*;
-import static org.lwjgl.system.MemoryUtil.*;
-
-import static org.lwjgl.glfw.GLFW.*;
 
 public class Window {
 
@@ -81,7 +63,7 @@ public class Window {
         glfwSetWindowPos(windowID, (vidmode.width() - WINDOW_WIDTH) / 2, (vidmode.height() - WINDOW_HEIGHT) / 2 );
 
         if (windowID == MemoryUtil.NULL)
-            throw new IllegalStateException("Window failed");
+            throw new IllegalStateException("Main.Window failed");
 
         glfwShowWindow(windowID);
         glfwMakeContextCurrent(windowID);

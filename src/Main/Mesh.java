@@ -1,4 +1,4 @@
-import org.joml.Matrix4f;
+package Main;
 
 public class Mesh {
 
@@ -16,7 +16,7 @@ public class Mesh {
 
     private static Center[][] centers;
 
-    public static final int MESHSIZE = 64, MESHSIZEC = MESHSIZE-1, DEPTH = 0;
+    public static final int MESHSIZE = 64, MESHSIZEC = MESHSIZE-1, DEPTH = 10;
 
     public Mesh(Corner[][] corners, Center[][] centers, int x, int y) {
 
@@ -42,14 +42,14 @@ public class Mesh {
 
                 vertices[count] = j;
                 vertices[count+1] = i;
-                vertices[count+2] = corners[(meshX*MESHSIZEC)+i][(meshY*MESHSIZEC)+j].getElevation()*DEPTH;
+                vertices[count+2] = corners[(meshX*MESHSIZEC)+j][(meshY*MESHSIZEC)+i].getElevation()*DEPTH;
                 if (vertices[count+2] < 0) vertices[count+2] = 0f;
 
                 count = (j * 4) + (i * MESHSIZE * 4);
 
-                colors[count] = biomeGenerator.getBiomeColor(corners[(meshX*MESHSIZEC)+i][(meshY*MESHSIZEC)+j].getBiome())[0];
-                colors[count+1] = biomeGenerator.getBiomeColor(corners[(meshX*MESHSIZEC)+i][(meshY*MESHSIZEC)+j].getBiome())[1];
-                colors[count+2] = biomeGenerator.getBiomeColor(corners[(meshX*MESHSIZEC)+i][(meshY*MESHSIZEC)+j].getBiome())[2];
+                colors[count] = biomeGenerator.getBiomeColor(corners[(meshX*MESHSIZEC)+j][(meshY*MESHSIZEC)+i].getBiome())[0];
+                colors[count+1] = biomeGenerator.getBiomeColor(corners[(meshX*MESHSIZEC)+j][(meshY*MESHSIZEC)+i].getBiome())[1];
+                colors[count+2] = biomeGenerator.getBiomeColor(corners[(meshX*MESHSIZEC)+j][(meshY*MESHSIZEC)+i].getBiome())[2];
                 colors[count+3] = 1;
 
 
@@ -64,16 +64,16 @@ public class Mesh {
 
                 vertices[count] = 0.5f + j;
                 vertices[count+1] = 0.5f + i;
-                vertices[count+2] = centers[meshX*MESHSIZEC+i][meshY*MESHSIZEC+j].getElevation()*DEPTH;
+                vertices[count+2] = centers[meshX*MESHSIZEC+j][meshY*MESHSIZEC+i].getElevation()*DEPTH;
 
                 if (vertices[count+2] < 0) vertices[count+2] = 0f;
 
                 l = (j * 4) + (i * (MESHSIZEC) * 4);
                 count = (MESHSIZE*MESHSIZE * 4) + l;
 
-                colors[count] = biomeGenerator.getBiomeColor(centers[meshX*MESHSIZEC+i][meshY*MESHSIZEC+j].getBiome())[0];
-                colors[count+1] = biomeGenerator.getBiomeColor(centers[meshX*MESHSIZEC+i][meshY*MESHSIZEC+j].getBiome())[1];
-                colors[count+2] = biomeGenerator.getBiomeColor(centers[meshX*MESHSIZEC+i][meshY*MESHSIZEC+j].getBiome())[2];
+                colors[count] = biomeGenerator.getBiomeColor(centers[meshX*MESHSIZEC+j][meshY*MESHSIZEC+i].getBiome())[0];
+                colors[count+1] = biomeGenerator.getBiomeColor(centers[meshX*MESHSIZEC+j][meshY*MESHSIZEC+i].getBiome())[1];
+                colors[count+2] = biomeGenerator.getBiomeColor(centers[meshX*MESHSIZEC+j][meshY*MESHSIZEC+i].getBiome())[2];
                 colors[count+3] = 1;
             }
         }
@@ -109,5 +109,6 @@ public class Mesh {
 
     public void render() {
         model.render();
+        //model.renderPoints();
     }
 }

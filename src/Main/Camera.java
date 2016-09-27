@@ -1,3 +1,5 @@
+package Main;
+
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -49,6 +51,13 @@ public class Camera {
     public Matrix4f getProjection() {
         Matrix4f targetMatrix = new Matrix4f();
         projection.translate(position, targetMatrix);
+        targetMatrix.rotate((float) Math.toRadians(getPitch()), new Vector3f(1,0,0), targetMatrix);
+        targetMatrix.rotate((float) Math.toRadians(getYaw()), new Vector3f(0,0,1), targetMatrix);
+        return targetMatrix;
+    }
+
+    public Matrix4f getRotation() {
+        Matrix4f targetMatrix = new Matrix4f();
         targetMatrix.rotate((float) Math.toRadians(getPitch()), new Vector3f(1,0,0), targetMatrix);
         targetMatrix.rotate((float) Math.toRadians(getYaw()), new Vector3f(0,0,1), targetMatrix);
         return targetMatrix;

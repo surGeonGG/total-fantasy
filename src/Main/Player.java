@@ -1,8 +1,7 @@
+package Main;
+
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-
-import java.awt.*;
-import java.util.Random;
 
 public class Player {
 
@@ -16,22 +15,34 @@ public class Player {
 
     private float[] colors;
 
+    private static Main main;
+
     private static Model model;
 
     private static Camera camera;
 
     private static Shader shader;
 
-    private static float scale = 1f;
+    private static Corner[][] corners;
 
-    public Player(Vector3f position, Camera camera, Shader shader) {
+    private static Center[][] centers;
+
+    private static float scale = 0.5f;
+
+    private static int[] stats = { 12, 14, 11, 18, 21, 9 };
+
+    public Player(Vector3f position, Main main, Corner[][] corners, Center[][] centers) {
         this.position = position;
         position.x += 0.5f;
         position.y += 0.5f;
         position.z += 0.5f;
 
-        this.camera = camera;
-        this.shader = shader;
+        this.main = main;
+
+        camera = main.getCamera();
+        shader = main.getShader();
+        this.corners = corners;
+        this.centers = centers;
 
         vertices = new float[] {
                 -0.5f, -0.5f, 0.5f,
@@ -69,15 +80,16 @@ public class Player {
         model = new Model(vertices, indices, colors);
     }
 
+    private void triggerEvent(String biome) {
+        main.getEventHandler().handleEvent(biome, "1");
+    }
+
     public void render() {
         shader.bind();
 
         Matrix4f projection = new Matrix4f();
         Matrix4f pos = new Matrix4f().translate(position);
         camera.getProjection().mul(pos, projection);
-
-        /*Matrix4f projection = new Matrix4f();
-        projection.translate(camera.getPosition(), projection);*/
 
         shader.setUniform("projectionMatrix", projection);
 
@@ -92,7 +104,21 @@ public class Player {
         this.position = position;
     }
 
-    public void addPosition(Vector3f position) {
-        this.position = this.position.add(position);
+    public void addPosition(Vector3f add) {
+
+        String biome = centers[(int) (position.x - 0.5f)][(int)(position.y - 0.5f)].getBiome();
+        float elevation = centers[(int) (position.x - 0.5f + add.x)][(int)(position.y - 0.5f + add.y)].getElevation();
+
+        if (elevation > 0) {
+            this.position = this.position.add(add);
+            System.out.println(biome);
+            triggerEvent(biome);
+        }
+    }
+
+
+
+    public static int[] getStats() {
+        return stats;
     }
 }

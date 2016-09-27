@@ -1,6 +1,6 @@
-import org.joml.Vector3f;
+package Main;
 
-import java.util.Timer;
+import org.joml.Vector3f;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.GL_TRUE;
@@ -31,7 +31,7 @@ public class Input {
 
         this.windowID = main.getWindow().getWindowID();
 
-        this.player = main.getWorld().getPlayer();
+        this.player = main.getPlayer();
 
     }
 
@@ -90,28 +90,28 @@ public class Input {
         }
 
         if (glfwGetKey(windowID, GLFW_KEY_UP) == GL_TRUE) {
-            if (System.currentTimeMillis() > moveTimer+1000) {
+           if (System.currentTimeMillis() > moveTimer+200) {
                 player.addPosition(new Vector3f(0,1,0));
                 moveTimer = System.currentTimeMillis();
-            }
+           }
         }
 
         if (glfwGetKey(windowID, GLFW_KEY_DOWN) == GL_TRUE) {
-            if (System.currentTimeMillis() > moveTimer+1000) {
+           if (System.currentTimeMillis() > moveTimer+200) {
                 player.addPosition(new Vector3f(0,-1,0));
                 moveTimer = System.currentTimeMillis();
-            }
+           }
         }
 
         if (glfwGetKey(windowID, GLFW_KEY_LEFT) == GL_TRUE) {
-            if (System.currentTimeMillis() > moveTimer+1000) {
+            if (System.currentTimeMillis() > moveTimer+200) {
                 player.addPosition(new Vector3f(-1,0,0));
                 moveTimer = System.currentTimeMillis();
             }
         }
 
         if (glfwGetKey(windowID, GLFW_KEY_RIGHT) == GL_TRUE) {
-            if (System.currentTimeMillis() > moveTimer+1000) {
+            if (System.currentTimeMillis() > moveTimer+200) {
                 player.addPosition(new Vector3f(1,0,0));
                 moveTimer = System.currentTimeMillis();
             }

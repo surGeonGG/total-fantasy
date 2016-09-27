@@ -1,5 +1,7 @@
+package Main;
 
 import Gui.Gui;
+import org.joml.Vector3f;
 import org.lwjgl.opengl.GL;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
@@ -16,6 +18,8 @@ public class Main {
 
     private static Camera camera;
 
+    private static EventHandler eventHandler;
+
     private static World world;
 
     private static Input input;
@@ -23,6 +27,8 @@ public class Main {
     private static Shader shader;
 
     private static Window window;
+
+    private static Player player;
 
     private static Gui gui;
 
@@ -40,31 +46,35 @@ public class Main {
 
         camera = new Camera(WINDOW_WIDTH, WINDOW_HEIGHT);
 
-        gui = new Gui(WINDOW_WIDTH, WINDOW_HEIGHT);
+        gui = new Gui(WINDOW_WIDTH, WINDOW_HEIGHT, this);
 
         gui.run(window.getWindowID());
 
-        GL.createCapabilities();
-        glEnable(GL_TEXTURE_2D);
-        glEnable(GL_DEPTH_TEST);
-
         shader = new Shader("shader");
-
-        float r = 139/256f;
-        float g = 121/256f;
-        float b = 94/256f;
-
-        glClearColor(r, g, b, 1);
 
         world = new World(this);
 
+        player = new Player(new Vector3f(300,300,0), this, world.getCorners(), world.getCenters());
+
         input = new Input(this);
+
+        eventHandler = new EventHandler(this);
 
         long delta = 0;
         long delta2 = 0;
         long sysTime = 0;
 
         int x = 0, y = 0;
+
+        float r = 139/256f;
+        float g = 121/256f;
+        float b = 94/256f;
+
+        GL.createCapabilities();
+        glEnable(GL_TEXTURE_2D);
+        glEnable(GL_DEPTH_TEST);
+
+        glClearColor(r, g, b, 1);
 
         while (!glfwWindowShouldClose(window.getWindowID())) { //Game Loop
 
@@ -117,8 +127,12 @@ public class Main {
         shader.bind();
         shader.setUniform("green", 1);
         world.render();
+        player.render();
 
     }
+
+
+    public static EventHandler getEventHandler() { return eventHandler; }
 
     public static Camera getCamera() {
         return camera;
@@ -132,10 +146,13 @@ public class Main {
         return shader;
     }
 
+    public static Gui getGui() { return gui; }
+
     public static World getWorld() {return world; }
 
     public static int getWIDTH() { return WINDOW_WIDTH; }
 
     public static int getHEIGHT() { return WINDOW_HEIGHT; }
 
+    public static Player getPlayer() { return player; }
 }

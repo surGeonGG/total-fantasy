@@ -1,3 +1,5 @@
+package Main;
+
 import java.util.Random;
 
 public class SimplexNoise {  // Simplex noise in 2D, 3D and 4D
