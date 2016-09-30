@@ -38,7 +38,7 @@ public class MapCoord {
 
     public void createRiver(boolean continuation, ArrayList<MapCoord> riverList) {
 
-        if ((continuation || moisture > -1) && !isRiver &&  elevation < 0.9f && elevation > 0) {
+        if ((continuation || moisture > -1) && !isRiver &&  elevation > 0) {
 
             riverList.add(this);
 

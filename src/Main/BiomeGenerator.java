@@ -5,41 +5,73 @@ public class BiomeGenerator {
     public static String generateBiome(float elevation, float moisture, float heat, boolean isLake, boolean isRiver) {
 
         if (elevation < 0) {
-            /*if (heat > 0.99 && elevation > -0.4) return "ICE";*/
+
             return "OCEAN";
+
         } else if (isLake) {
+
             return "LAKE";
+
         } else if (isRiver) {
+
             return "RIVER";
+
         } else if (elevation < 0.00001) {
+
             return "BEACH";
-        } else if (elevation > 0.8) {
-            //if (moisture > 0.33) return "TUNDRA";
-            /*else if (moisture > 0.16) */return "BARE";
-            //else return "SCORCHED";
-        } else if (elevation > 0.6) {
-            /*if (moisture > 0.66) */return "TAIGA";
-            /*else if (moisture > 0.33) return "SHRUBLAND";
-            else return "BARE";*/
-        } else if (elevation > 0.3) {
-            /*if (moisture > 0.83) return "TEMPERATE_RAIN_FOREST";
-            else if (moisture > 0.50) */return "TEMPERATE_DECIDUOUS_FOREST";
-            /*else if (moisture > 0.16) return "GRASSLAND";
-            else return "TEMPERATE_DESERT";*/
+
+        } else if (elevation == 0.95f) {
+
+            return "BARE";
+
+        } else if (elevation == 0.85f) {
+
+            return "TAIGA";
+
+        } else if (elevation == 0.75f) {
+
+            return "TAIGA";
+
+        } else if (elevation == 0.65f) {
+
+            return "SHRUBLAND";
+
+        } else if (elevation == 0.55f) {
+
+            return "TAIGA";
+
+        } else if (elevation == 0.45f) {
+
+            return "TEMPERATE_RAIN_FOREST";
+
+        } else if (elevation == 0.35f) {
+
+            return "TEMPERATE_DECIDUOUS_FOREST";
+
+        } else if (elevation == 0.25f) {
+
+            return "TROPICAL_RAIN_FOREST";
+
+        } else if (elevation == 0.15f) {
+
+            return "TROPICAL_SEASONAL_FOREST";
+
+        } else if (elevation == 0.05f) {
+
+            return "GRASSLAND";
+
         } else {
-            /*if (moisture > 0.66) return "TROPICAL_RAIN_FOREST";
-            else if (moisture > 0.33) return "TROPICAL_SEASONAL_FOREST";
-            else if (moisture > 0.16) return "GRASSLAND";
-            else */return "GRASSLAND";
+            return "GRASSLAND";
         }
     }
+
+
+
     public static float[] getBiomeColor(String biome) {
         if (biome == "OCEAN") return new float[] { 0.267f, 0.267f, 0.478f };
         if (biome == "COAST") return new float[] { 0.2f, 0.2f, 0.353f };
         if (biome == "LAKESHORE") return new float[] { 0.133f, 0.333f, 0.533f };
-        //if (biome == "LAKE") return new float[] { 0.2f, 0.4f, 0.6f };
-        if (biome == "LAKE") return new float[] { 1f, 0.333f, 0.533f };
-        //if (biome == "LAKE") return new float[] { 1f, 0f, 0f };
+        if (biome == "LAKE") return new float[] { 0.2f, 0.4f, 0.6f };
         if (biome == "RIVER") return new float[] { 0.133f, 0.333f, 0.533f };
         if (biome == "MARSH") return new float[] { 0.184f, 0.4f, 0.4f };
         if (biome == "ICE") return new float[] { 0.6f, 1f, 1f };
@@ -65,6 +97,8 @@ public class BiomeGenerator {
 
         return null;
     }
+
+
 
     public static float smoothElevation(float elevation) {
         if (elevation <= 0) return -0.001f;
