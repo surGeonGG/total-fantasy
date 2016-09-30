@@ -16,7 +16,7 @@ public class Mesh {
 
     private static Center[][] centers;
 
-    public static final int MESHSIZE = 64, MESHSIZEC = MESHSIZE-1, DEPTH = 10;
+    public static final int MESHSIZE = 64, MESHSIZEC = MESHSIZE-1, DEPTH = 0;
 
     public Mesh(Corner[][] corners, Center[][] centers, int x, int y) {
 

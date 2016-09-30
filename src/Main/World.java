@@ -6,6 +6,7 @@ import org.joml.Vector3f;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.Random;
 
 
@@ -29,7 +30,7 @@ public class World {
 
     private static Center[][] centers;
 
-    public static final int XMESHES = 5, YMESHES = 5,  MESHSIZE = 64, MESHSIZEC = MESHSIZE-1;
+    public static final int XMESHES = 10, YMESHES = 10,  MESHSIZE = 64, MESHSIZEC = MESHSIZE-1;
 
     private static int meshCorners, meshCenters;
 
@@ -95,9 +96,12 @@ public class World {
         for (int i = 0; i < corners.length; i++) {
             for (int j = 0; j < corners[i].length; j++) {
                 corners[i][j] = new Corner();
-                corners[i][j].setElevation(elevation[i][j]);
+                corners[i][j].setElevation(biomeGenerator.smoothElevation(elevation[i][j]));
                 corners[i][j].setMoisture(moisture[i][j]);
                 corners[i][j].setHeat(heat[i][j]);
+
+                corners[i][j].x = i;
+                corners[i][j].y = j;
 
             }
         }
@@ -105,10 +109,12 @@ public class World {
         for (int i = 0; i < centers.length; i++) {
             for (int j = 0; j < centers[i].length; j++) {
                 centers[i][j] = new Center();
-                centers[i][j].setElevation(elevationC[i][j]);
+                centers[i][j].setElevation(biomeGenerator.smoothElevation(elevationC[i][j]));
                 centers[i][j].setMoisture(moistureC[i][j]);
                 centers[i][j].setHeat(heat[i][j]);
 
+                centers[i][j].x = i;
+                centers[i][j].y = j;
             }
         }
 
@@ -151,8 +157,8 @@ public class World {
                     centers[i][j].setWest(centers[i-1][j]);
 
                 centers[i][j].setNw(corners[i][j]);
-                centers[i][j].setNe(corners[i][j+1]);
-                centers[i][j].setSw(corners[i+1][j]);
+                centers[i][j].setNe(corners[i+1][j]);
+                centers[i][j].setSw(corners[i][j+1]);
                 centers[i][j].setSe(corners[i+1][j+1]);
 
                /* centers[i][j].setBiome(biomeGenerator.generateBiome(centers[i][j].getElevation(),
@@ -161,13 +167,25 @@ public class World {
             }
         }
 
-        for (int i = 0; i < centers.length; i+=11) {
-            for (int j = 0; j < centers[i].length; j+=11) {
-                if (i > 0 && j > 0) {
-                    centers[i][j].createRiver(false);
-
+        /*for (int k = 0; k < 100; k++) {
+            for (int i = 0; i < centers.length; i++) {
+                for (int j = 0; j < centers[i].length; j++) {
+                    centers[i][j].removeLocalMinima();
                 }
             }
+
+            for (int i = 0; i < corners.length; i++) {
+                for (int j = 0; j < corners[i].length; j++) {
+                    corners[i][j].removeLocalMinima();
+                }
+            }
+        }*/
+
+        for (int i = 0; i < 500; i++) {
+            Random random = new Random();
+            ArrayList<MapCoord> riverList = new ArrayList();
+
+            centers[random.nextInt(centers.length)][random.nextInt(centers.length)].createRiver(false, riverList);
         }
 
        for (int i = 0; i < corners.length; i++) {

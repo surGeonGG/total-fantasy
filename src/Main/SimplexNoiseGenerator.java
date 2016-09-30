@@ -33,8 +33,13 @@ public class SimplexNoiseGenerator {
                         + weight * Math.pow(0.5, 9) * SimplexNoise.noise(nx * 512 * freq, ny * 512 * freq)
                         + weight * Math.pow(0.5, 10) * SimplexNoise.noise(nx * 1024 * freq, ny * 1024 * freq));
 
+                
                 if (adjust) tempMap[x][y] = adjust(tempMap[x][y]);
                 tempMap[x][y] = clamp(tempMap[x][y]);
+
+                tempMap[x][y] = (float) Math.pow(tempMap[x][y], 3);
+
+
             }
         }
         return tempMap;

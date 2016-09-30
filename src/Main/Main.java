@@ -78,6 +78,8 @@ public class Main {
 
         while (!glfwWindowShouldClose(window.getWindowID())) { //Game Loop
 
+            glEnable(GL_DEPTH_TEST);
+
             delta += (System.currentTimeMillis() - sysTime);
             sysTime = System.currentTimeMillis();
             if (delta >= 1/60) {
