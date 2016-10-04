@@ -1,5 +1,6 @@
 package Main;
 
+import Database.SQLite;
 import Gui.Gui;
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
@@ -23,6 +24,8 @@ public class Main {
     private static Camera camera;
 
     private static EventHandler eventHandler;
+
+    private static SQLite sqLite;
 
     private static World world;
 
@@ -62,24 +65,36 @@ public class Main {
 
         input = new Input(this);
 
-        eventHandler = new EventHandler(this);
+        sqLite = new SQLite();
 
-        long delta = 0;
-        long delta2 = 0;
-        long sysTime = 0;
-
-        int x = 0, y = 0;
-
-        float r = 139/256f;
-        float g = 121/256f;
-        float b = 94/256f;
+        sqLite.getConnection();
+        sqLite.getEvent("old_man");
 
         GL.createCapabilities();
         glEnable(GL_TEXTURE_2D);
         glEnable(GL_DEPTH_TEST);
 
-        glClearColor(r, g, b, 1);
+        glClearColor(0.5f, 0.5f, 0.4f, 1);
 
+        gameLoop();
+
+        cleanUp();
+
+    }
+
+    private void cleanUp() {
+        gui.nk_glfw3_shutdown();
+        glfwFreeCallbacks(window.getWindowID());
+        glfwTerminate();
+        glfwSetErrorCallback(null).free();
+        window.destroy();
+    }
+
+    private void gameLoop() {
+
+        long delta = 0;
+        long delta2 = 0;
+        long sysTime = System.currentTimeMillis();;
 
 
         while (!glfwWindowShouldClose(window.getWindowID())) { //Game Loop
@@ -88,10 +103,12 @@ public class Main {
 
             delta += (System.currentTimeMillis() - sysTime);
             sysTime = System.currentTimeMillis();
-            if (delta >= 1/60) {
+
+            if (delta > 1/60) {
+
                 update();
                 render();
-                gui.render();
+
                 window.swapBuffers();
 
                 delta2 += delta;
@@ -99,7 +116,8 @@ public class Main {
                 fps++;
 
             }
-            if (delta2 >= 1000) {
+            if (delta2 > 1000) {
+
                 delta2 = 0;
                 System.out.println(fps);
                 checkCursor();
@@ -107,13 +125,6 @@ public class Main {
                 fps = 0;
             }
         }
-
-        gui.nk_glfw3_shutdown();
-
-        glfwFreeCallbacks(window.getWindowID());
-        glfwTerminate();
-        glfwSetErrorCallback(null).free();
-        window.destroy();
     }
 
     private void checkCursor() {
@@ -148,6 +159,7 @@ public class Main {
         shader.setUniform("green", 1);
         world.render();
         player.render();
+        gui.render();
 
     }
 

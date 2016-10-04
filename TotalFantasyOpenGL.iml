@@ -10,5 +10,6 @@
     <orderEntry type="library" name="twl" level="application" />
     <orderEntry type="library" name="org.joml:joml:1.8.2" level="application" />
     <orderEntry type="library" name="lwjgl" level="application" />
+    <orderEntry type="library" name="sqlite-jdbc-3.14.2.1" level="application" />
   </component>
 </module>

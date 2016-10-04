@@ -176,7 +176,7 @@ public class MapCoord {
 
         }
 
-        System.out.println(smallestDistance);
+       // System.out.println(smallestDistance);
 
         return smallestDistance;
     }

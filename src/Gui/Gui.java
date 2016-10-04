@@ -1,5 +1,7 @@
 package Gui;
 
+import Main.Main;
+import Main.Main;
 import org.lwjgl.nuklear.*;
 import org.lwjgl.stb.*;
 import org.lwjgl.system.MemoryStack;
@@ -54,7 +56,7 @@ public class Gui {
                 .flip();
     }
 
-    private static Main.Main main;
+    private static Main main;
 
     private static Sidebar sidebar = new Sidebar();
     private static TextArea textArea = new TextArea();
@@ -90,7 +92,7 @@ public class Gui {
     private static NkColor.Buffer table;
 
 
-    public Gui(int WINDOW_WIDTH, int WINDOW_HEIGHT, Main.Main main) {
+    public Gui(int WINDOW_WIDTH, int WINDOW_HEIGHT, Main main) {
         try {
             this.ttf = ioResourceToByteBuffer("res/fonts/MODERNE SANS.ttf", 160 * 1024);
         } catch (IOException e) {
@@ -307,7 +309,7 @@ public class Gui {
         if ( glGetProgrami(prog, GL_LINK_STATUS) != GL_TRUE )
             throw new IllegalStateException();
 
-        uniform_tex = glGetUniformLocation(prog, "Main.Texture");
+        uniform_tex = glGetUniformLocation(prog, "Init.Texture");
         uniform_proj = glGetUniformLocation(prog, "ProjMtx");
         int attrib_pos = glGetAttribLocation(prog, "Position");
         int attrib_uv = glGetAttribLocation(prog, "TexCoord");
