@@ -18,43 +18,50 @@ public class BiomeGenerator {
 
         } else if (elevation == 0.9f) {
 
-            if (moisture > 0.6f)
+            if (moisture > 0.8f)
                 return "SNOW";
-            if (moisture > 0.3f)
+            if (moisture > 0.5f)
+                return "TUNDRA";
+            if (moisture > 0.25f)
                 return "BARE";
             if (moisture > 0.01f)
                 return "SCORCHED";
             return "LAVA";
 
         } else if (elevation == 0.8f) {
-            if (moisture > 0.6f)
-                return "TUNDRA";
-            if (moisture > 0.3f)
-                return "BARE";
-            return "SCORCHED";
+            if (moisture > 0.6666f)
+                return "TAIGA";
+            if (moisture > 0.3333f)
+                return "SHRUBLAND";
+            else
+                return "TEMPERATE_DESERT";
 
 
         } else if (elevation == 0.7f) {
-            if (moisture > 0.6f)
+            if (moisture > 0.6666f)
                 return "TAIGA";
-            if (moisture > 0.3f)
-                return "TUNDRA";
-            return "BARE";
+            if (moisture > 0.3333f)
+                return "SHRUBLAND";
+            else
+                return "TEMPERATE_DESERT";
 
         } else if (elevation == 0.6f) {
-            if (moisture > 0.6f)
+            if (moisture > 0.6666f)
                 return "TAIGA";
-            if (moisture > 0.3f)
-                return "TUNDRA";
-            return "BARE";
+            if (moisture > 0.3333f)
+                return "SHRUBLAND";
+            else
+                return "TEMPERATE_DESERT";
 
         } else if (elevation == 0.5f) {
 
             if (moisture > 0.8f)
+                return "TEMPERATE_RAIN_FOREST";
+            if (moisture > 0.5f)
                 return "TEMPERATE_DECIDUOUS_FOREST";
-            if (moisture > 0.4f)
-                return "SHRUBLAND";
-            return "TAIGA";
+            if (moisture > 0.2f)
+                return "GRASSLAND";
+            return "TEMPERATE_DESERT";
 
         } else if (elevation == 0.4f) {
 
@@ -62,36 +69,36 @@ public class BiomeGenerator {
                 return "TEMPERATE_RAIN_FOREST";
             if (moisture > 0.5f)
                 return "TEMPERATE_DECIDUOUS_FOREST";
-            return "SHRUBLAND";
+            if (moisture > 0.2f)
+                return "GRASSLAND";
+            return "TEMPERATE_DESERT";
 
         } else if (elevation == 0.3f) {
 
-            if (moisture > 0.7f)
+            if (moisture > 0.8f)
                 return "TEMPERATE_RAIN_FOREST";
-            if (moisture > 0.4f)
+            if (moisture > 0.5f)
                 return "TEMPERATE_DECIDUOUS_FOREST";
-            return "GRASSLAND";
+            if (moisture > 0.2f)
+                return "GRASSLAND";
+            return "TEMPERATE_DESERT";
 
         } else if (elevation == 0.2f) {
-            if (moisture > 0.95f)
-                return "MARSH";
             if (moisture > 0.7f)
-                return "TEMPERATE_RAIN_FOREST";
+                return "TROPICAL_RAIN_FOREST";
             if (moisture > 0.4f)
-                return "TEMPERATE_DECIDUOUS_FOREST";
-            if (moisture > 0.1f )
+                return "TROPICAL_SEASONAL_FOREST";
+            if (moisture > 0.2f)
                 return "GRASSLAND";
             return "TEMPERATE_DESERT";
 
         } else if (elevation == 0.15f) {
 
-            if (moisture > 0.95f)
-                return "MARSH";
             if (moisture > 0.7f)
-                return "TEMPERATE_RAIN_FOREST";
+                return "TROPICAL_RAIN_FOREST";
             if (moisture > 0.4f)
-                return "TEMPERATE_DECIDUOUS_FOREST";
-            if (moisture > 0.1f)
+                return "TROPICAL_SEASONAL_FOREST";
+            if (moisture > 0.2f)
                 return "GRASSLAND";
             return "TEMPERATE_DESERT";
 

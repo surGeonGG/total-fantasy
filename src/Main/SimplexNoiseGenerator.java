@@ -114,7 +114,9 @@ public class SimplexNoiseGenerator {
                         + e9 * SimplexNoise.noise(nx * 512 * freq, ny * 512 * freq)
                         + e10 * SimplexNoise.noise(nx * 1024 * freq, ny * 1024 * freq));
 
-                tempMap[x][y] = tempMap[x][y] + (rand.nextFloat() - 0.5f) / 2;
+
+                tempMap[x][y] = tempMap[x][y] / 1.2f;
+                tempMap[x][y] = tempMap[x][y] + (rand.nextFloat() - 0.5f) / 4;
 
                 //tempMap[x][y] = tempMap[x][y] / (e0+e1+e2+e3+e4+e5+e6+e7+e8+e9+e10);
 
