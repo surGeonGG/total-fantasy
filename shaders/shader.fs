@@ -14,6 +14,6 @@ void main() {
     float random2 = rand(vec2((gl_FragCoord.x * color.g * 345) / (gl_FragCoord.y * 8768), (gl_FragCoord.y * color.r * 234234) / (gl_FragCoord.x * 457896)));
     float random3 = rand(vec2((gl_FragCoord.x * color.g * 456745) / (gl_FragCoord.y * 6345), (gl_FragCoord.y * color.r * 34534) / (gl_FragCoord.x * 457896)));
 
-    gl_FragColor = vec4(color.r - random / 10, color.g - random2 / 10, color.b - random3 / 10, color.a);
-    //gl_FragColor = vec4(random, random, random, color.a);
+    //gl_FragColor = vec4(color.r - random / 10, color.g - random2 / 10, color.b - random3 / 10, color.a);
+    gl_FragColor = vec4(color.r, color.g, color.b, color.a);
 }

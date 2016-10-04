@@ -4,7 +4,7 @@ public class BiomeGenerator {
 
     public static String generateBiome(float elevation, float moisture, float heat, boolean isLake, boolean isRiver) {
 
-        if (elevation < 0) {
+        if (elevation == 0) {
 
             return "OCEAN";
 
@@ -16,53 +16,91 @@ public class BiomeGenerator {
 
             return "RIVER";
 
-        } else if (elevation < 0.00001) {
+        } else if (elevation == 0.9f) {
 
-            return "BEACH";
+            if (moisture > 0.6f)
+                return "SNOW";
+            if (moisture > 0.3f)
+                return "BARE";
+            if (moisture > 0.01f)
+                return "SCORCHED";
+            return "LAVA";
 
-        } else if (elevation == 0.95f) {
+        } else if (elevation == 0.8f) {
+            if (moisture > 0.6f)
+                return "TUNDRA";
+            if (moisture > 0.3f)
+                return "BARE";
+            return "SCORCHED";
 
+
+        } else if (elevation == 0.7f) {
+            if (moisture > 0.6f)
+                return "TAIGA";
+            if (moisture > 0.3f)
+                return "TUNDRA";
             return "BARE";
 
-        } else if (elevation == 0.85f) {
+        } else if (elevation == 0.6f) {
+            if (moisture > 0.6f)
+                return "TAIGA";
+            if (moisture > 0.3f)
+                return "TUNDRA";
+            return "BARE";
 
+        } else if (elevation == 0.5f) {
+
+            if (moisture > 0.8f)
+                return "TEMPERATE_DECIDUOUS_FOREST";
+            if (moisture > 0.4f)
+                return "SHRUBLAND";
             return "TAIGA";
 
-        } else if (elevation == 0.75f) {
+        } else if (elevation == 0.4f) {
 
-            return "TAIGA";
-
-        } else if (elevation == 0.65f) {
-
+            if (moisture > 0.8f)
+                return "TEMPERATE_RAIN_FOREST";
+            if (moisture > 0.5f)
+                return "TEMPERATE_DECIDUOUS_FOREST";
             return "SHRUBLAND";
 
-        } else if (elevation == 0.55f) {
+        } else if (elevation == 0.3f) {
 
-            return "TAIGA";
+            if (moisture > 0.7f)
+                return "TEMPERATE_RAIN_FOREST";
+            if (moisture > 0.4f)
+                return "TEMPERATE_DECIDUOUS_FOREST";
+            return "GRASSLAND";
 
-        } else if (elevation == 0.45f) {
-
-            return "TEMPERATE_RAIN_FOREST";
-
-        } else if (elevation == 0.35f) {
-
-            return "TEMPERATE_DECIDUOUS_FOREST";
-
-        } else if (elevation == 0.25f) {
-
-            return "TROPICAL_RAIN_FOREST";
+        } else if (elevation == 0.2f) {
+            if (moisture > 0.95f)
+                return "MARSH";
+            if (moisture > 0.7f)
+                return "TEMPERATE_RAIN_FOREST";
+            if (moisture > 0.4f)
+                return "TEMPERATE_DECIDUOUS_FOREST";
+            if (moisture > 0.1f )
+                return "GRASSLAND";
+            return "TEMPERATE_DESERT";
 
         } else if (elevation == 0.15f) {
 
-            return "TROPICAL_SEASONAL_FOREST";
+            if (moisture > 0.95f)
+                return "MARSH";
+            if (moisture > 0.7f)
+                return "TEMPERATE_RAIN_FOREST";
+            if (moisture > 0.4f)
+                return "TEMPERATE_DECIDUOUS_FOREST";
+            if (moisture > 0.1f)
+                return "GRASSLAND";
+            return "TEMPERATE_DESERT";
 
-        } else if (elevation == 0.05f) {
+        } else if (elevation == 0.1f) {
 
-            return "GRASSLAND";
+            return "BEACH";
 
-        } else {
-            return "GRASSLAND";
         }
+        return "GRASSLAND";
     }
 
 
@@ -101,17 +139,17 @@ public class BiomeGenerator {
 
 
     public static float smoothElevation(float elevation) {
-        if (elevation <= 0) return -0.001f;
-        else if (elevation < 0.00001f) return 0.000005f;
-        else if (elevation < 0.1f) return 0.05f;
+        if (elevation < 0.1) return 0;
+        else if (elevation < 0.103f) return 0.1f;
         else if (elevation < 0.2f) return 0.15f;
-        else if (elevation < 0.3f) return 0.25f;
-        else if (elevation < 0.4f) return 0.35f;
-        else if (elevation < 0.5f) return 0.45f;
-        else if (elevation < 0.6f) return 0.55f;
-        else if (elevation < 0.7f) return 0.65f;
-        else if (elevation < 0.8f) return 0.75f;
-        else if (elevation < 0.9f) return 0.85f;
-        else return 0.95f;
+        else if (elevation < 0.3f) return 0.2f;
+        else if (elevation < 0.4f) return 0.3f;
+        else if (elevation < 0.5f) return 0.4f;
+        else if (elevation < 0.6f) return 0.5f;
+        else if (elevation < 0.7f) return 0.6f;
+        else if (elevation < 0.8f) return 0.7f;
+        else if (elevation < 0.9f) return 0.8f;
+        else return 0.90f;
+
     }
 }

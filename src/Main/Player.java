@@ -106,8 +106,8 @@ public class Player {
 
     public void addPosition(Vector3f add) {
 
-        String biome = centers[(int) (position.x - 0.5f)][(int)(position.y - 0.5f)].getBiome();
         float elevation = centers[(int) (position.x - 0.5f + add.x)][(int)(position.y - 0.5f + add.y)].getElevation();
+        String biome = centers[(int) (position.x - 0.5f + add.x)][(int)(position.y - 0.5f + add.y)].getBiome();
 
         if (elevation > 0) {
             this.position = this.position.add(add);

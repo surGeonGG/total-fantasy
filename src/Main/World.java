@@ -74,7 +74,7 @@ public class World {
 
         simplexNoiseGenerator = new SimplexNoiseGenerator(XMESHES*MESHSIZE , YMESHES*MESHSIZE);
 
-        elevation = simplexNoiseGenerator.generateNoise(r.nextInt(), false);
+        elevation = simplexNoiseGenerator.generateNoise(r.nextInt(), true);
         moisture = simplexNoiseGenerator.generateNoiseM(r.nextInt(), true);
         heat = simplexNoiseGenerator.generateNoiseH(r.nextInt(), true);
 
@@ -82,7 +82,7 @@ public class World {
         moistureC = new float[MESHSIZE*XMESHES-1][MESHSIZE*XMESHES-1];
         heatC = new float[MESHSIZE*XMESHES-1][MESHSIZE*XMESHES-1];
 
-       makeImage(elevation, false);
+       makeImage(elevation, true);
        makeImage(moisture, true);
        makeImage(heat, true);
 
@@ -139,9 +139,6 @@ public class World {
                 if (i < centers.length-1 && j < centers[0].length-1)
                     corners[i][j].setSe(centers[i][j]);
 
-                /*corners[i][j].setBiome(biomeGenerator.generateBiome(corners[i][j].getElevation(),
-                        corners[i][j].getMoisture(), corners[i][j].getHeat(), corners[i][j].isLake(), corners[i][j].isRiver()));*/
-
             }
         }
 
@@ -161,27 +158,11 @@ public class World {
                 centers[i][j].setSw(corners[i][j+1]);
                 centers[i][j].setSe(corners[i+1][j+1]);
 
-               /* centers[i][j].setBiome(biomeGenerator.generateBiome(centers[i][j].getElevation(),
-                        centers[i][j].getMoisture(), centers[i][j].getHeat(), centers[i][j].isLake(), centers[i][j].isRiver()));*/
 
             }
         }
 
-        /*for (int k = 0; k < 100; k++) {
-            for (int i = 0; i < centers.length; i++) {
-                for (int j = 0; j < centers[i].length; j++) {
-                    centers[i][j].removeLocalMinima();
-                }
-            }
-
-            for (int i = 0; i < corners.length; i++) {
-                for (int j = 0; j < corners[i].length; j++) {
-                    corners[i][j].removeLocalMinima();
-                }
-            }
-        }*/
-
-        for (int i = 0; i < 500; i++) {
+        for (int i = 0; i < 1000; i++) {
             Random random = new Random();
             ArrayList<MapCoord> riverList = new ArrayList();
 

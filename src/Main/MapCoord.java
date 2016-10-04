@@ -78,7 +78,7 @@ public class MapCoord {
     private void handleRandoms(String smallestDistance, ArrayList<MapCoord> riverList) {
 
         Random rand = new Random();
-        int randInt = rand.nextInt(8);
+        int randInt = rand.nextInt(7);
         MapCoord target = null;
 
         if (smallestDistance == "se")
@@ -95,7 +95,7 @@ public class MapCoord {
         System.out.println(randInt);
         System.out.println(!riverList.contains(se) + " " +!riverList.contains(sw) + " " +!riverList.contains(ne) + " " +!riverList.contains(nw));*/
 
-        if (randInt <= 3 && !riverList.contains(target)) {
+        if (randInt <= 2 && !riverList.contains(target)) {
 
             if (target.isRiver())
                 paintRiver(riverList);
@@ -104,7 +104,7 @@ public class MapCoord {
                 target.createRiver(true, riverList);
 
         }
-         else if (randInt == 4 && !riverList.contains(se)) {
+         else if (randInt == 3 && !riverList.contains(se)) {
 
             if (se.isRiver())
                 paintRiver(riverList);
@@ -113,7 +113,7 @@ public class MapCoord {
                 se.createRiver(true, riverList);
         }
 
-        else if (randInt == 5 && !riverList.contains(sw)) {
+        else if (randInt == 4 && !riverList.contains(sw)) {
 
             if (sw.isRiver())
                 paintRiver(riverList);
@@ -122,7 +122,7 @@ public class MapCoord {
                 sw.createRiver(true, riverList);
         }
 
-        else if (randInt == 6 && !riverList.contains(ne)) {
+        else if (randInt == 5 && !riverList.contains(ne)) {
 
             if (ne.isRiver())
                 paintRiver(riverList);
@@ -131,7 +131,7 @@ public class MapCoord {
                 ne.createRiver(true, riverList);
         }
 
-        else if (randInt == 7 && !riverList.contains(nw)) {
+        else if (randInt == 6 && !riverList.contains(nw)) {
 
             if (nw.isRiver())
                 paintRiver(riverList);

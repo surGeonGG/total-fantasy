@@ -2,7 +2,11 @@ package Main;
 
 import Gui.Gui;
 import org.joml.Vector3f;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL;
+
+import java.nio.DoubleBuffer;
+import java.sql.Connection;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
@@ -76,6 +80,8 @@ public class Main {
 
         glClearColor(r, g, b, 1);
 
+
+
         while (!glfwWindowShouldClose(window.getWindowID())) { //Game Loop
 
             glEnable(GL_DEPTH_TEST);
@@ -96,6 +102,8 @@ public class Main {
             if (delta2 >= 1000) {
                 delta2 = 0;
                 System.out.println(fps);
+                checkCursor();
+
                 fps = 0;
             }
         }
@@ -106,6 +114,16 @@ public class Main {
         glfwTerminate();
         glfwSetErrorCallback(null).free();
         window.destroy();
+    }
+
+    private void checkCursor() {
+        DoubleBuffer posX = BufferUtils.createDoubleBuffer(1);
+        DoubleBuffer posY = BufferUtils.createDoubleBuffer(1);
+
+        glfwGetCursorPos(window.getWindowID(), posX, posY);
+
+        System.out.println(posX.get(0) + ", " + posY.get(0));
+
     }
 
 
