@@ -18,23 +18,6 @@ public class MapCoord {
 
     public int x, y;
 
- /*   public void removeLocalMinima() {
-
-        if (ne != null && sw != null && nw != null && se != null) {
-            if (ne.getElevation() >= elevation && sw.getElevation() >= elevation && nw.getElevation() >= elevation
-                    && se.getElevation() >= elevation) {
-
-                float target = ne.getElevation();
-                if (target > se.getElevation() && se.elevation < getElevation()) target = se.getElevation();
-                if (target > sw.getElevation() && sw.elevation < getElevation()) target = sw.getElevation();
-                if (target > nw.getElevation() && nw.elevation < getElevation()) target = nw.getElevation();
-
-                elevation = target;
-
-            }
-        }
-    }*/
-
 
     public void createRiver(boolean continuation, ArrayList<MapCoord> riverList) {
 

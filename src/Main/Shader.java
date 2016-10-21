@@ -1,6 +1,7 @@
 package Main;
 
 import org.joml.Matrix4f;
+import org.joml.Vector2i;
 import org.lwjgl.BufferUtils;
 
 import java.io.*;
@@ -18,14 +19,14 @@ public class Shader {
         vs = glCreateShader(GL_VERTEX_SHADER);
         fs = glCreateShader(GL_FRAGMENT_SHADER);
 
-        glShaderSource(vs, readShader(filename + ".vs"));
+        glShaderSource(vs, readShader(filename + ".vs.glsl"));
         glCompileShader(vs);
         if (glGetShaderi(vs, GL_COMPILE_STATUS) != 1) {
             System.err.println(glGetShaderInfoLog(vs));
             System.exit(1);
         }
 
-        glShaderSource(fs, readShader(filename + ".fs"));
+        glShaderSource(fs, readShader(filename + ".fs.glsl"));
         glCompileShader(fs);
         if (glGetShaderi(fs, GL_COMPILE_STATUS) != 1) {
             System.err.println(glGetShaderInfoLog(fs));
@@ -35,7 +36,7 @@ public class Shader {
         glAttachShader(program, vs);
         glAttachShader(program, fs);
 
-        glBindAttribLocation(program, 0, "vertices");
+        glBindAttribLocation(program, 0, "coordinates");
 
         glLinkProgram(program);
         if (glGetProgrami(program, GL_LINK_STATUS) != 1) {
@@ -54,6 +55,12 @@ public class Shader {
         int location = glGetUniformLocation(program, name);
         if (location != -1)
             glUniform1i(location, value);
+    }
+
+    public void setUniform(String name, Vector2i value) {
+        int location = glGetUniformLocation(program, name);
+        if (location != -1)
+            glUniform2i(location, value.x, value.y);
     }
 
     public void setUniform(String name, Matrix4f value) {

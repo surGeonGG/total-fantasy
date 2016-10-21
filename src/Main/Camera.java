@@ -2,6 +2,7 @@ package Main;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import java.math.*;
 
 public class Camera {
 
@@ -22,7 +23,7 @@ public class Camera {
 
         aspectRatio = width / height;
 
-        position = new Vector3f(-300, -300, -100f);
+        position = new Vector3f(-10, -10, -50f);
         projection = new Matrix4f();
 
         float y_scale = (float) ((float) 1/Math.tan(Math.toRadians(FOV/2f)));
@@ -58,8 +59,8 @@ public class Camera {
 
     public Matrix4f getRotation() {
         Matrix4f targetMatrix = new Matrix4f();
-        targetMatrix.rotate((float) Math.toRadians(getPitch()), new Vector3f(1,0,0), targetMatrix);
-        targetMatrix.rotate((float) Math.toRadians(getYaw()), new Vector3f(0,0,1), targetMatrix);
+        targetMatrix.rotate((float) Math.toRadians(getPitch()), new Vector3f((float)Math.cos(4),0,0), targetMatrix);
+        targetMatrix.rotate((float) Math.toRadians(getYaw()), new Vector3f(0,0,(float)Math.cos(4)), targetMatrix);
         return targetMatrix;
     }
 

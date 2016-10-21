@@ -7,7 +7,6 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL;
 
 import java.nio.DoubleBuffer;
-import java.sql.Connection;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
@@ -33,9 +32,13 @@ public class Main {
 
     private static Shader shader;
 
+    private static Renderer renderer;
+
     private static Window window;
 
     private static Player player;
+
+    private static Loader loader;
 
     private static Gui gui;
 
@@ -57,11 +60,15 @@ public class Main {
 
         gui.run(window.getWindowID());
 
-        shader = new Shader("shader");
+        shader = new Shader("world");
+
+        loader = new Loader();
+
+        renderer = new Renderer();
 
         world = new World(this);
 
-        player = new Player(new Vector3f(300,300,0), this, world.getCorners(), world.getCenters());
+        player = new Player(new Vector3f(300,300,0), this, world.getMapCoords());
 
         input = new Input(this);
 
@@ -74,6 +81,7 @@ public class Main {
         glEnable(GL_TEXTURE_2D);
         glEnable(GL_DEPTH_TEST);
 
+        
         glClearColor(0.5f, 0.5f, 0.4f, 1);
 
         gameLoop();
@@ -99,7 +107,8 @@ public class Main {
 
         while (!glfwWindowShouldClose(window.getWindowID())) { //Game Loop
 
-            glEnable(GL_DEPTH_TEST);
+            //glEnable(GL_DEPTH_TEST);
+
 
             delta += (System.currentTimeMillis() - sysTime);
             sysTime = System.currentTimeMillis();
@@ -123,6 +132,8 @@ public class Main {
                 checkCursor();
 
                 fps = 0;
+                System.out.println(GL_VERSION);
+    
             }
         }
     }
@@ -156,7 +167,6 @@ public class Main {
 
         glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
         shader.bind();
-        shader.setUniform("green", 1);
         world.render();
         player.render();
         gui.render();
@@ -187,4 +197,12 @@ public class Main {
     public static int getHEIGHT() { return WINDOW_HEIGHT; }
 
     public static Player getPlayer() { return player; }
+
+    public static Renderer getRenderer() {
+        return renderer;
+    }
+
+    public static Loader getLoader() {
+        return loader;
+    }
 }

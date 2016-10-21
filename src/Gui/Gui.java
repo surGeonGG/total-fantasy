@@ -484,7 +484,7 @@ public class Gui {
             display_width = w.get(0);
             display_height = h.get(0);
         }
-
+        
         nk_input_begin(ctx);
         glfwPollEvents();
 

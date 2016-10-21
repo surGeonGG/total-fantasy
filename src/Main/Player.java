@@ -17,21 +17,20 @@ public class Player {
 
     private static Main main;
 
-    private static Model model;
+    private static RawModel rawModel;
 
     private static Camera camera;
 
     private static Shader shader;
 
-    private static Corner[][] corners;
+    private static MapCoord[][] mapCoords;
 
-    private static Center[][] centers;
 
     private static float scale = 0.5f;
 
     private static int[] stats = { 12, 14, 11, 18, 21, 9 };
 
-    public Player(Vector3f position, Main main, Corner[][] corners, Center[][] centers) {
+    public Player(Vector3f position, Main main, MapCoord[][] corners) {
         this.position = position;
         position.x += 0.5f;
         position.y += 0.5f;
@@ -41,8 +40,7 @@ public class Player {
 
         camera = main.getCamera();
         shader = main.getShader();
-        this.corners = corners;
-        this.centers = centers;
+        this.mapCoords = mapCoords;
 
         vertices = new float[] {
                 -0.5f, -0.5f, 0.5f,
@@ -77,7 +75,7 @@ public class Player {
 
         }
 
-        model = new Model(vertices, indices, colors);
+        //rawModel = new RawModel(vertices, indices, colors);
     }
 
     private void triggerEvent(String biome) {
@@ -93,7 +91,7 @@ public class Player {
 
         shader.setUniform("projectionMatrix", projection);
 
-        model.render();
+       // rawModel.render();
     }
 
     public Vector3f getPosition() {
@@ -106,8 +104,8 @@ public class Player {
 
     public void addPosition(Vector3f add) {
 
-        float elevation = centers[(int) (position.x - 0.5f + add.x)][(int)(position.y - 0.5f + add.y)].getElevation();
-        String biome = centers[(int) (position.x - 0.5f + add.x)][(int)(position.y - 0.5f + add.y)].getBiome();
+        float elevation = mapCoords[(int) (position.x + add.x)][(int)(position.y + add.y)].getElevation();
+        String biome = mapCoords[(int) (position.x + add.x)][(int)(position.y + add.y)].getBiome();
 
         if (elevation > 0) {
             this.position = this.position.add(add);
