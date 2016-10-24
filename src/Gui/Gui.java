@@ -244,9 +244,9 @@ public class Gui {
     public void render() {
         nk_glfw3_new_frame();
 
-        sidebar.layout(ctx, -1, -1, WINDOW_WIDTH, WINDOW_HEIGHT, main.getPlayer());
+     /*   sidebar.layout(ctx, -1, -1, WINDOW_WIDTH, WINDOW_HEIGHT, main.getPlayer());
         textArea.layout(ctx, 150, -1, WINDOW_WIDTH, WINDOW_HEIGHT);
-        lowerBar.layout(ctx, 150, WINDOW_HEIGHT-98, WINDOW_WIDTH, WINDOW_HEIGHT);
+        lowerBar.layout(ctx, 150, WINDOW_HEIGHT-98, WINDOW_WIDTH, WINDOW_HEIGHT);*/
 
         nk_style_from_table(ctx, table);
 

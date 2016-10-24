@@ -13,13 +13,14 @@ void main() {
 
 
 
-    int instanceY = int(gl_InstanceID / meshLength);
-    int instanceX = int(mod(gl_InstanceID, meshLength));
+    int instanceX = int(gl_InstanceID / meshLength);
+    int instanceY = int(mod(gl_InstanceID, meshLength));
 
     float y = coordinates.y + gl_InstanceID / meshLength;
     float x = coordinates.x + mod(gl_InstanceID, meshLength);
 
     color = texelFetch(biomes, ivec2(instanceX, instanceY), 0);
+    //color = texture(biomes, vec2(0.5,0.4));
 
     if (mod(gl_InstanceID / meshLength, 2) == 0) {
         x = x + 0.5;

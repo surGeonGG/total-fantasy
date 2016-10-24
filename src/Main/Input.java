@@ -40,26 +40,26 @@ public class Input {
 
 
         if (glfwGetKey(windowID, GLFW_KEY_A) == GL_TRUE) {
-            camera.addPosition(new Vector3f(-0.004f*camera.getPosition().z, 0f, 0f));
+            camera.addPosition(new Vector3f(-0.01f*camera.getPosition().z, 0f, 0f));
         }
         if (glfwGetKey(windowID, GLFW_KEY_D) == GL_TRUE) {
-            camera.addPosition(new Vector3f(0.004f*camera.getPosition().z, 0f, 0f));
+            camera.addPosition(new Vector3f(0.01f*camera.getPosition().z, 0f, 0f));
 
         }
         if (glfwGetKey(windowID, GLFW_KEY_S) == GL_TRUE) {
-            camera.addPosition(new Vector3f(0f, -0.004f*camera.getPosition().z, 0f));
+            camera.addPosition(new Vector3f(0f, -0.01f*camera.getPosition().z, 0f));
 
         }
         if (glfwGetKey(windowID, GLFW_KEY_W) == GL_TRUE) {
-            camera.addPosition(new Vector3f(0f, 0.004f*camera.getPosition().z, 0f));
+            camera.addPosition(new Vector3f(0f, 0.01f*camera.getPosition().z, 0f));
         }
 
         if (glfwGetKey(windowID, GLFW_KEY_KP_ADD) == GL_TRUE) {
-            if (camera.getPosition().z < -0.2f) camera.addPosition(new Vector3f(0f, 0f, 1f));
+            if (camera.getPosition().z < -0.2f) camera.addPosition(new Vector3f(0f, 0f, 3f));
         }
 
         if (glfwGetKey(windowID, GLFW_KEY_KP_SUBTRACT) == GL_TRUE) {
-            if (camera.getPosition().z >= -1000) camera.addPosition(new Vector3f(0f, 0f, -1f));
+            if (camera.getPosition().z >= -1000) camera.addPosition(new Vector3f(0f, 0f, -3f));
         }
 
         if (glfwGetKey(windowID, GLFW_KEY_KP_2) == GL_TRUE) {

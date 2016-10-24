@@ -36,12 +36,15 @@ public class Window {
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         if ( Platform.get() == Platform.MACOSX )
             glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
-        glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
+        //glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
+
+
+
 
         windowID = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, title, MemoryUtil.NULL, MemoryUtil.NULL);
         glfwMakeContextCurrent(windowID);
         GLCapabilities caps = GL.createCapabilities();
-        Callback debugProc = GLUtil.setupDebugMessageCallback();
+        //Callback debugProc = GLUtil.setupDebugMessageCallback();
         ;
         //end of copy/paste
 
