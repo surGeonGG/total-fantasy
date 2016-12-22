@@ -2,13 +2,13 @@ package Gui;
 
 import Main.Main;
 import Main.Main;
+import Utils.DiverseUtilities;
 import org.lwjgl.nuklear.*;
 import org.lwjgl.stb.*;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.Platform;
 import java.io.IOException;
 import java.nio.*;
-import static nuklear.IOUtil.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.nuklear.Nuklear.*;
 import static org.lwjgl.opengl.GL11.*;
@@ -94,7 +94,7 @@ public class Gui {
 
     public Gui(int WINDOW_WIDTH, int WINDOW_HEIGHT, Main main) {
         try {
-            this.ttf = ioResourceToByteBuffer("res/fonts/MODERNE SANS.ttf", 160 * 1024);
+            this.ttf = DiverseUtilities.ioResourceToByteBuffer("fonts/MODERNE SANS.ttf", 160 * 1024);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

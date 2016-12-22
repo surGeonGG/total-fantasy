@@ -81,7 +81,8 @@ public class Shader {
 
         try {
 
-            BufferedReader reader = new BufferedReader(new FileReader(new File("./shaders/" + filename)));
+//            BufferedReader reader = new BufferedReader(new FileReader(new File("./shaders/" + filename)));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(Shader.class.getClassLoader().getResourceAsStream(filename)));
             while ((line = reader.readLine()) != null) {
                 builder.append(line + "\n");
             }

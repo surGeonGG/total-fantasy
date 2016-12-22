@@ -30,19 +30,27 @@ public class Loader {
         return new RawModel(vaoID, indices.length);
     }
 
-    public Texture createTextureFromByteBuffer(ByteBuffer texture, int width, int height) {
-
-        int texID = glGenTextures();
-        glBindTexture(GL_TEXTURE_2D, texID);
-
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE , texture);
-
-        return new Texture(texID);
+    public TexturedModel createTexturedModel(RawModel model, Texture texture) {
+        TexturedModel texturedModel = new TexturedModel(model, texture);
+        return texturedModel;
     }
 
+    public int createVAO(float[] coordinates, int[] indices) {
+        int vaoID = createVAO();
+        bindIndicesBuffer(indices);
+        storeDataInAttributeList(0, coordinates);
+        unbindVAO();
+        return vaoID;
+    }
+
+    public Texture createTextureFromByteBuffer(ByteBuffer texture, int width, int height) {
+        int texID = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D, texID);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE , texture);
+        return new Texture(texID);
+    }
 
     public void cleanUp() {
         for (int vao : vaos) {

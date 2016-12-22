@@ -1,5 +1,6 @@
 package Gui;
 
+import Entities.Player;
 import org.lwjgl.nuklear.*;
 import org.lwjgl.system.MemoryStack;
 
@@ -8,7 +9,7 @@ import static org.lwjgl.system.MemoryStack.*;
 
 class Sidebar {
 
-    void layout(NkContext ctx, int x, int y, int WINDOW_WIDTH, int WINDOW_HEIGHT, Main.Player player) {
+    void layout(NkContext ctx, int x, int y, int WINDOW_WIDTH, int WINDOW_HEIGHT, Player player) {
         try ( MemoryStack stack = stackPush() ) {
             NkPanel layout = NkPanel.mallocStack(stack);
             NkRect rect = NkRect.mallocStack(stack);

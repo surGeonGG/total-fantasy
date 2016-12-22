@@ -18,5 +18,7 @@ public class RawModel {
         return vertexCount;
     }
 
-
+    public void replaceVAO(int vaoID) {
+        this.vaoID = vaoID;
+    }
 }

@@ -50,7 +50,7 @@ public class Wind {
         return null;
     }
     
-    public static float[][] spreadMoisture(float[][] moisture, float[][] elevation, float x, float y) {
+    public static float[][] spreadMoisture(float[][] moisture, float[][] ocean, float x, float y) {
         Random rand = new Random();
 
         int windX = (int) x*(moisture.length / (rand.nextInt(30)+10));
@@ -62,8 +62,8 @@ public class Wind {
         float[][] result = new float[moisture.length][moisture[0].length];
         for (int i = 0; i < moisture.length; i++) {
             for (int j = 0; j < moisture.length; j++) {
-                if (elevation[i][j] < BiomeGenerator.OCEAN_LEVEL) {
-                    result[i][j] += 1f; // ocean
+                if (ocean[i][j] > 0f) {
+                    result[i][j] = 1f; // ocean
                 }
 
                 result[i][j] += moisture[i][j] - evaporation/255;
@@ -73,13 +73,13 @@ public class Wind {
                 float wy = (float) ((20.0 + Math.random() + Math.random()) / 21.0);
                 int i2 = i + (int) (windX * wx);
                 int j2 = j + (int) (windY * wy);
-                i2 %= moisture.length;
-                j2 %= moisture.length;
+//                i2 %= moisture.length;
+//                j2 %= moisture.length;
                 if (j2 < 0 || j2 > moisture.length-1) continue;
                 if (i2 < 0 || i2 > moisture.length-1) continue;
                 if (i != i2 && j != j2) {
                     float transfer = moisture[i][j] / 9;
-                    float speed = (float) ((30.0 + elevation[i][j]) / (30.0 + elevation[i2][j2]));
+                    float speed = (float) ((30.0 + ocean[i][j]) / (30.0 + ocean[i2][j2]));
                     if (speed > 1.0) speed = 1.0f;
                     /* speed is lower if going uphill */
                     transfer = transfer * speed;
@@ -91,6 +91,48 @@ public class Wind {
         }
         return result;
     }
+
+//    public static float[][] spreadCold(float[][] temperature, float[][] moisture, float[][] elevation, float x, float y) {
+//        Random rand = new Random();
+//
+//        int windX = (int) x*(temperature.length / (rand.nextInt(15)));
+//        int windY = (int) y*(temperature.length / (rand.nextInt(15)));
+//        /*int windX = (int) x* (temperature.length / 17);
+//        int windY = (int) y* (temperature.length / 23);*/
+//        float evaporation = 1;
+//
+//        float[][] result = new float[temperature.length][temperature[0].length];
+//        for (int i = 0; i < temperature.length; i++) {
+//            for (int j = 0; j < temperature.length; j++) {
+//                if (elevation[i][j] < BiomeGenerator.SNOW_LEVEL && moisture[i][j] > BiomeGenerator.MOISTURE_SNOW_LEVEL && temperature[i][j] < ) {
+//                    result[i][j] += j/(temperature.length*2); // snow
+//                }
+//
+//                result[i][j] += temperature[i][j] - evaporation/255;
+//
+//                // Dampen the randomness
+//                float wx = (float) ((20.0 + Math.random() + Math.random()) / 21.0);
+//                float wy = (float) ((20.0 + Math.random() + Math.random()) / 21.0);
+//                int i2 = i + (int) (windX * wx);
+//                int j2 = j + (int) (windY * wy);
+////                i2 %= moisture.length;
+////                j2 %= moisture.length;
+//                if (j2 < 0 || j2 > temperature.length-1) continue;
+//                if (i2 < 0 || i2 > temperature.length-1) continue;
+//                if (i != i2 && j != j2) {
+//                    float transfer = temperature[i][j] / 9;
+//                    float speed = (float) ((30.0 + elevation[i][j]) / (30.0 + elevation[i2][j2]));
+//                    if (speed > 1.0) speed = 1.0f;
+//                    /* speed is lower if going uphill */
+//                    transfer = transfer * speed;
+//
+//                    result[i][j] -= transfer;
+//                    result[i2][j2] += transfer;
+//                }
+//            }
+//        }
+//        return result;
+//    }
 
     public static float[][] convolutionFilterf(float[][] array, float[] kernel, float[][] elevation) {
 

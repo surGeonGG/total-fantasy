@@ -2,127 +2,77 @@ package Main;
 
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.function.Consumer;
 
 public class MapCoord {
 
     public String biome;
-
-    public float elevation, moisture, heat, biomeElevation;
-
-    public boolean isRiver, isLake, isMountainTop, isMountainSide;
-
-    public MapCoord e, w, nw, ne, se, sw;
-
+    public float smoothElevation, moisture, heat, biomeElevation;
+    public boolean isRiver, isLake, isMountainTop, isMountainSide, isOcean;
+    public MapCoord[] neighbours = new MapCoord[6];
+    public static final int NW = 0, NE = 1, SE = 2, SW = 3, E = 4, W = 5;
     public int x, y;
 
-
     public boolean createRiver(boolean continuation, ArrayList<MapCoord> riverList) {
-
-        if ((continuation || moisture > 0.3f) && !isRiver &&  elevation >= BiomeGenerator.OCEAN_LEVEL) {
-
-            if (ne == null && sw == null && nw == null && se == null) return false;
+        if ((continuation || moisture > 0.2f) && !isRiver && !isOcean) {
+            if (neighbours[NE] == null && neighbours[SW] == null && neighbours[NW] == null && neighbours[SE] == null) return false;
 
             riverList.add(this);
-
-
-
             String smallestDistance = "";
-
-            //find which direction has lowest elevation
+            //find which direction has lowest smoothElevation
             MapCoord target = findTarget();
-
-            //in local minima
-            if (target.getElevation() > elevation)
-                riverList.clear();
-
-            //in even terrain
-            else if (target.getElevation() == elevation) {
+            //checks if in even terrain or local min
+            if (target.getSmoothElevation() >= smoothElevation) {
                 if (smallestDistance == "")
                     smallestDistance = determineSmallestDistance();
-
-                if(!riverList.contains(se) || !riverList.contains(sw) || !riverList.contains(ne) || !riverList.contains(nw))
-                    handleRandoms(smallestDistance, riverList);
-
-            //in descending terrain
-            } else {
-
-                if (target.getElevation() >= BiomeGenerator.OCEAN_LEVEL && !target.isRiver())
-                    target.createRiver(true, riverList);
-
-                else
+                if (riverList.contains(neighbours[SE]) && riverList.contains(neighbours[NE])
+                        && riverList.contains(neighbours[NW]) && riverList.contains(neighbours[SW]))
+                    return false;
+                target = handleRandoms(smallestDistance, riverList);
+                if (target.isOcean || (target.isRiver && !riverList.contains(target)))
                     paintRiver(riverList);
-
-
+                else target.createRiver(true, riverList);
+            } else {
+                if (target.isOcean || (target.isRiver && !riverList.contains(target)))
+                    paintRiver(riverList);
+                else target.createRiver(true, riverList);
             }
         }
         return true;
     }
 
-
-
-
-    private void handleRandoms(String smallestDistance, ArrayList<MapCoord> riverList) {
-
+    private MapCoord handleRandoms(String smallestDistance, ArrayList<MapCoord> riverList) {
         Random rand = new Random();
         int randInt = rand.nextInt(7);
-        //int randInt = ;
         MapCoord target = null;
-
         if (smallestDistance == "se")
-            target = se;
+            target = neighbours[SE];
         if (smallestDistance == "sw")
-            target = sw;
+            target = neighbours[SW];
         if (smallestDistance == "ne")
-            target = ne;
+            target = neighbours[NE];
         if (smallestDistance == "nw")
-            target = nw;
-
-        if (randInt == 3 && !riverList.contains(se)) {
-            target = se;
+            target = neighbours[NW];
+        if (randInt <= 3  && !riverList.contains(neighbours[randInt])) {
+            target = neighbours[randInt];
         }
-
-        else if (randInt == 4 && !riverList.contains(sw)) {
-            target = sw;
-        }
-
-        else if (randInt == 5 && !riverList.contains(ne)) {
-            target = ne;
-        }
-
-        else if (randInt == 6 && !riverList.contains(nw)) {
-            target = nw;
-        }
-
-        if (target.isRiver())
-            paintRiver(riverList);
-
-        else
-            target.createRiver(true, riverList);
-
-        /*else if (!riverList.contains(se) || !riverList.contains(sw) || !riverList.contains(ne) || !riverList.contains(nw))
-            handleRandoms(smallestDistance, riverList);*/
+        return target;
     }
 
 
 
     private String determineSmallestDistance() {
-
         int seDistToOcean;
         int swDistToOcean;
         int neDistToOcean;
         int nwDistToOcean;
         int distance = 0;
         String smallestDistance;
-
-        seDistToOcean = se.findDistToOcean("se", distance);
-        swDistToOcean = sw.findDistToOcean("sw", distance);
-        neDistToOcean = ne.findDistToOcean("ne", distance);
-        nwDistToOcean = nw.findDistToOcean("nw", distance);
-
+        seDistToOcean = neighbours[SE].findDistToOcean("se", distance);
+        swDistToOcean = neighbours[SW].findDistToOcean("sw", distance);
+        neDistToOcean = neighbours[NE].findDistToOcean("ne", distance);
+        nwDistToOcean = neighbours[NW].findDistToOcean("nw", distance);
         smallestDistance = "se";
         distance = seDistToOcean;
-
         if (neDistToOcean < distance) {
             smallestDistance = "ne";
             distance = neDistToOcean;
@@ -133,122 +83,48 @@ public class MapCoord {
         }
         if (swDistToOcean < distance) {
             smallestDistance = "sw";
-
         }
-
-       //System.out.println(smallestDistance);
-
         return smallestDistance;
     }
 
-
-
-
     public int findDistToOcean(String direction, int distance) {
-        if (elevation < BiomeGenerator.OCEAN_LEVEL || isRiver)
+        if (isOcean || isRiver)
             return distance;
-
         else {
             distance++;
-           // System.out.println(x + " " + y + " " + direction + " " + distance + " " + elevation);
+           // System.out.println(x + " " + y + " " + direction + " " + distance + " " + smoothElevation);
             if (direction == "se")
-                if (se != null)
-                    return se.findDistToOcean(direction, distance);
+                if (neighbours[SE] != null)
+                    return neighbours[SE].findDistToOcean(direction, distance);
             if (direction == "sw")
-                if (sw != null)
-                    return sw.findDistToOcean(direction, distance);
+                if (neighbours[SW] != null)
+                    return neighbours[SW].findDistToOcean(direction, distance);
             if (direction == "ne")
-                if (ne != null)
-                    return ne.findDistToOcean(direction, distance);
+                if (neighbours[NE] != null)
+                    return neighbours[NE].findDistToOcean(direction, distance);
             if (direction == "nw")
-                if (nw != null)
-                    return nw.findDistToOcean(direction, distance);
+                if (neighbours[NW] != null)
+                    return neighbours[NW].findDistToOcean(direction, distance);
             return 10000;
         }
     }
 
-
-
     private MapCoord findTarget() {
-        MapCoord target = nw;
-
-        if (target.getElevation() > se.getElevation() && !se.isRiver())
-            target = se;
-        if (target.getElevation() > ne.getElevation() && !ne.isRiver())
-            target = ne;
-        if (target.getElevation() > sw.getElevation() && !sw.isRiver())
-            target = sw;
-
+        MapCoord target = neighbours[NW];
+        if (target.getSmoothElevation() > neighbours[SE].getSmoothElevation() && !neighbours[SE].isRiver())
+            target = neighbours[SE];
+        if (target.getSmoothElevation() > neighbours[NE].getSmoothElevation() && !neighbours[NE].isRiver())
+            target = neighbours[NE];
+        if (target.getSmoothElevation() > neighbours[SW].getSmoothElevation() && !neighbours[SW].isRiver())
+            target = neighbours[SW];
         return target;
     }
-
-
 
     private void paintRiver(ArrayList<MapCoord> riverList) {
         for (MapCoord riverSegment : riverList) {
             riverSegment.setRiver();
         }
-
     }
-
-    public boolean createMountain(int size) {
-
-
-        if (ne == null || sw == null || nw == null || se == null || elevation < 0.7f) return false;
-
-        isMountainTop = true;
-
-        Random rand = new Random();
-        size--;
-
-        int randomNumber = rand.nextInt(4);
-
-        if (size < 2) return true;
-        System.out.println(randomNumber);
-        switch (randomNumber) {
-            case 0:
-                se.createMountain(size);
-                break;
-            case 1:
-                sw.createMountain(size);
-                break;
-            case 2:
-                ne.createMountain(size);
-                break;
-            case 3:
-                nw.createMountain(size);
-                break;
-        }
-
-        int slopeSize = 10+rand.nextInt(15);
-
-        createMountainSide(slopeSize);
-
-        return true;
-
-    }
-
-    public boolean createMountainSide(int size) {
-
-        Random rand = new Random();
-        size -= 1+rand.nextInt(3);
-
-        if (ne == null || sw == null || nw == null || se == null || elevation < 0.6f || size < 2) return false;
-
-        if (!se.isMountainSide && !se.isMountainTop) se.createMountainSide(size);
-        if (!sw.isMountainSide && !sw.isMountainTop) sw.createMountainSide(size);
-        if (!ne.isMountainSide && !ne.isMountainTop) ne.createMountainSide(size);
-        if (!nw.isMountainSide && !nw.isMountainTop) nw.createMountainSide(size);
-        if (!e.isMountainSide && !e.isMountainTop) e.createMountainSide(size);
-        if (!w.isMountainSide && !w.isMountainTop) w.createMountainSide(size);
-
-        if (!isMountainTop)
-            isMountainSide = true;
-
-        return true;
-
-    }
-
 
     public String getBiome() {
         return biome;
@@ -258,12 +134,12 @@ public class MapCoord {
         this.biome = biome;
     }
 
-    public float getElevation() {
-        return elevation;
+    public float getSmoothElevation() {
+        return smoothElevation;
     }
 
-    public void setElevation(float elevation) {
-        this.elevation = elevation;
+    public void setSmoothElevation(float smoothElevation) {
+        this.smoothElevation = smoothElevation;
     }
 
     public float getBiomeElevation() {
@@ -303,26 +179,26 @@ public class MapCoord {
     }
 
     public void setEast(MapCoord e) {
-        this.e = e;
+        this.neighbours[E] = e;
     }
 
     public void setWest(MapCoord w) {
-        this.w = w;
+        this.neighbours[W] = w;
     }
 
     public void setNw(MapCoord nw) {
-        this.nw = nw;
+        this.neighbours[NW] = nw;
     }
 
     public void setNe(MapCoord ne) {
-        this.ne = ne;
+        this.neighbours[NE] = ne;
     }
 
     public void setSe(MapCoord se) {
-        this.se = se;
+        this.neighbours[SE] = se;
     }
 
     public void setSw(MapCoord sw) {
-        this.sw = sw;
+        this.neighbours[SW] = sw;
     }
 }
