@@ -1,25 +1,28 @@
 package Main;
 
+import Entities.Player;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-import java.math.*;
 
 public class Camera {
 
-    private static final float FOV = 70;
-    private static final float NEAR_PLANE = 0.1f;
-    private static final float FAR_PLANE = 10000;
-    private static float aspectRatio;
-
-    private static float pitch = 0f, yaw = 0f, roll;
+    private final float FOV = 70f ;
+    private final float NEAR_PLANE = 0.1f;
+    private final float FAR_PLANE = 1000f;
+    private float aspectRatio;
+    private float distanceFromPlayer = 50f;
+    private float angleAroundPlayer = 0f;
+    private float pitch = 20f;
+    private float yaw = 0f;
 
     Matrix4f projection;
-    Vector3f position;
+    Vector3f position = new Vector3f(0f,0f,0f);
     Vector3f rotation;
+
+    private Player player;
 
     public Camera(int width, int height) {
         aspectRatio = width / height;
-        position = new Vector3f(-500, -500, -500f);
         projection = new Matrix4f();
         projection.identity();
         float y_scale = (float) ((float) 1/Math.tan(Math.toRadians(FOV/2f)));
@@ -33,59 +36,68 @@ public class Camera {
         projection.m33(0);
     }
 
-    public void setPosition(Vector3f position) {
-        this.position = position;
+    public void followPlayer(Player player) {
+        this.player = player;
+        calculateCameraPosition();
     }
 
-    public void addPosition(Vector3f position) {
-        this.position.add(position);
+    public void calculateCameraPosition() {
+        float horizontalDistance = (float) (distanceFromPlayer * Math.cos(Math.toRadians(pitch)));
+        float verticalDistance = (float) (distanceFromPlayer * Math.sin(Math.toRadians(pitch)));
+        float theta = player.getRy() + angleAroundPlayer;
+        float offsetX = (float) (horizontalDistance * Math.sin(Math.toRadians(theta)));
+        float offsetZ = (float) (horizontalDistance * Math.cos(Math.toRadians(theta)));
+        position.x = player.getPosition().x - offsetX;
+        position.y = player.getPosition().y + verticalDistance;
+        position.z = player.getPosition().z - offsetZ;
+        yaw = 180 - theta;
+    }
 
+    public Matrix4f getProjectionMatrix() {
+        return projection;
+    }
+
+    public void zoom(float zoom) {
+        distanceFromPlayer -= zoom;
+        calculateCameraPosition();
+        if (distanceFromPlayer < 1) {
+            distanceFromPlayer = 1;
+        }
+    }
+
+    public void changePitch(float rotation) {
+        pitch += rotation;
+        calculateCameraPosition();
+    }
+
+    public void rotate(float rotation) {
+        angleAroundPlayer += rotation;
+        calculateCameraPosition();
     }
 
     public Vector3f getPosition() { return position; }
 
-    public Matrix4f getProjection() {
-        Matrix4f targetMatrix = new Matrix4f();
-        projection.translate(position, targetMatrix);
-//        targetMatrix.rotate((float) Math.toRadians(pitch), new Vector3f(1,0,0), targetMatrix);
-//        targetMatrix.rotate((float) Math.toRadians(yaw), new Vector3f(0,0,1), targetMatrix);
-        return targetMatrix;
+    public void printPosition() {
+        System.out.println("Camera position: " + position.x + " " + position.y + " " + position.z);
+        System.out.println("Camera DTP and AAP: " + distanceFromPlayer + " " + angleAroundPlayer);
+
     }
 
-    public Matrix4f getRotation() {
-        Matrix4f targetMatrix = new Matrix4f();
-        targetMatrix.rotate((float) Math.toRadians(pitch), new Vector3f(1,0,0), targetMatrix);
-        targetMatrix.rotate((float) Math.toRadians(yaw), new Vector3f(0,0,1), targetMatrix);
-        return targetMatrix;
+    public void setPitch(float pitch) {
+        this.pitch = pitch;
+        calculateCameraPosition();
     }
 
-//    public Matrix4f getRotation() {
-//        Matrix4f targetMatrix = new Matrix4f();
-//        targetMatrix.rotate((float) Math.toRadians(getPitch()), new Vector3f((float)Math.cos(4),0,0), targetMatrix);
-//        targetMatrix.rotate((float) Math.toRadians(getYaw()), new Vector3f(0,0,(float)Math.cos(4)), targetMatrix);
-//        return targetMatrix;
-//    }
-
-    public static float getYaw() {
-        return yaw;
+    public void setYaw(float yaw) {
+        this.yaw = yaw;
+        calculateCameraPosition();
     }
 
-    public static void addYaw(float yaw) {
-        Camera.yaw += yaw;
-    }
-
-    public static float getPitch() {
+    public float getPitch() {
         return pitch;
     }
 
-    public static void addPitch(float pitch) {
-        Camera.pitch += pitch;
+    public float getYaw() {
+        return yaw;
     }
-
-   /* public Matrix4f getRotation() {
-        Matrix4f viewMatrix = new Matrix4f();
-        Matrix4f.rotate((float) Math.toRadians(getPitch()), new Vector3f(1, 0, 0), viewMatrix,
-                viewMatrix);
-        Matrix4f.rotate((float) Math.toRadians(getYaw()), new Vector3f(0, 1, 0), viewMatrix, viewMatrix);
-    }*/
 }

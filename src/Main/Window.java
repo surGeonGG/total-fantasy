@@ -18,6 +18,9 @@ import static org.lwjgl.opengl.GL43.*;
 public class Window {
 
     private static long windowID;
+    private static final boolean fullscreen = false;
+    private final int RESOLUTION_WIDTH = 1000;
+    private final int RESOLUTION_HEIGHT = 1000;
 
     private static Input input;
 
@@ -32,7 +35,10 @@ public class Window {
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         if ( Platform.get() == Platform.MACOSX )
             glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
-        windowID = glfwCreateWindow(1920, 1200, title, glfwGetPrimaryMonitor(), MemoryUtil.NULL);
+        if (fullscreen)
+            windowID = glfwCreateWindow(1920, 1200, title, glfwGetPrimaryMonitor(), MemoryUtil.NULL);
+        else
+            windowID = glfwCreateWindow(RESOLUTION_WIDTH, RESOLUTION_HEIGHT, title, MemoryUtil.NULL, MemoryUtil.NULL);
         glfwMakeContextCurrent(windowID);
         GLCapabilities caps = GL.createCapabilities();
         GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
@@ -45,7 +51,7 @@ public class Window {
         IntBuffer height = BufferUtils.createIntBuffer(1);
         glfwGetWindowSize(windowID, width, height);
         System.out.println(width.get() + " " + height.get());
-        GL11.glViewport(0,0, 1920, 1200);
+        GL11.glViewport(0,0, RESOLUTION_WIDTH, RESOLUTION_HEIGHT);
     }
 
     public static long getWindowID() {

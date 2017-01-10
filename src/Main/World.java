@@ -3,12 +3,13 @@ package Main;
 import Utils.ArrayManipulation;
 import Utils.DiverseUtilities;
 import org.joml.Matrix4f;
-import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Random;
@@ -16,35 +17,36 @@ import java.util.Random;
 
 public class World {
 
-    private static JFrame[] frames;
-    private static JPanel[] panels;
-    private static JScrollPane[] scrollPanes;
-    private static Main main;
+    private JFrame[] frames;
+    private JPanel[] panels;
+    private JScrollPane[] scrollPanes;
+    private Main main;
     private RawModel rawModel;
     private Texture texture;
     private TexturedModel texturedModel;
-    private static Camera camera;
-    private static Shader shader;
-    private static Renderer renderer;
-    private static BiomeGenerator biomeGenerator;
+    private Camera camera;
+    private Shader worldShader;
+    private Renderer renderer;
+    private BiomeGenerator biomeGenerator;
     private float[] vertices;
     private int[] indices;
-    private static SimplexNoiseGenerator simplexNoiseGenerator;
-    private static float[][] moisture, islandShape, temprature, smoothElevation, elevation;
-    public static final int MESHLENGTH = 1000, NOISEMAPLENGTH = MESHLENGTH;
-    private static MapCoord[][] mapCoords = new MapCoord[MESHLENGTH][MESHLENGTH];
-    private static int offset = (NOISEMAPLENGTH-MESHLENGTH)/2;
-    private static int offsetPlusLength = offset + mapCoords.length;
-    private static Loader loader;
-    private static Matrix4f projection, tile_pos;
+    private SimplexNoiseGenerator simplexNoiseGenerator;
+    private float[][] moisture, islandShape, temprature, smoothElevation, elevation;
+    public final int MESHLENGTH = 1000, NOISEMAPLENGTH = MESHLENGTH;
+    private MapCoord[][] mapCoords = new MapCoord[MESHLENGTH][MESHLENGTH];
+    private int offset = (NOISEMAPLENGTH-MESHLENGTH)/2;
+    private int offsetPlusLength = offset + mapCoords.length;
+    private Loader loader;
+    private Matrix4f projection, tile_pos;
 
     public World(Main main) {
-
+        this.camera = camera;
         this.main = main;
-        shader = main.getWorldShader();
-        camera = main.getCamera();
-        renderer = main.getRenderer();
-        loader = main.getLoader();
+        this.worldShader = worldShader;
+        worldShader.bind();
+        worldShader.setUniform("projectionMatrix", camera.getProjectionMatrix());
+        this.renderer = renderer;
+        this.loader = loader;
         biomeGenerator = new BiomeGenerator();
         buildNoise();
         vertices = new float[18];
@@ -53,7 +55,7 @@ public class World {
         texturedModel = new TexturedModel(rawModel, texture);
     }
 
-    private static void buildNoise() {
+    private void buildNoise() {
         Random rand = new Random();
         simplexNoiseGenerator = new SimplexNoiseGenerator();
         islandShape = simplexNoiseGenerator.generateElevation(rand.nextInt(), NOISEMAPLENGTH, NOISEMAPLENGTH);
@@ -138,13 +140,13 @@ public class World {
         ArrayManipulation.gaussianBlur2Df(moisture);
         ArrayManipulation.gaussianBlur2Df(moisture);*/
 
-        int numFrames = 1;
+        int numFrames = 0;
         frames = new JFrame[numFrames];
         panels = new JPanel[numFrames];
         scrollPanes = new JScrollPane[numFrames];
 
 
-        makeImage(islandShape, 0, "Island Shape");
+//        makeImage(islandShape, 0, "Island Shape");
 //          makeImage(moisture, 0, "Moisture");
 //        makeImage(smoothElevation, 1, "Smooth smoothElevation");
 
@@ -207,25 +209,7 @@ public class World {
 
         for (int i = 0; i < mapCoords.length; i++) {
             for (int j = 0; j < mapCoords.length; j++) {
-//                if (mapCoords[i][j].smoothElevation > 0.9f) {
-//                    mapCoords[i][j].createMountain(rand.nextInt(100));
-//                    continue;
-//                } else if (mapCoords[i][j].smoothElevation > 0.8f) {
-//                    if (rand.nextInt(20) == 0)
-//                        mapCoords[i][j].createMountain(rand.nextInt(100));
-//                } else if (mapCoords[i][j].smoothElevation > 0.7f) {
-//                    if (rand.nextInt(100) == 0)
-//                        mapCoords[i][j].createMountain(rand.nextInt(100));
-//                } else if (mapCoords[i][j].smoothElevation > 0.5f) {
-//                    if (rand.nextInt(2000) == 0)
-//                        mapCoords[i][j].createMountain(rand.nextInt(100));
-//                } else if (mapCoords[i][j].smoothElevation > 0.3f) {
-//                    if (rand.nextInt(5000) == 0)
-//                        mapCoords[i][j].createMountain(rand.nextInt(100));
-//                } else if (mapCoords[i][j].smoothElevation > 0.1f) {
-//                    if (rand.nextInt(10000) == 0)
-//                        mapCoords[i][j].createMountain(rand.nextInt(100));
-//                }
+
             }
         }
         /*Sets biome for each Mapcoord*/
@@ -245,37 +229,6 @@ public class World {
             }
         }
     }
-
-//    private void buildModelVertices(float border) {
-//        //Center vertex
-//        vertices[0] = 0;
-//        vertices[1] = 0;
-//        vertices[2] = 0;
-//        //North West vertex
-//        vertices[3] = -0.5f+border;
-//        vertices[4] = -1f/3+border;
-//        vertices[5] = 0;
-//        //North vertex
-//        vertices[6] = 0;
-//        vertices[7] = -2f/3+border;
-//        vertices[8] = 0;
-//        //North east vertex
-//        vertices[9] = 0.5f-border;
-//        vertices[10] = -1f/3+border;
-//        vertices[11] = 0;
-//        //South east vertex
-//        vertices[12] = 0.5f-border;
-//        vertices[13] = 1f/3-border;
-//        vertices[14] = 0;
-//        //South vertex
-//        vertices[15] = 0;
-//        vertices[16] = 2f/3-border;
-//        vertices[17] = 0;
-//        //South west vertex
-//        vertices[18] = -0.5f+border;
-//        vertices[19] = 1f/3-border;
-//        vertices[20] = 0;
-//    }
 
     private void buildModelVertices(float border) {
         //North West vertex
@@ -344,32 +297,6 @@ public class World {
                 a[i][j] = biomeGenerator.getBiomeColor(mapCoords[i][j].getBiome())[2];
             }
         }
-        /*Filters*/
-    /*    for (int i = 0; i < mapCoords.length; i++) {
-            for (int j = 0; j < mapCoords[i].length; j++) {
-
-                colors[0] -= 100 * smoothElevation[i][j];
-                colors[1] -= 100 * smoothElevation[i][j];
-                colors[2] -= 100 * smoothElevation[i][j];
-
-                if (mapCoords[i][j].getBiome() == "OCEAN") {
-                    colors[1] += 10 * moisture[i][j] - 5;
-
-                    colors[0] += 250 * smoothElevation[i][j];
-                    colors[1] += 250 * smoothElevation[i][j];
-                    colors[2] += 400 * smoothElevation[i][j];
-                }
-
-
-                if (j > 9 && i < smoothElevation.length-10) {
-                    if (mapCoords[i][j].getBiome() != "OCEAN" && smoothElevation[i + 10][j - 10] > 0.5f) {
-                        r[i][j] += 40 * smoothElevation[i + 10][j - 10];
-                        g[i][j] += 40 * smoothElevation[i + 10][j - 10];
-                        b[i][j] += 40 * smoothElevation[i + 10][j - 10];
-                    }
-                }
-            }
-        }*/
 
       /*  Puts colors into bytebuffer*/
         for (int i = 0; i < mapCoords.length; i++) {
@@ -383,7 +310,7 @@ public class World {
                 texture.put((byte)(r[i][j] & 0xFF)); //red
                 texture.put((byte)(g[i][j] & 0xFF)); //green
                 texture.put((byte)(b[i][j] & 0xFF)); // blue
-                texture.put((byte)(a[i][j] & 0xFF));; //alpha
+                texture.put((byte)(a[i][j] & 0xFF)); //alpha
             }
         }
         texture.flip();
@@ -414,7 +341,7 @@ public class World {
     }
 
     /*Makes an image of a noismap*/
-    private static void makeImage(float[][] map, int num, String title) {
+    private void makeImage(float[][] map, int num, String title) {
         BufferedImage img = new BufferedImage(map.length, map[0].length, BufferedImage.TYPE_INT_RGB);
         float[][] tempMap = new float[map.length][map[0].length];
         for (int i = 0; i < map.length; i++) {
@@ -450,14 +377,13 @@ public class World {
     }
 
     public void render(){
-        shader.bind();
-        shader.setUniform("projectionMatrix", camera.getProjection());
-        shader.setUniform("rotationMatrix", camera.getRotation());
-        shader.setUniform("meshLength", MESHLENGTH);
-        renderer.render(texturedModel, MESHLENGTH * MESHLENGTH);
+        worldShader.bind();
+        worldShader.setUniform("viewMatrix", DiverseUtilities.createViewMatrix(camera));
+        worldShader.setUniform("meshLength", MESHLENGTH);
+        renderer.renderInstanced(texturedModel, MESHLENGTH * MESHLENGTH);
     }
 
-    public static MapCoord[][] getMapCoords() {
+    public MapCoord[][] getMapCoords() {
         return mapCoords;
     }
 }

@@ -8,8 +8,8 @@ import org.joml.Vector3f;
 public abstract class Entity {
 
     private TexturedModel model;
-    private Vector3f position;
-    private float rx, ry, rz, scale;
+    private Vector3f position = new Vector3f(0,0,0);
+    private float rx = 0, ry = 0, rz = 0, scale = 1;
 
     public Entity() {
     }
@@ -83,7 +83,4 @@ public abstract class Entity {
         this.scale = scale;
     }
 
-    public Matrix4f getTransformationMatrix() {
-        return DiverseUtilities.createTransformationMatrix(position, rx, ry, rz, scale);
-    }
 }

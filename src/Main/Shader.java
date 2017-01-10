@@ -14,36 +14,30 @@ public class Shader {
     private int program, vs, fs;
 
     public Shader(String filename) {
-
         program = glCreateProgram();
         vs = glCreateShader(GL_VERTEX_SHADER);
         fs = glCreateShader(GL_FRAGMENT_SHADER);
-
         glShaderSource(vs, readShader(filename + ".vs.glsl"));
         glCompileShader(vs);
         if (glGetShaderi(vs, GL_COMPILE_STATUS) != 1) {
             System.err.println(glGetShaderInfoLog(vs));
             System.exit(1);
         }
-
         glShaderSource(fs, readShader(filename + ".fs.glsl"));
         glCompileShader(fs);
         if (glGetShaderi(fs, GL_COMPILE_STATUS) != 1) {
             System.err.println(glGetShaderInfoLog(fs));
             System.exit(1);
         }
-
         glAttachShader(program, vs);
         glAttachShader(program, fs);
-
         glBindAttribLocation(program, 0, "coordinates");
-
+        glBindAttribLocation(program, 1, "texCoords");
         glLinkProgram(program);
         if (glGetProgrami(program, GL_LINK_STATUS) != 1) {
             System.err.println(glGetProgramInfoLog(program));
             System.exit(1);
         }
-
         glValidateProgram(program);
         if (glGetProgrami(program, GL_VALIDATE_STATUS) != 1) {
             System.err.println(glGetProgramInfoLog(program));
@@ -78,10 +72,7 @@ public class Shader {
     static String readShader(String filename) {
         String line;
         StringBuilder builder = new StringBuilder();
-
         try {
-
-//            BufferedReader reader = new BufferedReader(new FileReader(new File("./shaders/" + filename)));
             BufferedReader reader = new BufferedReader(new InputStreamReader(Shader.class.getClassLoader().getResourceAsStream(filename)));
             while ((line = reader.readLine()) != null) {
                 builder.append(line + "\n");
@@ -92,7 +83,6 @@ public class Shader {
         } catch (IOException e) {
         e.printStackTrace();
         }
-
         return builder.toString();
     }
 }

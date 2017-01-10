@@ -1,5 +1,7 @@
 package Utils;
 
+import Entities.Entity;
+import Main.Camera;
 import nuklear.IOUtil;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -25,15 +27,26 @@ public class DiverseUtilities {
         return val;
     }
 
-    public static Matrix4f createTransformationMatrix(Vector3f translation, float rx, float ry, float rz, float scale) {
-        Matrix4f target = new Matrix4f();
-        target.identity();
-        target.translate(translation);
-        target.rotate((float) Math.toRadians(rx), new Vector3f(1,0,0));
-        target.rotate((float) Math.toRadians(ry), new Vector3f(0,1,0));
-        target.rotate((float) Math.toRadians(rz), new Vector3f(0,0,1));
-        target.scale(new Vector3f(scale,scale,scale));
-        return target;
+    public static Matrix4f createTransformationMatrix(Entity entity) {
+        Matrix4f targetMatrix = new Matrix4f();
+        targetMatrix.identity();
+        targetMatrix.translate(entity.getPosition());
+        targetMatrix.rotate((float) Math.toRadians(entity.getRx()), new Vector3f(1,0,0));
+        targetMatrix.rotate((float) Math.toRadians(entity.getRy()), new Vector3f(0,1,0));
+        targetMatrix.rotate((float) Math.toRadians(entity.getRz()), new Vector3f(0,0,1));
+        targetMatrix.scale(new Vector3f(entity.getScale(), entity.getScale(), entity.getScale()));
+        return targetMatrix;
+    }
+
+    public static Matrix4f createViewMatrix(Camera camera) {
+        Matrix4f targetMatrix = new Matrix4f();
+        targetMatrix.identity();
+        targetMatrix.rotate((float) Math.toRadians(camera.getPitch()), new Vector3f(1,0,0));
+        targetMatrix.rotate((float) Math.toRadians(camera.getYaw()), new Vector3f(0,1,0));
+        Vector3f negativeCameraPosition = new Vector3f(camera.getPosition().x, camera.getPosition().y,
+                camera.getPosition().z).mul(-1);
+        targetMatrix.translate(negativeCameraPosition);
+        return targetMatrix;
     }
 
     public static ByteBuffer ioResourceToByteBuffer(String resource, int bufferSize) throws IOException {

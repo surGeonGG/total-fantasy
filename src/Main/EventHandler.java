@@ -8,7 +8,6 @@ import javax.xml.parsers.*;
 
 public class EventHandler {
 
-    private static Main main;
 
     public EventHandler(Main main) {
 
@@ -18,15 +17,14 @@ public class EventHandler {
 
         String root = xmlDOM.getDocumentElement().getNodeName();
 
-        this.main = main;
     }
 
-    public static void handleEvent(String biome, String id) {
+    public void handleEvent(String biome, String id) {
 
-        main.getGui().getTextArea().changeText(biome + " " + id);
+//        main.getGui().getTextArea().changeText(biome + " " + id);
     }
 
-    private static Document buildDOM(String source) {
+    private Document buildDOM(String source) {
 
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
