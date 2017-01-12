@@ -1,5 +1,6 @@
 package Main;
 
+import Entities.Light;
 import Entities.Player;
 import Gui.Gui;
 import org.joml.Vector3f;
@@ -23,6 +24,7 @@ public class Game {
     private Player player;
     private Loader loader;
     private Gui gui;
+    private Light light;
 
     public Game(Window window) {
         this.window = window;
@@ -35,6 +37,7 @@ public class Game {
         Shader shader = new Shader("player");
         shader.bind();
         shader.setUniform("projectionMatrix", camera.getProjectionMatrix());
+        light = new Light(new Vector3f(50,10,10), new Vector3f(1,1,1));
         loader = new Loader();
         renderer = new Renderer(camera);
         player = new Player(new Vector3f(0,1,0), camera, loader, renderer, shader);

@@ -36,7 +36,8 @@ public class Player extends Entity {
     };
     private float[] normals;
     private float[] colors;
-    private Main main;
+    private Vector3f moveTo;
+    private float travelspeed = 0.01f;
     private RawModel rawModel;
     private Camera camera;
     private Renderer renderer;
@@ -47,7 +48,8 @@ public class Player extends Entity {
 
     public Player(Vector3f position, Camera camera, Loader loader, Renderer renderer, Shader playerShader) {
         setPosition(position);
-        setScale(1);
+        moveTo = position;
+        setScale(1f);
         setRx(0);
         setRy(0);
         setRz(0);
@@ -66,9 +68,10 @@ public class Player extends Entity {
         for (int i = 0; i < colors.length; i++) {
             colors[i] = 0f;
         }
-        rawModel = loader.createRawModel(vertices, indices, texCoords);
+//        rawModel = loader.createRawModel(vertices, indices, texCoords);
+        rawModel = loader.loadOBJ("stall");
 
-        ByteBuffer texByteBuffer = loader.loadImageFileToByteBuffer("res/grasstexture.png");
+        ByteBuffer texByteBuffer = loader.loadImageFileToByteBuffer("Rock1.png");
         Texture texture = loader.createTextureFromByteBuffer(texByteBuffer, 256, 256);
         setModel(loader.createTexturedModel(rawModel, texture));
     }
@@ -77,16 +80,25 @@ public class Player extends Entity {
 //        main.getEventHandler().handleEvent(biome, "1");
     }
 
+    public void update() {
+        if (getPosition() != moveTo)
+            move();
+    }
+
     public void render() {
+        update();
         renderer.render(this, playerShader);
     }
 
-    public void move(Vector3f vector) {
-
+    public void move() {
+        Vector3f vector = new Vector3f();
+        moveTo.sub(getPosition(), vector);
+        vector.normalize().mul(travelspeed);
         addPosition(vector);
-        printPosition();
-        camera.calculateCameraPosition();
-//        triggerEvent(biome);
+    }
+
+    public void moveTo(Vector3f moveTo) {
+        this.moveTo = moveTo.add(0,0.5f,0);
     }
 
     public int[] getStats() {

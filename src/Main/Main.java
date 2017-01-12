@@ -33,18 +33,16 @@ public class Main {
         window = new Window(WINDOW_WIDTH, WINDOW_HEIGHT, "Game");
 //        world = new World(this);
 //        player = new Player(new Vector3f(500,500,0), this);
-
         sqLite = new SQLite();
         sqLite.getConnection();
         sqLite.getEvent("old_man");
-        game = new Game(window);
+        glEnable(GL_DEPTH_TEST);
         GL.createCapabilities();
         glEnable(GL_TEXTURE_2D);
         glEnable(GL_DEPTH_TEST);
         glClearColor(0.5f, 0.5f, 0.4f, 1);
-
+        game = new Game(window);
     }
-
     public static void main(String[] args) {
         new Main();
     }

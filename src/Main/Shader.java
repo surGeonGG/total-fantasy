@@ -33,6 +33,7 @@ public class Shader {
         glAttachShader(program, fs);
         glBindAttribLocation(program, 0, "coordinates");
         glBindAttribLocation(program, 1, "texCoords");
+        glBindAttribLocation(program, 2, "normal");
         glLinkProgram(program);
         if (glGetProgrami(program, GL_LINK_STATUS) != 1) {
             System.err.println(glGetProgramInfoLog(program));

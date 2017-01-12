@@ -17,9 +17,6 @@ public class MousePicker {
 
     private static final int RECURSION_COUNT = 40;
     private static final float RAY_RANGE = 600;
-
-
-
     private Map map;
     private Vector3f currentTerrainPoint;
     Vector3f currentRay;

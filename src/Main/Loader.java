@@ -1,11 +1,12 @@
 package Main;
 
+import org.joml.Vector2f;
+import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -43,6 +44,17 @@ public class Loader {
         return new RawModel(vaoID, indices.length);
     }
 
+    public RawModel createRawModel(float[] coordinates, int[] indices, float[] texCoords, float[] normals) {
+        int vaoID = createVAO();
+        bindIndicesBuffer(indices);
+        storeDataInAttributeList(0, 3, coordinates);
+        storeDataInAttributeList(1, 2, texCoords);
+        storeDataInAttributeList(2, 3, normals);
+        unbindVAO();
+        return new RawModel(vaoID, indices.length);
+    }
+
+
     public TexturedModel createTexturedModel(RawModel model, Texture texture) {
         TexturedModel texturedModel = new TexturedModel(model, texture);
         return texturedModel;
@@ -58,6 +70,7 @@ public class Loader {
 
     public BufferedImage loadFileToBufferedImage(String path) {
         BufferedImage bufferedImage = null;
+        System.out.println(path);
         try {
             bufferedImage = ImageIO.read(new File(path));
         } catch (IOException e) {
@@ -66,8 +79,8 @@ public class Loader {
         return bufferedImage;
     }
 
-    public ByteBuffer loadImageFileToByteBuffer(String path) {
-        BufferedImage bufferedImage = loadFileToBufferedImage(path);
+    public ByteBuffer loadImageFileToByteBuffer(String filename) {
+        BufferedImage bufferedImage = loadFileToBufferedImage("res/textures/"+filename);
         ByteBuffer byteBuffer = BufferUtils.createByteBuffer(bufferedImage.getWidth() * bufferedImage.getHeight() * 4);
         System.out.println(bufferedImage.getWidth() + " - " + bufferedImage.getHeight());
         for (int i = 0; i < bufferedImage.getWidth(); i++) {
@@ -88,6 +101,75 @@ public class Loader {
 //        BufferedImage bufferedImage = loadFileToBufferedImage(path);
 //    }
 
+    public RawModel loadOBJ(String filename) {
+        FileReader fileReader = null;
+        String line;
+        try {
+            fileReader = new FileReader("res/models/"+filename+".obj");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        BufferedReader bufferedReader = new BufferedReader(fileReader);
+        List<Vector3f> vertices = new ArrayList<Vector3f>();
+        List<Vector2f> textures = new ArrayList<Vector2f>();
+        List<Vector3f> normals = new ArrayList<Vector3f>();
+        List<Integer> indices = new ArrayList<Integer>();
+        float[] verticesArray = null;
+        float[] textureArray = null;
+        float[] normalsArray = null;
+        int[] indicesArray = null;
+        try {
+            while (true) {
+                line = bufferedReader.readLine();
+                String[] currentLine = line.split(" ");
+                if (line.startsWith("v ")) {
+                    Vector3f vertex = new Vector3f(Float.parseFloat(currentLine[1]), Float.parseFloat(currentLine[2]),
+                            Float.parseFloat(currentLine[3]));
+                    vertices.add(vertex);
+                } else if (line.startsWith("vt ")) {
+                    Vector2f texture = new Vector2f(Float.parseFloat(currentLine[1]), Float.parseFloat(currentLine[2]));
+                    textures.add(texture);
+                } else if (line.startsWith("vn ")) {
+                    Vector3f normal = new Vector3f(Float.parseFloat(currentLine[1]), Float.parseFloat(currentLine[2]),
+                            Float.parseFloat(currentLine[3]));
+                    normals.add(normal);
+                } else if (line.startsWith("f ")) {
+                    textureArray = new float[vertices.size() * 2];
+                    normalsArray = new float[vertices.size() * 3];
+                    break;
+                }
+            }
+            while (line != null) {
+                if (!line.startsWith("f ")) {
+                    line = bufferedReader.readLine();
+                    continue;
+                }
+                String[] currentLine = line.split(" ");
+                String[] vertex1 = currentLine[1].split("/");
+                String[] vertex2 = currentLine[2].split("/");
+                String[] vertex3 = currentLine[3].split("/");
+                processVertex(vertex1, textureArray, normalsArray, indices, textures, normals);
+                processVertex(vertex2, textureArray, normalsArray, indices, textures, normals);
+                processVertex(vertex3, textureArray, normalsArray, indices, textures, normals);
+                line = bufferedReader.readLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        verticesArray = new float[vertices.size() * 3];
+        int counter = 0;
+        for (Vector3f vertex : vertices) {
+            verticesArray[counter++] = vertex.x;
+            verticesArray[counter++] = vertex.y;
+            verticesArray[counter++] = vertex.z;
+        }
+        indicesArray = new int[indices.size()];
+        for (int i = 0; i < indices.size(); i++) {
+            indicesArray[i] = indices.get(i);
+        }
+        return createRawModel(verticesArray, indicesArray, textureArray, normalsArray);
+    }
+
     public Texture createTextureFromByteBuffer(ByteBuffer texture, int width, int height) {
         int texID = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, texID);
@@ -95,6 +177,19 @@ public class Loader {
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE , texture);
         return new Texture(texID);
+    }
+
+    private void processVertex(String[] vertex, float[] textureArray, float[] normalsArray, List<Integer> indices,
+                                List<Vector2f> textures, List<Vector3f> normals) {
+        int currentVertexPointer = Integer.parseInt(vertex[0]) - 1;
+        indices.add(currentVertexPointer);
+        Vector2f currentTex = textures.get(Integer.parseInt(vertex[1]) - 1);
+        textureArray[currentVertexPointer * 2] = currentTex.x;
+        textureArray[currentVertexPointer * 2 + 1] = 1 - currentTex.y;
+        Vector3f currentNorm = normals.get(Integer.parseInt(vertex[2]) - 1);
+        normalsArray[currentVertexPointer * 3] = currentNorm.x;
+        normalsArray[currentVertexPointer * 3 + 1] = currentNorm.y;
+        normalsArray[currentVertexPointer * 3 + 2] = currentNorm.z;
     }
 
     public void cleanUp() {

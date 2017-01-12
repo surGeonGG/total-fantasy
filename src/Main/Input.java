@@ -79,28 +79,28 @@ public class Input {
 
         if (glfwGetKey(windowID, GLFW_KEY_UP) == GL_TRUE) {
            if (System.currentTimeMillis() > moveTimer+200) {
-                player.move(new Vector3f(0,0,1));
+//                player.move(new Vector3f(0,0,1));
                 moveTimer = System.currentTimeMillis();
            }
         }
 
         if (glfwGetKey(windowID, GLFW_KEY_DOWN) == GL_TRUE) {
            if (System.currentTimeMillis() > moveTimer+200) {
-                player.move(new Vector3f(0,0,-1));
+//                player.move(new Vector3f(0,0,-1));
                 moveTimer = System.currentTimeMillis();
            }
         }
 
         if (glfwGetKey(windowID, GLFW_KEY_LEFT) == GL_TRUE) {
             if (System.currentTimeMillis() > moveTimer+200) {
-                player.move(new Vector3f(-1f,0,0));
+//                player.move(new Vector3f(-1f,0,0));
                 moveTimer = System.currentTimeMillis();
             }
         }
 
         if (glfwGetKey(windowID, GLFW_KEY_RIGHT) == GL_TRUE) {
             if (System.currentTimeMillis() > moveTimer+200) {
-                player.move(new Vector3f(1f,0,0));
+//                player.move(new Vector3f(1f,0,0));
                 moveTimer = System.currentTimeMillis();
             }
         }
@@ -111,10 +111,10 @@ public class Input {
                 mousePicker.update();
                 Vector3f mapPoint = mousePicker.getCurrentTerrainPoint();
                 if (mapPoint != null) {
-                    System.out.println("Map point: " + mapPoint.x + " " + mapPoint.y + " " + mapPoint.z);
-                    player.setPosition(mapPoint);
+//                    System.out.println("Map point: " + mapPoint.x + " " + mapPoint.y + " " + mapPoint.z);
+                    player.moveTo(mapPoint);
                 }
-                System.out.println("Current ray: " + mousePicker.getCurrentRay().x + " " + mousePicker.getCurrentRay().y + " " + mousePicker.getCurrentRay().z);
+//                System.out.println("Current ray: " + mousePicker.getCurrentRay().x + " " + mousePicker.getCurrentRay().y + " " + mousePicker.getCurrentRay().z);
                 clickTimer = System.currentTimeMillis();
             }
         }

@@ -32,6 +32,12 @@ public class Map extends Entity {
             1f, 1f,
             1f, 0f
     };
+    private float[] normals = {
+            0f, 1f, 0f,
+            0f, 1f, 0f,
+            0f, 1f, 0f,
+            0f, 1f, 0f
+    };
 
     public Map(Camera camera, Shader shader, Loader loader, Renderer renderer, Vector3f position) {
         setPosition(position);
@@ -46,11 +52,9 @@ public class Map extends Entity {
 //        this.shader = new Shader("general");
 //        shader.bind();
 //        shader.setUniform("projectionMatrix", camera.getProjectionMatrix());
-        rawModel = loader.createRawModel(vertices, indices, texCoords);
-
-        ByteBuffer texByteBuffer = loader.loadImageFileToByteBuffer("res/mapck2/Terrain2.png");
+        rawModel = loader.createRawModel(vertices, indices, texCoords, normals);
+        ByteBuffer texByteBuffer = loader.loadImageFileToByteBuffer("Grass1.png");
         texture = loader.createTextureFromByteBuffer(texByteBuffer, 2048, 2048);
-
     }
 
     public void update() {
