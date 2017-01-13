@@ -49,7 +49,7 @@ public class Player extends Entity {
     public Player(Vector3f position, Camera camera, Loader loader, Renderer renderer, Shader playerShader) {
         setPosition(position);
         moveTo = position;
-        setScale(1f);
+        setScale(0.1f);
         setRx(0);
         setRy(0);
         setRz(0);
@@ -71,7 +71,7 @@ public class Player extends Entity {
 //        rawModel = loader.createRawModel(vertices, indices, texCoords);
         rawModel = loader.loadOBJ("stall");
 
-        ByteBuffer texByteBuffer = loader.loadImageFileToByteBuffer("Rock1.png");
+        ByteBuffer texByteBuffer = loader.loadImageFileToByteBuffer("Rock4.png");
         Texture texture = loader.createTextureFromByteBuffer(texByteBuffer, 256, 256);
         setModel(loader.createTexturedModel(rawModel, texture));
     }
@@ -99,6 +99,11 @@ public class Player extends Entity {
 
     public void moveTo(Vector3f moveTo) {
         this.moveTo = moveTo.add(0,0.5f,0);
+    }
+
+    @Override
+    public void setPosition(Vector3f position) {
+        super.setPosition(position.add(0,0.5f,0));
     }
 
     public int[] getStats() {

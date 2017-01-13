@@ -3,6 +3,7 @@ package Main;
 import Entities.Light;
 import Entities.Player;
 import Gui.Gui;
+import Terrains.Terrain;
 import org.joml.Vector3f;
 
 import static Main.Main.WINDOW_HEIGHT;
@@ -15,7 +16,7 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class Game {
 
-    Map map;
+    Terrain terrain;
     private Camera camera;
     private Window window;
     private MousePicker mousePicker;
@@ -25,6 +26,7 @@ public class Game {
     private Loader loader;
     private Gui gui;
     private Light light;
+    private Shader shader;
 
     public Game(Window window) {
         this.window = window;
@@ -34,19 +36,27 @@ public class Game {
 //        generalShader = new Shader("general");
 //        generalShader.bind();
 //        generalShader.setUniform("projectionMatrix", camera.getProjectionMatrix());
-        Shader shader = new Shader("player");
+        light = new Light(new Vector3f(500,100,100), new Vector3f(1,0.8f,1));
+        shader = new Shader("player");
         shader.bind();
         shader.setUniform("projectionMatrix", camera.getProjectionMatrix());
-        light = new Light(new Vector3f(50,10,10), new Vector3f(1,1,1));
         loader = new Loader();
         renderer = new Renderer(camera);
-        player = new Player(new Vector3f(0,1,0), camera, loader, renderer, shader);
+        player = new Player(new Vector3f(500,1,500), camera, loader, renderer, shader);
         camera.followPlayer(player);
-        map = new Map(camera, shader, loader, renderer, new Vector3f(0,0,0));
-        mousePicker = new MousePicker(camera, window.getWindowID(), map);
-        input = new Input(camera, window.getWindowID(), player, map, mousePicker);
+        SimplexNoiseGenerator simplexNoiseGenerator = new SimplexNoiseGenerator();
+        float[][] noiseMap = simplexNoiseGenerator.buildNoise(1000, 1000);
+        terrain = new Terrain(camera, shader, loader, renderer, 5, 5, noiseMap);
+        mousePicker = new MousePicker(camera, window.getWindowID(), terrain);
+        input = new Input(camera, window.getWindowID(), player, terrain, mousePicker, light);
         gameLoop();
         cleanUp();
+    }
+
+    private void updateShaders() {
+        shader.setUniform("lightPosition", light.getPosition());
+        shader.setUniform("lightColor", light.getColor());
+
     }
 
     private void gameLoop() {
@@ -65,12 +75,13 @@ public class Game {
     public void update() {
         window.update();
         input.update();
-        map.update();
+        terrain.update();
+        updateShaders();
     }
 
     public void render(){
         glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-        map.render();
+        terrain.render();
         player.render();
 //        gui.render();
     }

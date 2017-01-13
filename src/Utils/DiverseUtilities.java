@@ -2,6 +2,7 @@ package Utils;
 
 import Entities.Entity;
 import Main.Camera;
+import Terrains.Terrain;
 import nuklear.IOUtil;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -35,6 +36,17 @@ public class DiverseUtilities {
         targetMatrix.rotate((float) Math.toRadians(entity.getRy()), new Vector3f(0,1,0));
         targetMatrix.rotate((float) Math.toRadians(entity.getRz()), new Vector3f(0,0,1));
         targetMatrix.scale(new Vector3f(entity.getScale(), entity.getScale(), entity.getScale()));
+        return targetMatrix;
+    }
+
+    public static Matrix4f createTransformationMatrix(Terrain terrain) {
+        Matrix4f targetMatrix = new Matrix4f();
+        targetMatrix.identity();
+        targetMatrix.translate(terrain.getPosition());
+        targetMatrix.rotate((float) Math.toRadians(terrain.getRx()), new Vector3f(1,0,0));
+        targetMatrix.rotate((float) Math.toRadians(terrain.getRy()), new Vector3f(0,1,0));
+        targetMatrix.rotate((float) Math.toRadians(terrain.getRz()), new Vector3f(0,0,1));
+        targetMatrix.scale(new Vector3f(terrain.getScale(), terrain.getScale(), terrain.getScale()));
         return targetMatrix;
     }
 

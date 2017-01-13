@@ -20,6 +20,10 @@ public class Light {
         this.position = position;
     }
 
+    public void addPosition(Vector3f movement) {
+        this.position = position.add(movement);
+    }
+
     public Vector3f getColor() {
         return color;
     }

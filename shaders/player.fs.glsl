@@ -14,6 +14,6 @@ void main() {
     vec3 unitNormal = normalize(pass_normal);
     vec3 unitTowardsLightVector = normalize(pass_towardsLightVector);
     float brightness = dot(unitNormal, unitTowardsLightVector);
-    out_color = texture(textureSampler, pass_texCoords) * brightness;
+    out_color = texture(textureSampler, pass_texCoords) * brightness * vec4(lightColor, 1);
 //    out_color = vec4(brightness,brightness,brightness,1);
 }

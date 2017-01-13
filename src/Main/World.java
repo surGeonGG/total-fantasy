@@ -287,7 +287,7 @@ public class World {
         int[][] a = new int[MESHLENGTH][MESHLENGTH];
         Random rand = new Random();
         ByteBuffer texture = BufferUtils.createByteBuffer(MESHLENGTH * MESHLENGTH * 4);
-        /*Makes color map*/
+        /*Makes color terrain*/
         for (int i = 0; i < mapCoords.length; i++) {
             for (int j = 0; j < mapCoords[i].length; j++) {
 

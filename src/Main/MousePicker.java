@@ -1,5 +1,6 @@
 package Main;
 
+import Terrains.Terrain;
 import Utils.DiverseUtilities;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
@@ -17,7 +18,7 @@ public class MousePicker {
 
     private static final int RECURSION_COUNT = 40;
     private static final float RAY_RANGE = 600;
-    private Map map;
+    private Terrain terrain;
     private Vector3f currentTerrainPoint;
     Vector3f currentRay;
     Camera camera;
@@ -25,10 +26,10 @@ public class MousePicker {
     Matrix4f projectionMatrix;
     long windowID;
 
-    public MousePicker(Camera camera, long windowID, Map map) {
+    public MousePicker(Camera camera, long windowID, Terrain terrain) {
         this.windowID = windowID;
         this.camera = camera;
-        this.map = map;
+        this.terrain = terrain;
         viewMatrix = DiverseUtilities.createViewMatrix(camera);
         projectionMatrix = camera.getProjectionMatrix();
     }
@@ -108,8 +109,8 @@ public class MousePicker {
         float half = start + ((finish - start) / 2f);
         if (count >= RECURSION_COUNT) {
             Vector3f endPoint = getPointOnRay(ray, half);
-            Map map = getMap(endPoint.x, endPoint.z);
-            if (map != null) {
+            Terrain terrain = getMap(endPoint.x, endPoint.z);
+            if (terrain != null) {
                 return endPoint;
             } else {
                 return null;
@@ -137,10 +138,10 @@ public class MousePicker {
     }
 
     private boolean isUnderGround(Vector3f testPoint) {
-        Map map = getMap(testPoint.x, testPoint.z);
+        Terrain terrain = getMap(testPoint.x, testPoint.z);
         float height = 0;
-        if (map != null) {
-            height = map.getHeightOfMap(testPoint.x, testPoint.z);
+        if (terrain != null) {
+            height = terrain.getHeightOfMap(testPoint.x, testPoint.z);
 //            System.out.println("mapheight: " + height);
         }
         if (testPoint.y < height) {
@@ -150,8 +151,8 @@ public class MousePicker {
         }
     }
 
-    private Map getMap(float worldX, float worldZ) {
-        return map;
+    private Terrain getMap(float worldX, float worldZ) {
+        return terrain;
     }
 
     public Vector3f getCurrentTerrainPoint() {

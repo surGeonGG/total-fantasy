@@ -1,9 +1,9 @@
 package Main;
 
 import Entities.Entity;
+import Terrains.Terrain;
 import Utils.DiverseUtilities;
 import org.joml.Matrix4f;
-import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
@@ -73,18 +73,18 @@ public class Renderer {
         GL30.glBindVertexArray(0);
     }
 
-    public void renderMap(Map map, Shader shader){
-        Matrix4f transformationMatrix = DiverseUtilities.createTransformationMatrix(map);
+    public void renderMap(Terrain terrain, Shader shader){
+        Matrix4f transformationMatrix = DiverseUtilities.createTransformationMatrix(terrain);
         shader.bind();
         shader.setUniform("transformationMatrix", transformationMatrix);
         shader.setUniform("viewMatrix", DiverseUtilities.createViewMatrix(camera));
-        RawModel rawModel = map.getRawModel();
+        RawModel rawModel = terrain.getRawModel();
         GL30.glBindVertexArray(rawModel.getVaoID());
         GL20.glEnableVertexAttribArray(0);
         GL20.glEnableVertexAttribArray(1);
         GL20.glEnableVertexAttribArray(2);
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, map.getTexture().getTexID());
+        glBindTexture(GL_TEXTURE_2D, terrain.getTexture().getTexID());
         glDrawElements(GL_TRIANGLES, rawModel.getVertexCount(), GL_UNSIGNED_INT, 0);
         GL20.glDisableVertexAttribArray(0);
         GL20.glDisableVertexAttribArray(1);

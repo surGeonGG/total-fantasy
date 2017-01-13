@@ -2,6 +2,7 @@ package Main;
 
 import org.joml.Matrix4f;
 import org.joml.Vector2i;
+import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 
 import java.io.*;
@@ -56,6 +57,12 @@ public class Shader {
         int location = glGetUniformLocation(program, name);
         if (location != -1)
             glUniform2i(location, value.x, value.y);
+    }
+
+    public void setUniform(String name, Vector3f value) {
+        int location = glGetUniformLocation(program, name);
+        if (location != -1)
+            glUniform3f(location, value.x, value.y, value.z);
     }
 
     public void setUniform(String name, Matrix4f value) {

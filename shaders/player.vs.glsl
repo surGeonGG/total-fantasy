@@ -19,6 +19,5 @@ void main() {
     gl_Position = projectionMatrix * viewMatrix * worldPosition;
     pass_texCoords = texCoords;
     pass_normal = (transformationMatrix * vec4(normal,0)).xyz;
-    pass_towardsLightVector = vec3(50,40,10) - worldPosition.xyz;
-
+    pass_towardsLightVector = lightPosition - worldPosition.xyz;
 }

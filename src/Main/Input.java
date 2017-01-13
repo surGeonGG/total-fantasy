@@ -1,28 +1,33 @@
 package Main;
 
+import Entities.Light;
 import Entities.Player;
+import Terrains.Terrain;
 import org.joml.Vector3f;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.GL_TRUE;
+import static org.lwjgl.opengl.GL11.glGetLightf;
 
 public class Input {
 
     private Camera camera;
     private World world;
     private Player player;
-    private Map map;
+    private Light light;
+    private Terrain terrain;
     private MousePicker mousePicker;
     private long windowID;
     private long rebuildTimer = 0;
     private long moveTimer = 0;
     private long clickTimer = 0;
 
-    public Input(Camera camera, long windowID, Player player, Map map, MousePicker mousePicker) {
+    public Input(Camera camera, long windowID, Player player, Terrain terrain, MousePicker mousePicker, Light light) {
         this.camera = camera;
         this.windowID = windowID;
         this.player = player;
-        this.map = map;
+        this.terrain = terrain;
+        this.light = light;
         this.mousePicker = mousePicker;
     }
 
@@ -67,7 +72,7 @@ public class Input {
         if (glfwGetKey(windowID, GLFW_KEY_SPACE) == GL_TRUE) {
             camera.printPosition();
             player.printPosition();
-            map.printPosition();
+            terrain.printPosition();
             camera.setPitch(90);
             camera.setYaw(0);
         }
@@ -80,20 +85,23 @@ public class Input {
         if (glfwGetKey(windowID, GLFW_KEY_UP) == GL_TRUE) {
            if (System.currentTimeMillis() > moveTimer+200) {
 //                player.move(new Vector3f(0,0,1));
-                moveTimer = System.currentTimeMillis();
+               light.addPosition(new Vector3f(10,0,0));
+               moveTimer = System.currentTimeMillis();
            }
         }
 
         if (glfwGetKey(windowID, GLFW_KEY_DOWN) == GL_TRUE) {
            if (System.currentTimeMillis() > moveTimer+200) {
 //                player.move(new Vector3f(0,0,-1));
-                moveTimer = System.currentTimeMillis();
+               light.addPosition(new Vector3f(-10,0,0));
+               moveTimer = System.currentTimeMillis();
            }
         }
 
         if (glfwGetKey(windowID, GLFW_KEY_LEFT) == GL_TRUE) {
             if (System.currentTimeMillis() > moveTimer+200) {
 //                player.move(new Vector3f(-1f,0,0));
+                light.addPosition(new Vector3f(0,0,-10));
                 moveTimer = System.currentTimeMillis();
             }
         }
@@ -101,6 +109,7 @@ public class Input {
         if (glfwGetKey(windowID, GLFW_KEY_RIGHT) == GL_TRUE) {
             if (System.currentTimeMillis() > moveTimer+200) {
 //                player.move(new Vector3f(1f,0,0));
+                light.addPosition(new Vector3f(0,0,10));
                 moveTimer = System.currentTimeMillis();
             }
         }
@@ -111,8 +120,9 @@ public class Input {
                 mousePicker.update();
                 Vector3f mapPoint = mousePicker.getCurrentTerrainPoint();
                 if (mapPoint != null) {
-//                    System.out.println("Map point: " + mapPoint.x + " " + mapPoint.y + " " + mapPoint.z);
-                    player.moveTo(mapPoint);
+//                    System.out.println("Terrain point: " + mapPoint.x + " " + mapPoint.y + " " + mapPoint.z);
+//                    player.moveTo(mapPoint);
+                    player.setPosition(mapPoint);
                 }
 //                System.out.println("Current ray: " + mousePicker.getCurrentRay().x + " " + mousePicker.getCurrentRay().y + " " + mousePicker.getCurrentRay().z);
                 clickTimer = System.currentTimeMillis();
