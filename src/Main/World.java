@@ -68,23 +68,23 @@ public class World {
             int y = rand.nextInt(islandShape.length);
             if (islandShape[x][y] > 0.01f) {
                 int range = rand.nextInt(100) + 10;
-                int size = (int) (range*1.5f);
+                int size = (int) (range * 1.5f);
                 boolean direction = rand.nextBoolean();
-                int plusOrMinus = rand.nextInt(2)*2-1;
-                float a = (float) (Math.random()-0.5f)/5;
-                float b = (float) (Math.random()-0.5f)/5;
-                float c = (float) (Math.random()-0.5f)/5;
-                float e = (float) (Math.random()-0.5f)/5;
+                int plusOrMinus = rand.nextInt(2) * 2 - 1;
+                float a = (float) (Math.random() - 0.5f) / 5;
+                float b = (float) (Math.random() - 0.5f) / 5;
+                float c = (float) (Math.random() - 0.5f) / 5;
+                float e = (float) (Math.random() - 0.5f) / 5;
                 for (int j = 0; j < size; j++) {
-                    int randomizer = rand.nextInt(range)-range/2; //Where along length of mountain range. 0 if no shift in x axis
+                    int randomizer = rand.nextInt(range) - range / 2; //Where along length of mountain range. 0 if no shift in x axis
                     int x2 = x + randomizer;
-                    int y2 = rand.nextInt(10)-5 + y + (int) (Math.pow(e*randomizer, 4) + Math.pow(a*randomizer, 3) + Math.pow(b*randomizer, 2) + c*randomizer) * plusOrMinus;
+                    int y2 = rand.nextInt(10) - 5 + y + (int) (Math.pow(e * randomizer, 4) + Math.pow(a * randomizer, 3) + Math.pow(b * randomizer, 2) + c * randomizer) * plusOrMinus;
                     if (direction) {
                         y2 = y + randomizer;
-                        x2 = rand.nextInt(10)-5 + x + (int) (Math.pow(e*randomizer, 4) + Math.pow(a*randomizer, 3) + Math.pow(b*randomizer, 2) + c*randomizer) * plusOrMinus;
+                        x2 = rand.nextInt(10) - 5 + x + (int) (Math.pow(e * randomizer, 4) + Math.pow(a * randomizer, 3) + Math.pow(b * randomizer, 2) + c * randomizer) * plusOrMinus;
                     }
                     System.out.println(i + ": " + x2 + " " + y2);
-                    if (x2 > 1 && y2 > 1 && x2 < islandShape.length-1 && y2 < islandShape.length-1) {
+                    if (x2 > 1 && y2 > 1 && x2 < islandShape.length - 1 && y2 < islandShape.length - 1) {
                         if (islandShape[x2][y2] > 0.01f) {
                             islandShape[x2][y2] += 0.2f;
                             islandShape[x2 + 1][y2 + 1] += 0.1f;
@@ -103,12 +103,12 @@ public class World {
         for (int i = 0; i < mapCoords.length; i++) {
             for (int j = 0; j < mapCoords[i].length; j++) {
                 mapCoords[i][j] = new MapCoord();
-                mapCoords[i][j].smoothElevation = smoothElevation[i+offset][j+offset];
+                mapCoords[i][j].smoothElevation = smoothElevation[i + offset][j + offset];
 //                float x = (float) i / mapCoords.length;
 //                float y = (float) j / mapCoords.length;
 //                float dist = (float)(Math.sqrt(Math.pow(Math.abs(x - 0.5f),2) + Math.pow(Math.abs(y - 0.5f),2)));
 //                mapCoords[i][j].isOcean = (islandShape[i+offset][j+offset] < Math.pow(dist+0.5f, 3));
-                mapCoords[i][j].isOcean = (islandShape[i+offset][j+offset] < 0.01f);
+                mapCoords[i][j].isOcean = (islandShape[i + offset][j + offset] < 0.01f);
                 mapCoords[i][j].x = i;
                 mapCoords[i][j].y = j;
             }
@@ -159,7 +159,7 @@ public class World {
         /*Assigns location, smoothElevation and moisture data for each Mapcoord*/
         for (int i = 0; i < mapCoords.length; i++) {
             for (int j = 0; j < mapCoords[i].length; j++) {
-                mapCoords[i][j].setMoisture(moisture[i+offset][j+offset]);
+                mapCoords[i][j].setMoisture(moisture[i + offset][j + offset]);
             }
         }
 
@@ -180,21 +180,20 @@ public class World {
 //        }
 
         /*Sets adjacenct Mapcoords for each Mapcoord*/
-        for (int i = 1; i < mapCoords.length-1; i++) {
-            for (int j = 1; j < mapCoords[i].length-1; j++) {
-                mapCoords[i][j].setEast(mapCoords[i+1][j]);
-                mapCoords[i][j].setWest(mapCoords[i-1][j]);
+        for (int i = 1; i < mapCoords.length - 1; i++) {
+            for (int j = 1; j < mapCoords[i].length - 1; j++) {
+                mapCoords[i][j].setEast(mapCoords[i + 1][j]);
+                mapCoords[i][j].setWest(mapCoords[i - 1][j]);
                 if (j % 2 == 0) {
-                    mapCoords[i][j].setNw(mapCoords[i]      [j+1]);
-                    mapCoords[i][j].setNe(mapCoords[i+1]    [j+1]);
-                    mapCoords[i][j].setSw(mapCoords[i]      [j-1]);
-                    mapCoords[i][j].setSe(mapCoords[i+1]    [j-1]);
-                }
-                else {
-                    mapCoords[i][j].setNw(mapCoords[i-1]    [j+1]);
-                    mapCoords[i][j].setNe(mapCoords[i]      [j+1]);
-                    mapCoords[i][j].setSw(mapCoords[i-1]    [j-1]);
-                    mapCoords[i][j].setSe(mapCoords[i]      [j-1]);
+                    mapCoords[i][j].setNw(mapCoords[i][j + 1]);
+                    mapCoords[i][j].setNe(mapCoords[i + 1][j + 1]);
+                    mapCoords[i][j].setSw(mapCoords[i][j - 1]);
+                    mapCoords[i][j].setSe(mapCoords[i + 1][j - 1]);
+                } else {
+                    mapCoords[i][j].setNw(mapCoords[i - 1][j + 1]);
+                    mapCoords[i][j].setNe(mapCoords[i][j + 1]);
+                    mapCoords[i][j].setSw(mapCoords[i - 1][j - 1]);
+                    mapCoords[i][j].setSe(mapCoords[i][j - 1]);
                 }
             }
         }
@@ -212,23 +211,8 @@ public class World {
 
             }
         }
-        /*Sets biome for each Mapcoord*/
-        for (int i = 0; i < mapCoords.length; i++) {
-            for (int j = 0; j < mapCoords[i].length; j++) {
-                float latitude = (float)j/mapCoords.length;
-                mapCoords[i][j].setBiome(biomeGenerator.generateBiome(
-                        islandShape[i+offset][j+offset],
-                        mapCoords[i][j].moisture,
-                        mapCoords[i][j].isRiver,
-                        mapCoords[i][j].isMountainTop,
-                        mapCoords[i][j].isMountainSide,
-                        mapCoords[i][j].isOcean,
-                        latitude
-                        )
-                );
-            }
-        }
     }
+
 
     private void buildModelVertices(float border) {
         //North West vertex
@@ -288,15 +272,7 @@ public class World {
         Random rand = new Random();
         ByteBuffer texture = BufferUtils.createByteBuffer(MESHLENGTH * MESHLENGTH * 4);
         /*Makes color terrain*/
-        for (int i = 0; i < mapCoords.length; i++) {
-            for (int j = 0; j < mapCoords[i].length; j++) {
 
-                r[i][j] = biomeGenerator.getBiomeColor(mapCoords[i][j].getBiome())[0];
-                g[i][j] = biomeGenerator.getBiomeColor(mapCoords[i][j].getBiome())[1];
-                b[i][j] = biomeGenerator.getBiomeColor(mapCoords[i][j].getBiome())[2];
-                a[i][j] = biomeGenerator.getBiomeColor(mapCoords[i][j].getBiome())[2];
-            }
-        }
 
       /*  Puts colors into bytebuffer*/
         for (int i = 0; i < mapCoords.length; i++) {

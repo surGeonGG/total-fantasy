@@ -15,18 +15,18 @@ public class Input {
     private World world;
     private Player player;
     private Light light;
-    private Terrain terrain;
+    private Terrain[][] terrains;
     private MousePicker mousePicker;
     private long windowID;
     private long rebuildTimer = 0;
     private long moveTimer = 0;
     private long clickTimer = 0;
 
-    public Input(Camera camera, long windowID, Player player, Terrain terrain, MousePicker mousePicker, Light light) {
+    public Input(Camera camera, long windowID, Player player, Terrain[][] terrains, MousePicker mousePicker, Light light) {
         this.camera = camera;
         this.windowID = windowID;
         this.player = player;
-        this.terrain = terrain;
+        this.terrains = terrains;
         this.light = light;
         this.mousePicker = mousePicker;
     }
@@ -72,13 +72,19 @@ public class Input {
         if (glfwGetKey(windowID, GLFW_KEY_SPACE) == GL_TRUE) {
             camera.printPosition();
             player.printPosition();
-            terrain.printPosition();
             camera.setPitch(90);
             camera.setYaw(0);
         }
 
         if (glfwGetKey(windowID, GLFW_KEY_F5) == GL_TRUE) {
-//            if (System.currentTimeMillis() > rebuildTimer+1000) world.rebuild();
+            if (System.currentTimeMillis() > rebuildTimer+1000) {
+                Terrain.generateTerrain();
+                for (int i = 0; i < terrains.length; i++) {
+                    for (int j = 0; j < terrains.length; j++) {
+                        terrains[j][i].generateModel();
+                    }
+                }
+            }
             rebuildTimer = System.currentTimeMillis();
         }
 

@@ -22,27 +22,28 @@ public class SimplexNoiseGenerator {
         float[][] islandShape = generateElevation(rand.nextInt(), width, height);
 //        smoothElevation = BiomeGenerator.smoothElevation(islandShape);
         //builds mountains
-        for (int i = 0; i < 200; i++) {
+        for (int i = 0; i < 300; i++) {
             int x = rand.nextInt(islandShape.length);
             int y = rand.nextInt(islandShape.length);
             if (islandShape[x][y] > 0.01f) {
                 int range = rand.nextInt(100) + 10;
-                int size = (int) (range * 1.5f);
+                int size = (int) (range * 1f);
                 boolean direction = rand.nextBoolean();
                 int plusOrMinus = rand.nextInt(2) * 2 - 1;
-                float a = (float) (Math.random() - 0.5f) / 5;
-                float b = (float) (Math.random() - 0.5f) / 5;
-                float c = (float) (Math.random() - 0.5f) / 5;
-                float e = (float) (Math.random() - 0.5f) / 5;
+                float a = (float) (Math.random() - 0.5f) / 7;
+                float b = (float) (Math.random() - 0.5f) / 7;
+                float c = (float) (Math.random() - 0.5f) / 7;
+                float d = (float) (Math.random() - 0.5f) / 7;
                 for (int j = 0; j < size; j++) {
                     int randomizer = rand.nextInt(range) - range / 2; //Where along length of mountain range. 0 if no shift in x axis
                     int x2 = x + randomizer;
-                    int y2 = rand.nextInt(10) - 5 + y + (int) (Math.pow(e * randomizer, 4) + Math.pow(a * randomizer, 3) + Math.pow(b * randomizer, 2) + c * randomizer) * plusOrMinus;
+                    int y2 = rand.nextInt(10) - 5 + y + (int) (Math.pow(d * randomizer, 4) + Math.pow(a * randomizer, 3)
+                            + Math.pow(b * randomizer, 2) + c * randomizer * Math.sin(Math.random()*100)) * plusOrMinus;
                     if (direction) {
                         y2 = y + randomizer;
-                        x2 = rand.nextInt(10) - 5 + x + (int) (Math.pow(e * randomizer, 4) + Math.pow(a * randomizer, 3) + Math.pow(b * randomizer, 2) + c * randomizer) * plusOrMinus;
+                        x2 = rand.nextInt(10) - 5 + x + (int) (Math.pow(d * randomizer, 4) + Math.pow(a * randomizer, 3)
+                                + Math.pow(b * randomizer, 2) + c * randomizer * Math.sin(Math.random()*100)) * plusOrMinus;
                     }
-                    System.out.println(i + ": " + x2 + " " + y2);
                     if (x2 > 1 && y2 > 1 && x2 < islandShape.length - 1 && y2 < islandShape.length - 1) {
                         if (islandShape[x2][y2] > 0.01f) {
                             islandShape[x2][y2] += 0.2f;
@@ -59,6 +60,7 @@ public class SimplexNoiseGenerator {
                 }
             }
         }
+        islandShape = DiverseUtilities.clamp(islandShape, min, max);
         return islandShape;
     }
 

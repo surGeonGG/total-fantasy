@@ -28,6 +28,16 @@ public class DiverseUtilities {
         return val;
     }
 
+    public static float[][] clamp(float[][] array, float lower, float upper) {
+        for (int i = 0; i < array.length; i++) {
+            for (int j = 0; j < array[i].length; j++) {
+                if (array[j][i] > upper) array[j][i] = upper;
+                if (array[j][i] < lower) array[j][i] = lower;
+            }
+        }
+        return array;
+    }
+
     public static Matrix4f createTransformationMatrix(Entity entity) {
         Matrix4f targetMatrix = new Matrix4f();
         targetMatrix.identity();

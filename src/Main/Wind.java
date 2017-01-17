@@ -52,22 +52,18 @@ public class Wind {
     
     public static float[][] spreadMoisture(float[][] moisture, float[][] ocean, float x, float y) {
         Random rand = new Random();
-
-        int windX = (int) x*(moisture.length / (rand.nextInt(30)+10));
-        int windY = (int) y*(moisture.length / (rand.nextInt(30)+10));
+        int windX = (int) x*(moisture.length / (rand.nextInt(20)+10));
+        int windY = (int) y*(moisture.length / (rand.nextInt(20)+10));
         /*int windX = (int) x* (moisture.length / 17);
         int windY = (int) y* (moisture.length / 23);*/
         float evaporation = 1;
-    
         float[][] result = new float[moisture.length][moisture[0].length];
         for (int i = 0; i < moisture.length; i++) {
             for (int j = 0; j < moisture.length; j++) {
                 if (ocean[i][j] > 0f) {
                     result[i][j] = 1f; // ocean
                 }
-
                 result[i][j] += moisture[i][j] - evaporation/255;
-
                 // Dampen the randomness
                 float wx = (float) ((20.0 + Math.random() + Math.random()) / 21.0);
                 float wy = (float) ((20.0 + Math.random() + Math.random()) / 21.0);

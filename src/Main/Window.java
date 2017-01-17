@@ -26,21 +26,29 @@ public class Window {
 
     public Window(int WINDOW_WIDTH, int WINDOW_HEIGHT, String title) {
         GLFWErrorCallback.createPrint().set();
-        if ( !glfwInit() )
+        if (!glfwInit())
             throw new IllegalStateException("Unable to initialize glfw");
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-        if ( Platform.get() == Platform.MACOSX )
+        if (Platform.get() == Platform.MACOSX)
             glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
-        if (fullscreen)
+        if (fullscreen) {
             windowID = glfwCreateWindow(1920, 1200, title, glfwGetPrimaryMonitor(), MemoryUtil.NULL);
-        else
+        }
+        else {
             windowID = glfwCreateWindow(RESOLUTION_WIDTH, RESOLUTION_HEIGHT, title, MemoryUtil.NULL, MemoryUtil.NULL);
+        }
         glfwMakeContextCurrent(windowID);
         GLCapabilities caps = GL.createCapabilities();
+        if (fullscreen) {
+            GL11.glViewport(0,0, 1200, 1200);
+        }
+        else {
+            GL11.glViewport(0, 0, RESOLUTION_WIDTH, RESOLUTION_HEIGHT);
+        }
         GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
         glfwSetWindowPos(windowID, (vidmode.width() - WINDOW_WIDTH) / 2, (vidmode.height() - WINDOW_HEIGHT) / 2 );
         if (windowID == MemoryUtil.NULL)
@@ -51,7 +59,6 @@ public class Window {
         IntBuffer height = BufferUtils.createIntBuffer(1);
         glfwGetWindowSize(windowID, width, height);
         System.out.println(width.get() + " " + height.get());
-        GL11.glViewport(0,0, RESOLUTION_WIDTH, RESOLUTION_HEIGHT);
     }
 
     public static long getWindowID() {

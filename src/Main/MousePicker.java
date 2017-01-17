@@ -10,6 +10,7 @@ import org.lwjgl.BufferUtils;
 
 import java.nio.DoubleBuffer;
 import java.nio.IntBuffer;
+import java.util.List;
 
 import static org.lwjgl.glfw.GLFW.glfwGetCursorPos;
 import static org.lwjgl.glfw.GLFW.glfwGetWindowSize;
@@ -18,7 +19,7 @@ public class MousePicker {
 
     private static final int RECURSION_COUNT = 40;
     private static final float RAY_RANGE = 600;
-    private Terrain terrain;
+    private Terrain[][] terrains;
     private Vector3f currentTerrainPoint;
     Vector3f currentRay;
     Camera camera;
@@ -26,10 +27,10 @@ public class MousePicker {
     Matrix4f projectionMatrix;
     long windowID;
 
-    public MousePicker(Camera camera, long windowID, Terrain terrain) {
+    public MousePicker(Camera camera, long windowID, Terrain[][] terrains) {
         this.windowID = windowID;
         this.camera = camera;
-        this.terrain = terrain;
+        this.terrains = terrains;
         viewMatrix = DiverseUtilities.createViewMatrix(camera);
         projectionMatrix = camera.getProjectionMatrix();
     }
@@ -39,9 +40,7 @@ public class MousePicker {
         currentRay = calculateCurrentRay();
         if (intersectionInRange(0, RAY_RANGE, currentRay)) {
             currentTerrainPoint = binarySearch(0, 0, RAY_RANGE, currentRay);
-//            System.out.println(":)");
         } else {
-//            System.out.println(":(");
             currentTerrainPoint = null;
         }
     }
@@ -72,7 +71,7 @@ public class MousePicker {
         Matrix4f invertedProjectionMatrix = new Matrix4f();
         projectionMatrix.invert(invertedProjectionMatrix);
         Vector4f eyeCoords = invertedProjectionMatrix.transform(clipCoords);
-        System.out.println(eyeCoords.x + " " + eyeCoords.y + " " + eyeCoords.z);
+//        System.out.println(eyeCoords.x + " " + eyeCoords.y + " " + eyeCoords.z);
 
         return new Vector4f(eyeCoords.x, -eyeCoords.y, -1f, 0f);
     }
@@ -105,7 +104,6 @@ public class MousePicker {
     }
 
     private Vector3f binarySearch(int count, float start, float finish, Vector3f ray) {
-//        System.out.println("Binary search: " + count);
         float half = start + ((finish - start) / 2f);
         if (count >= RECURSION_COUNT) {
             Vector3f endPoint = getPointOnRay(ray, half);
@@ -126,10 +124,6 @@ public class MousePicker {
     private boolean intersectionInRange(float start, float finish, Vector3f ray) {
         Vector3f startPoint = getPointOnRay(ray, start);
         Vector3f endPoint = getPointOnRay(ray, finish);
-//        System.out.println("startpoint: " + startPoint);
-//        System.out.println("endpoint: " + endPoint);
-//        System.out.println(isUnderGround(startPoint) );
-//        System.out.println(isUnderGround(endPoint) );
         if (!isUnderGround(startPoint) && isUnderGround(endPoint)) {
             return true;
         } else {
@@ -141,8 +135,7 @@ public class MousePicker {
         Terrain terrain = getMap(testPoint.x, testPoint.z);
         float height = 0;
         if (terrain != null) {
-            height = terrain.getHeightOfMap(testPoint.x, testPoint.z);
-//            System.out.println("mapheight: " + height);
+            height = terrain.getHeight((int) testPoint.x, (int) testPoint.z);
         }
         if (testPoint.y < height) {
             return true;
@@ -152,7 +145,19 @@ public class MousePicker {
     }
 
     private Terrain getMap(float worldX, float worldZ) {
-        return terrain;
+        int widthPerTile = Game.WIDTH/Game.NUMBER_OF_TILES_X;
+        int heightPerTile = Game.HEIGHT/Game.NUMBER_OF_TILES_Y;
+        int x = (int) (worldX / widthPerTile);
+        int y = (int) (worldZ / heightPerTile);
+        if (x > Game.NUMBER_OF_TILES_X - 1)
+            x = Game.NUMBER_OF_TILES_X - 1;
+        if (y > Game.NUMBER_OF_TILES_Y - 1)
+            y = Game.NUMBER_OF_TILES_Y - 1;
+        if (x < 0)
+            x = 0;
+        if (y < 0)
+            y = 0;
+        return  terrains[x][y];
     }
 
     public Vector3f getCurrentTerrainPoint() {

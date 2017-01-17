@@ -40,6 +40,10 @@ public class Main {
         GL.createCapabilities();
         glEnable(GL_TEXTURE_2D);
         glEnable(GL_DEPTH_TEST);
+        glEnable(GL_CULL_FACE);
+//        glEnable(GL_BLEND);
+//        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glCullFace(GL_BACK);
         glClearColor(0.5f, 0.5f, 0.4f, 1);
         game = new Game(window);
     }

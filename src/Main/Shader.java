@@ -77,6 +77,8 @@ public class Shader {
         glUseProgram(program);
     }
 
+    public void unbind() { glUseProgram(0); }
+
     static String readShader(String filename) {
         String line;
         StringBuilder builder = new StringBuilder();

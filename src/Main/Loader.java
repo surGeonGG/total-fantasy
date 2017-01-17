@@ -82,15 +82,30 @@ public class Loader {
     public ByteBuffer loadImageFileToByteBuffer(String filename) {
         BufferedImage bufferedImage = loadFileToBufferedImage("res/textures/"+filename);
         ByteBuffer byteBuffer = BufferUtils.createByteBuffer(bufferedImage.getWidth() * bufferedImage.getHeight() * 4);
-        System.out.println(bufferedImage.getWidth() + " - " + bufferedImage.getHeight());
-        for (int i = 0; i < bufferedImage.getWidth(); i++) {
-            for (int j = 0; j < bufferedImage.getHeight(); j++) {
+        for (int i = 0; i < bufferedImage.getHeight(); i++) {
+            for (int j = 0; j < bufferedImage.getWidth(); j++) {
                 int color = bufferedImage.getRGB(j, i);
                 byteBuffer.put((byte) (color >> 16 & 0xff)); //red
+//                System.out.println((byte) (color >> 16 & 0xff));
                 byteBuffer.put((byte) (color >> 8 & 0xff)); //green
                 byteBuffer.put((byte) (color & 0xff)); // blue
                 byteBuffer.put((byte) (color >> 24 & 0xff)); //alpha
 
+            }
+        }
+        byteBuffer.flip();
+        return byteBuffer;
+    }
+
+    public ByteBuffer loadArrayToByteBuffer(float[][] array, float[][] array2, float[][] array3) {
+        ByteBuffer byteBuffer = BufferUtils.createByteBuffer(array.length * array[0].length * 4);
+//        System.out.println(bufferedImage.getWidth() + " - " + bufferedImage.getHeight());
+        for (int i = 0; i < array.length; i++) {
+            for (int j = 0; j < array[i].length; j++) {
+                byteBuffer.put((byte) (array[j][i] * (float) 255)); //red
+                byteBuffer.put((byte) (array2[j][i] * (float) 255)); //green
+                byteBuffer.put((byte) (array3[j][i] * (float) 255)); //blue
+                byteBuffer.put((byte) (array[j][i] * (float) 255)); //alpha
             }
         }
         byteBuffer.flip();
@@ -242,5 +257,10 @@ public class Loader {
         buffer.put(data);
         buffer.flip();
         return buffer;
+    }
+
+    public Texture createTextureFromImageFile(String filename, int width, int height) {
+        ByteBuffer texByteBuffer = loadImageFileToByteBuffer(filename);
+        return createTextureFromByteBuffer(texByteBuffer, width, height);
     }
 }

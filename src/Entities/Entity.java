@@ -5,11 +5,20 @@ import Utils.DiverseUtilities;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
-public abstract class Entity {
+public class Entity {
 
-    private TexturedModel model;
+    private TexturedModel texturedModel;
     private Vector3f position = new Vector3f(0,0,0);
     private float rx = 0, ry = 0, rz = 0, scale = 1;
+
+    public Entity(TexturedModel texturedModel, Vector3f position, float rx, float ry, float rz, float scale) {
+        this.texturedModel = texturedModel;
+        this.position = position;
+        this.rx = rx;
+        this.ry = ry;
+        this.rz = rz;
+        this.scale = scale;
+    }
 
     public Entity() {
     }
@@ -36,11 +45,11 @@ public abstract class Entity {
     }
 
     public TexturedModel getModel() {
-        return model;
+        return texturedModel;
     }
 
     public void setModel(TexturedModel model) {
-        this.model = model;
+        this.texturedModel = model;
     }
 
     public Vector3f getPosition() {
