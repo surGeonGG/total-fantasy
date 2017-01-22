@@ -5,12 +5,9 @@ import java.util.Random;
 public class ArrayManipulation {
 
     public static float[][] gaussianBlur2Df(float[][] array) {
-
         float[][] tempArray = array;
-
         for (int i = 1; i < tempArray.length-1; i++) {
             for (int j = 1; j < tempArray.length-1; j++) {
-
                 array[i][j] = (
                         tempArray[i+1][j+1] +
                         tempArray[i-1][j-1] +

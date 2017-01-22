@@ -2,6 +2,7 @@ package Utils;
 
 import Entities.Entity;
 import Main.Camera;
+import Terrains.Ocean;
 import Terrains.Terrain;
 import nuklear.IOUtil;
 import org.joml.Matrix4f;
@@ -57,6 +58,17 @@ public class DiverseUtilities {
         targetMatrix.rotate((float) Math.toRadians(terrain.getRy()), new Vector3f(0,1,0));
         targetMatrix.rotate((float) Math.toRadians(terrain.getRz()), new Vector3f(0,0,1));
         targetMatrix.scale(new Vector3f(terrain.getScale(), terrain.getScale(), terrain.getScale()));
+        return targetMatrix;
+    }
+
+    public static Matrix4f createTransformationMatrix(Ocean ocean) {
+        Matrix4f targetMatrix = new Matrix4f();
+        targetMatrix.identity();
+        targetMatrix.translate(ocean.getPosition());
+        targetMatrix.rotate((float) Math.toRadians(ocean.getRx()), new Vector3f(1,0,0));
+        targetMatrix.rotate((float) Math.toRadians(ocean.getRy()), new Vector3f(0,1,0));
+        targetMatrix.rotate((float) Math.toRadians(ocean.getRz()), new Vector3f(0,0,1));
+        targetMatrix.scale(new Vector3f(ocean.getScale(), ocean.getScale(), ocean.getScale()));
         return targetMatrix;
     }
 

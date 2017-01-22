@@ -18,7 +18,7 @@ import static org.lwjgl.glfw.GLFW.glfwGetWindowSize;
 public class MousePicker {
 
     private static final int RECURSION_COUNT = 40;
-    private static final float RAY_RANGE = 600;
+    private static final float RAY_RANGE = 6000;
     private Terrain[][] terrains;
     private Vector3f currentTerrainPoint;
     Vector3f currentRay;

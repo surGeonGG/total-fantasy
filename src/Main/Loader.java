@@ -97,20 +97,34 @@ public class Loader {
         return byteBuffer;
     }
 
-    public ByteBuffer loadArrayToByteBuffer(float[][] array, float[][] array2, float[][] array3) {
+    public ByteBuffer loadArrayToByteBuffer(float[][] array, float[][] array2, float[][] array3, float[][] array4) {
         ByteBuffer byteBuffer = BufferUtils.createByteBuffer(array.length * array[0].length * 4);
-//        System.out.println(bufferedImage.getWidth() + " - " + bufferedImage.getHeight());
         for (int i = 0; i < array.length; i++) {
             for (int j = 0; j < array[i].length; j++) {
                 byteBuffer.put((byte) (array[j][i] * (float) 255)); //red
                 byteBuffer.put((byte) (array2[j][i] * (float) 255)); //green
                 byteBuffer.put((byte) (array3[j][i] * (float) 255)); //blue
+                byteBuffer.put((byte) (array4[j][i] * (float) 255)); //alpha
+            }
+        }
+        byteBuffer.flip();
+        return byteBuffer;
+    }
+
+    public ByteBuffer loadArrayToByteBuffer(float[][] array, float[][] array2) {
+        ByteBuffer byteBuffer = BufferUtils.createByteBuffer(array.length * array[0].length * 4);
+        for (int i = 0; i < array.length; i++) {
+            for (int j = 0; j < array[i].length; j++) {
+                byteBuffer.put((byte) (array[j][i] * (float) 255)); //red
+                byteBuffer.put((byte) (array2[j][i] * (float) 255)); //green
+                byteBuffer.put((byte) (array[j][i] * (float) 255)); //blue
                 byteBuffer.put((byte) (array[j][i] * (float) 255)); //alpha
             }
         }
         byteBuffer.flip();
         return byteBuffer;
     }
+
 
 //    public Texture loadImageFileToArray(String path) {
 //        BufferedImage bufferedImage = loadFileToBufferedImage(path);

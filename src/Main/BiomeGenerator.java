@@ -9,7 +9,9 @@ public class BiomeGenerator {
     public static final float MOUNTAIN = 0.3f;
     public static final float SNOW = 0.5f;
 
-    public static float[][] generateBiome(float[][] textureMap, float[][] heightMap, float[][] moistureMap ) {
+    public static void generateBiome(float[][] heightMap, float[][] moistureMap, float[][] grassMap,
+                                     float[][] desertMap, float[][] mountainMap, float[][] snowMap,
+                                     float[][] waterMap, float[][] forestMap) {
 
 //        float mountainLevel = 0.3f;
 //        latitude = ((latitude-0.5f)*3)+0.5f;
@@ -22,34 +24,37 @@ public class BiomeGenerator {
 
         for (int i = 0; i < heightMap.length; i++) {
             for (int j = 0; j < heightMap[i].length; j++) {
-                float latitude = (float) i/ (float) heightMap.length;
-                textureMap[j][i] = evaluateTerrain(heightMap[j][i], moistureMap[j][i], latitude);
+                float latitude = ((float) i / (float) heightMap.length + (float) j / (float) heightMap[i].length) / 2;
+                latitude = ((latitude-0.5f)*3)+0.7f;
+                float height = heightMap[j][i];
+                float moisture = moistureMap[j][i];
+                float snowLine = -(latitude-1)+0.2f;
+                grassMap[j][i] = 0;
+                desertMap[j][i] = 0;
+                mountainMap[j][i] = 0;
+                snowMap[j][i] = 0;
+                waterMap[j][i] = 0;
+                forestMap[j][i] = 0;
+                if (height >= snowLine) {
+                    if (moisture > 0.5f)
+                        snowMap[j][i] = 1f;
+                    else
+                        mountainMap[j][i] = 1f;
+                }
+                else if (height > 0.25f) {
+                    mountainMap[j][i] = 1f;
+                }
+                else if (height >= 0.1f && moisture > 0.6f) {
+                    forestMap[j][i] = 1f;
+                }
+                else if (moisture > 0.5f) {
+                    grassMap[j][i] = 1f;
+                }
+                else
+                    desertMap[j][i] = 1f;
             }
         }
-        return textureMap;
     }
-
-    private static float evaluateTerrain(float height, float moisture, float latitude) {
-
-        latitude = ((latitude-0.5f)*3)+0.5f;
-        float snowLine = -(latitude-1)+0.2f;
-//        System.out.printf("ltd %.3f snw %.3f \n", latitude, snowLine);
-        if (height == 0f)
-            return OCEAN;
-        else if (height >= snowLine) {
-            if (moisture > 0.5f)
-                return SNOW;
-        }
-        else if (height >= 0.25f) {
-            return MOUNTAIN;
-        }
-        else if (moisture > 0.5f) {
-            return GRASSLAND;
-        }
-        return DESERT;
-    }
-
-
 
     public static float[][] smoothElevation(float[][] elevation) {
         float[][] elevationCopy = new float[elevation.length][elevation[0].length];

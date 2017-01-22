@@ -4,6 +4,7 @@ import Entities.Entity;
 import Entities.Light;
 import Entities.Player;
 import Gui.Gui;
+import Terrains.Ocean;
 import Terrains.Terrain;
 import org.joml.Vector3f;
 
@@ -27,7 +28,6 @@ public class Game {
     public static final int NUMBER_OF_TILES_X = 4;
     public static final int NUMBER_OF_TILES_Y = 4;
 
-    Terrain terrain;
     private Camera camera;
     private Window window;
     private MousePicker mousePicker;
@@ -37,7 +37,6 @@ public class Game {
     private Loader loader;
     private Gui gui;
     private Light light;
-    private Shader shader;
 
     public Game(Window window) {
         this.window = window;
@@ -45,9 +44,6 @@ public class Game {
 //        gui = new Gui(WINDOW_WIDTH, WINDOW_HEIGHT, this);
 //        gui.run(window.getWindowID());
         light = new Light(new Vector3f(500,500,500), new Vector3f(1,0.8f,1));
-        shader = new Shader("terrain");
-        shader.bind();
-        shader.setUniform("projectionMatrix", camera.getProjectionMatrix());
         loader = new Loader();
         renderer = new Renderer(camera);
         player = new Player(new Vector3f(500,1,500), camera, loader, renderer);
@@ -61,22 +57,23 @@ public class Game {
         Terrain[][] terrains = new Terrain[NUMBER_OF_TILES_X][NUMBER_OF_TILES_Y];
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
-                terrains[j][i] = new Terrain(camera, shader, renderer, j, i);
+                terrains[j][i] = new Terrain(renderer, j, i);
             }
         }
+        Ocean ocean = new Ocean(renderer);
         List<Entity> entities = new ArrayList<>();
-        for (int i = 0; i < 1000; i++) {
-            int x = random.nextInt(1000);
-            int z = random.nextInt(1000);
-            entities.add(new Entity(texturedModel, new Vector3f(x, Terrain.getHeight(x, z), z), 0f, 0f, 0f, 0.1f));
-        }
+//        for (int i = 0; i < 1000; i++) {
+//            int x = random.nextInt(1000);
+//            int z = random.nextInt(1000);
+//            entities.add(new Entity(texturedModel, new Vector3f(x, Terrain.getHeight(x, z), z), 0f, 0f, 0f, 0.1f));
+//        }
         mousePicker = new MousePicker(camera, window.getWindowID(), terrains);
         input = new Input(camera, window.getWindowID(), player, terrains, mousePicker, light);
-        gameLoop(entities, terrains);
+        gameLoop(entities, terrains, ocean);
         cleanUp();
     }
 
-    private void gameLoop(List<Entity> entities, Terrain[][] terrains) {
+    private void gameLoop(List<Entity> entities, Terrain[][] terrains, Ocean ocean) {
         long delta = 0;
         long sysTime = System.currentTimeMillis();
         while (!glfwWindowShouldClose(window.getWindowID())) {
@@ -91,6 +88,7 @@ public class Game {
                             && entity.getPosition().z > player.getPosition().z - 100)
                         renderer.renderEntity(entity, light);
                 }
+                renderer.renderOcean(ocean, light);
                 for (Terrain[] terrains2 : terrains) {
                     for (Terrain terrain : terrains2) {
 //                    if (terrain.getPosition().x < player.getPosition().x + 100

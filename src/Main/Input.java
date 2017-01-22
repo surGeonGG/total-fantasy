@@ -133,6 +133,7 @@ public class Input {
 //                System.out.println("Current ray: " + mousePicker.getCurrentRay().x + " " + mousePicker.getCurrentRay().y + " " + mousePicker.getCurrentRay().z);
                 clickTimer = System.currentTimeMillis();
             }
+            camera.calculateCameraPosition();
         }
     }
 }
