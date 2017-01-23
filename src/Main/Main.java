@@ -17,7 +17,7 @@ import static org.lwjgl.opengl.GL11.*;
 public class Main {
 
     public static final float min = -1.0f, max = 1.0f;
-    public static final int WINDOW_WIDTH = 1000, WINDOW_HEIGHT = 1000;
+    public static final int WINDOW_WIDTH = 1920, WINDOW_HEIGHT = 1200;
 //    private static EventHandler eventHandler;
     private static SQLite sqLite;
 //    private static World world;
@@ -44,7 +44,7 @@ public class Main {
 //        glEnable(GL_BLEND);
 //        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glCullFace(GL_BACK);
-        glClearColor(0.5f, 0.5f, 0.4f, 1);
+        glClearColor(0.53f, 0.8f, 0.92f, 1);
         game = new Game(window);
     }
     public static void main(String[] args) {

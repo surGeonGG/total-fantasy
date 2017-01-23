@@ -13,12 +13,16 @@ import java.nio.*;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.ARBDebugOutput.*;
+import static org.lwjgl.opengl.GL11.glLoadIdentity;
+import static org.lwjgl.opengl.GL11.glMatrixMode;
 import static org.lwjgl.opengl.GL43.*;
 
 public class Window {
 
     private static long windowID;
-    private static final boolean fullscreen = false;
+    private static final boolean fullscreen = true;
+    private final int FULLSCREEN_WIDTH = 1920;
+    private final int FULLSCREEN_HEIGHT = 1200;
     private final int RESOLUTION_WIDTH = 1000;
     private final int RESOLUTION_HEIGHT = 1000;
 
@@ -36,7 +40,7 @@ public class Window {
         if (Platform.get() == Platform.MACOSX)
             glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
         if (fullscreen) {
-            windowID = glfwCreateWindow(1920, 1200, title, glfwGetPrimaryMonitor(), MemoryUtil.NULL);
+            windowID = glfwCreateWindow(FULLSCREEN_WIDTH, FULLSCREEN_WIDTH, title, glfwGetPrimaryMonitor(), MemoryUtil.NULL);
         }
         else {
             windowID = glfwCreateWindow(RESOLUTION_WIDTH, RESOLUTION_HEIGHT, title, MemoryUtil.NULL, MemoryUtil.NULL);
@@ -44,7 +48,7 @@ public class Window {
         glfwMakeContextCurrent(windowID);
         GLCapabilities caps = GL.createCapabilities();
         if (fullscreen) {
-            GL11.glViewport(0,0, 1200, 1200);
+            GL11.glViewport(0,0, FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT);
         }
         else {
             GL11.glViewport(0, 0, RESOLUTION_WIDTH, RESOLUTION_HEIGHT);

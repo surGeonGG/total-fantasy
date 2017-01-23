@@ -20,7 +20,7 @@ void main() {
     vec3 unitNormal = normalize(pass_normal);
     vec3 unitTowardsLightVector = normalize(pass_towardsLightVector);
     float brightness = dot(unitNormal, unitTowardsLightVector);
-    brightness = max(brightness, 0.3);
+    brightness = max(brightness, 0.8);
     vec2 scaledTexCoords = pass_texCoords * 50;
 
     vec4 grassDesertMountainSnow = texture(grassDesertMountainSnowSampler, pass_texCoords);

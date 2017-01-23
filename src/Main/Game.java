@@ -13,8 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static Main.Main.WINDOW_HEIGHT;
-import static Main.Main.WINDOW_WIDTH;
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.glfwSetErrorCallback;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
@@ -40,8 +38,8 @@ public class Game {
 
     public Game(Window window) {
         this.window = window;
-        camera = new Camera(WINDOW_WIDTH, WINDOW_HEIGHT);
-//        gui = new Gui(WINDOW_WIDTH, WINDOW_HEIGHT, this);
+        camera = new Camera(Main.WINDOW_WIDTH, Main.WINDOW_HEIGHT);
+//        gui = new Gui(Main.WINDOW_WIDTH, Main.WINDOW_HEIGHT, this);
 //        gui.run(window.getWindowID());
         light = new Light(new Vector3f(500,500,500), new Vector3f(1,0.8f,1));
         loader = new Loader();

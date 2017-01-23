@@ -108,7 +108,7 @@ public class SimplexNoiseGenerator {
                 float dist = (float)(Math.sqrt(Math.pow(Math.abs(xDist - 0.5f),2) + Math.pow(Math.abs(yDist - 0.5f),2)));
                 tempMap[x][y] -= Math.pow(dist+0.5f, 3);
                 tempMap[x][y] /= 3;
-                if (tempMap[x][y] <= 0) tempMap[x][y] = -10;
+                if (tempMap[x][y] <= 0) tempMap[x][y] = -1;
                 tempMap[x][y] = DiverseUtilities.clamp(tempMap[x][y], min, 0.25f);
             }
         }

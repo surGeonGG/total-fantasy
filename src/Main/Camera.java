@@ -22,7 +22,7 @@ public class Camera {
     private Player player;
 
     public Camera(int width, int height) {
-        aspectRatio = width / height;
+        aspectRatio = (float) width / (float) height;
         projection = new Matrix4f();
         projection.identity();
         float y_scale = (float) ((float) 1/Math.tan(Math.toRadians(FOV/2f)));
