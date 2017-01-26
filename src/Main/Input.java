@@ -120,17 +120,27 @@ public class Input {
             }
         }
 
+        if (glfwGetMouseButton(windowID, GLFW_MOUSE_BUTTON_2) == GL_TRUE) {
+//            camera.printPosition();
+            if (System.currentTimeMillis() > clickTimer+200) {
+                mousePicker.update();
+                Vector3f mapPoint = mousePicker.getCurrentTerrainPoint();
+                if (mapPoint != null) {
+                    player.setPosition(mapPoint);
+                }
+                clickTimer = System.currentTimeMillis();
+            }
+            camera.calculateCameraPosition();
+        }
+
         if (glfwGetMouseButton(windowID, GLFW_MOUSE_BUTTON_1) == GL_TRUE) {
 //            camera.printPosition();
             if (System.currentTimeMillis() > clickTimer+200) {
                 mousePicker.update();
                 Vector3f mapPoint = mousePicker.getCurrentTerrainPoint();
                 if (mapPoint != null) {
-//                    System.out.println("Terrain point: " + mapPoint.x + " " + mapPoint.y + " " + mapPoint.z);
-//                    player.moveTo(mapPoint);
-                    player.setPosition(mapPoint);
+                    player.moveTo(mapPoint);
                 }
-//                System.out.println("Current ray: " + mousePicker.getCurrentRay().x + " " + mousePicker.getCurrentRay().y + " " + mousePicker.getCurrentRay().z);
                 clickTimer = System.currentTimeMillis();
             }
             camera.calculateCameraPosition();

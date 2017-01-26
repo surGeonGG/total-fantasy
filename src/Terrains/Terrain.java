@@ -82,10 +82,9 @@ public class Terrain {
             ArrayManipulation.gaussianBlur2Df(desertMap);
             ArrayManipulation.gaussianBlur2Df(waterMap);
             ArrayManipulation.gaussianBlur2Df(forestMap);
+            ArrayManipulation.gaussianBlur2Df(mountainMap);
             ArrayManipulation.gaussianBlur2Df(snowMap);
         }
-        ArrayManipulation.gaussianBlur2Df(mountainMap);
-
         mountainTexture = loader.createTextureFromImageFile("Rock1.png", 1024, 1024);
         grassTexture = loader.createTextureFromImageFile("grassland.png", 1024, 1024);
         forestTexture = loader.createTextureFromImageFile("forest.png", 1024, 1024);

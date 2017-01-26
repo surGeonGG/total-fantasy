@@ -85,12 +85,10 @@ public class Camera {
 
     public void setPitch(float pitch) {
         this.pitch = pitch;
-        calculateCameraPosition();
     }
 
     public void setYaw(float yaw) {
         this.yaw = yaw;
-        calculateCameraPosition();
     }
 
     public float getPitch() {

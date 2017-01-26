@@ -104,6 +104,7 @@ public class Game {
     public void update() {
         window.update();
         input.update();
+        camera.calculateCameraPosition();
     }
 
     public void render(){

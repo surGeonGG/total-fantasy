@@ -49,7 +49,7 @@ public class Player extends Entity {
     }
 
     public void moveTo(Vector3f moveTo) {
-        this.moveTo = moveTo.add(0,0.5f,0);
+        this.moveTo = moveTo;
     }
 
     @Override
