@@ -1,15 +1,8 @@
 package Main;
 
 import Database.SQLite;
-import Entities.Player;
-import Gui.Gui;
-import org.joml.Vector3f;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL;
 
-import java.nio.DoubleBuffer;
-
-import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 
@@ -17,7 +10,7 @@ import static org.lwjgl.opengl.GL11.*;
 public class Main {
 
     public static final float min = -1.0f, max = 1.0f;
-    public static final int WINDOW_WIDTH = 1920, WINDOW_HEIGHT = 1200;
+    public static final int WINDOW_WIDTH = 1920, WINDOW_HEIGHT = 1080;
 //    private static EventHandler eventHandler;
     private static SQLite sqLite;
 //    private static World world;

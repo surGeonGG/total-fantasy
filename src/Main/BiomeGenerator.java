@@ -35,6 +35,8 @@ public class BiomeGenerator {
                 snowMap[j][i] = 0;
                 waterMap[j][i] = 0;
                 forestMap[j][i] = 0;
+//                if (height < 0)
+//                    desertMap[j][i] = 1f;
                 if (height >= snowLine) {
                     if (moisture > 0.5f)
                         snowMap[j][i] = 1f;

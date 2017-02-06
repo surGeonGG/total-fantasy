@@ -22,7 +22,7 @@ public class Window {
     private static long windowID;
     private static final boolean fullscreen = true;
     private final int FULLSCREEN_WIDTH = 1920;
-    private final int FULLSCREEN_HEIGHT = 1200;
+    private final int FULLSCREEN_HEIGHT = 1080;
     private final int RESOLUTION_WIDTH = 1000;
     private final int RESOLUTION_HEIGHT = 1000;
 

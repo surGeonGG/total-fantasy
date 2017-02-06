@@ -1,25 +1,15 @@
 package Utils;
 
 import Entities.Entity;
+import Gui.GuiElement;
 import Main.Camera;
 import Terrains.Ocean;
 import Terrains.Terrain;
-import nuklear.IOUtil;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
-import java.nio.channels.SeekableByteChannel;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import static org.lwjgl.BufferUtils.createByteBuffer;
 
 public class DiverseUtilities {
 
@@ -37,6 +27,18 @@ public class DiverseUtilities {
             }
         }
         return array;
+    }
+
+    public static float[][] clampAndCopy(float[][] array, float lower, float upper) {
+        float[][] newArray = new float[array.length][array[0].length];
+        for (int i = 0; i < array.length; i++) {
+            for (int j = 0; j < array[i].length; j++) {
+                newArray[j][i] = array[j][i];
+                if (array[j][i] > upper) newArray[j][i] = upper;
+                if (array[j][i] < lower) newArray[j][i] = lower;
+            }
+        }
+        return newArray;
     }
 
     public static Matrix4f createTransformationMatrix(Entity entity) {
@@ -72,6 +74,14 @@ public class DiverseUtilities {
         return targetMatrix;
     }
 
+    public static Matrix4f createTransformationMatrix(GuiElement guiElement) {
+        Matrix4f targetMatrix = new Matrix4f();
+        targetMatrix.identity();
+        targetMatrix.translate(guiElement.getPosition());
+        targetMatrix.scale(new Vector3f(guiElement.getScale().x, guiElement.getScale().y, 1));
+        return targetMatrix;
+    }
+
     public static Matrix4f createViewMatrix(Camera camera) {
         Matrix4f targetMatrix = new Matrix4f();
         targetMatrix.identity();
@@ -81,33 +91,6 @@ public class DiverseUtilities {
                 camera.getPosition().z).mul(-1);
         targetMatrix.translate(negativeCameraPosition);
         return targetMatrix;
-    }
-
-    public static ByteBuffer ioResourceToByteBuffer(String resource, int bufferSize) throws IOException {
-        ByteBuffer buffer;
-        Path path = Paths.get(resource);
-        if ( Files.isReadable(path) ) {
-            try (SeekableByteChannel fc = Files.newByteChannel(path)) {
-                buffer = BufferUtils.createByteBuffer((int)fc.size() + 1);
-                while ( fc.read(buffer) != -1 ) ;
-            }
-        } else {
-            try (
-                    InputStream source = IOUtil.class.getClassLoader().getResourceAsStream(resource);
-                    ReadableByteChannel rbc = Channels.newChannel(source)
-            ) {
-                buffer = createByteBuffer(bufferSize);
-                while ( true ) {
-                    int bytes = rbc.read(buffer);
-                    if ( bytes == -1 )
-                        break;
-                    if ( buffer.remaining() == 0 )
-                        buffer = resizeBuffer(buffer, buffer.capacity() * 2);
-                }
-            }
-        }
-        buffer.flip();
-        return buffer;
     }
 
     private static ByteBuffer resizeBuffer(ByteBuffer buffer, int newCapacity) {

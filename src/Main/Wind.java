@@ -52,8 +52,8 @@ public class Wind {
     
     public static float[][] spreadMoisture(float[][] moisture, float[][] ocean, float x, float y) {
         Random rand = new Random();
-        int windX = (int) x*(moisture.length / (rand.nextInt(20)+10));
-        int windY = (int) y*(moisture.length / (rand.nextInt(20)+10));
+        int windX = (int) (x*(moisture.length / (rand.nextInt(20)+10)));
+        int windY = (int) (y*(moisture.length / (rand.nextInt(20)+10)));
         /*int windX = (int) x* (moisture.length / 17);
         int windY = (int) y* (moisture.length / 23);*/
         float evaporation = 1;
@@ -65,10 +65,12 @@ public class Wind {
                 }
                 result[i][j] += moisture[i][j] - evaporation/255;
                 // Dampen the randomness
-                float wx = (float) ((20.0 + Math.random() + Math.random()) / 21.0);
-                float wy = (float) ((20.0 + Math.random() + Math.random()) / 21.0);
-                int i2 = i + (int) (windX * wx);
-                int j2 = j + (int) (windY * wy);
+//                float wx = (float) ((1000.0 + Math.random() + Math.random()) / 1001.0);
+//                float wy = (float) ((1000.0 + Math.random() + Math.random()) / 1001.0);
+//                int i2 = i + (int) (windX * wx);
+//                int j2 = j + (int) (windY * wy);
+                int i2 = i + (int) (windX);
+                int j2 = j + (int) (windY);
 //                i2 %= moisture.length;
 //                j2 %= moisture.length;
                 if (j2 < 0 || j2 > moisture.length-1) continue;

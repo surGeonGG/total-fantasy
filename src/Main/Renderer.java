@@ -18,9 +18,10 @@ import static org.lwjgl.opengles.GLES20.GL_TEXTURE3;
 public class Renderer {
 
     private Camera camera;
-    Shader terrainShader;
-    Shader entityShader;
-    Shader oceanShader;
+    private Shader terrainShader;
+    private Shader entityShader;
+    private Shader oceanShader;
+    private Shader guiShader;
 
 
     public Renderer(Camera camera) {
@@ -28,12 +29,14 @@ public class Renderer {
         terrainShader = new Shader("terrain");
         entityShader = new Shader("entity");
         oceanShader = new Shader("ocean");
+        guiShader = new Shader("gui");
         terrainShader.bind();
         terrainShader.setUniform("projectionMatrix", camera.getProjectionMatrix());
         entityShader.bind();
         entityShader.setUniform("projectionMatrix", camera.getProjectionMatrix());
         oceanShader.bind();
         oceanShader.setUniform("projectionMatrix", camera.getProjectionMatrix());
+        guiShader.bind();
     }
 
     public void prepare(){
@@ -99,6 +102,7 @@ public class Renderer {
         terrainShader.setUniform("viewMatrix", DiverseUtilities.createViewMatrix(camera));
         terrainShader.setUniform("lightPosition", light.getPosition());
         terrainShader.setUniform("lightColor", light.getColor());
+        terrainShader.setUniform("season", terrain.getSeason());
         RawModel rawModel = terrain.getRawModel();
         GL30.glBindVertexArray(rawModel.getVaoID());
         GL20.glEnableVertexAttribArray(0);
@@ -113,21 +117,21 @@ public class Renderer {
         glActiveTexture(GL_TEXTURE3);
         glBindTexture(GL_TEXTURE_2D, terrain.getSnowTexture().getTexID());
         glActiveTexture(GL_TEXTURE4);
-        glBindTexture(GL_TEXTURE_2D, terrain.getGrassDesertMountainSnowMapTexture().getTexID());
+        glBindTexture(GL_TEXTURE_2D, terrain.getHeightMoisture().getTexID());
         glActiveTexture(GL_TEXTURE5);
-        glBindTexture(GL_TEXTURE_2D, terrain.getWaterTexture().getTexID());
-        glActiveTexture(GL_TEXTURE6);
         glBindTexture(GL_TEXTURE_2D, terrain.getForestTexture().getTexID());
+        glActiveTexture(GL_TEXTURE6);
+        glBindTexture(GL_TEXTURE_2D, terrain.getPermTexture().getTexID());
         glActiveTexture(GL_TEXTURE7);
-        glBindTexture(GL_TEXTURE_2D, terrain.getWaterForestMapTexture().getTexID());
+        glBindTexture(GL_TEXTURE_1D, terrain.getSimplexTexture().getTexID());
         terrainShader.setUniform("mountainTextureSampler", 0);
         terrainShader.setUniform("grassTextureSampler", 1);
         terrainShader.setUniform("desertTextureSampler", 2);
         terrainShader.setUniform("snowTextureSampler", 3);
-        terrainShader.setUniform("grassDesertMountainSnowSampler", 4);
-        terrainShader.setUniform("waterTextureSampler", 5);
-        terrainShader.setUniform("forestTextureSampler", 6);
-        terrainShader.setUniform("waterForestSampler", 7);
+        terrainShader.setUniform("height_moisture", 4);
+        terrainShader.setUniform("forestTextureSampler", 5);
+        terrainShader.setUniform("permTexture", 6);
+        terrainShader.setUniform("simplexTexture", 7);
         glDrawElements(GL_TRIANGLES, rawModel.getVertexCount(), GL_UNSIGNED_INT, 0);
         terrainShader.unbind();
         GL20.glDisableVertexAttribArray(0);
@@ -156,6 +160,28 @@ public class Renderer {
         GL20.glDisableVertexAttribArray(0);
         GL20.glDisableVertexAttribArray(1);
         GL20.glDisableVertexAttribArray(2);
+        GL30.glBindVertexArray(0);
+    }
+
+    public void renderGui(Gui.GuiElement guiElement) {
+        Matrix4f transformationMatrix = DiverseUtilities.createTransformationMatrix(guiElement);
+        guiShader.bind();
+        guiShader.setUniform("transformationMatrix", transformationMatrix);
+//        guiShader.setUniform("viewMatrix", DiverseUtilities.createViewMatrix(camera));
+        RawModel rawModel = guiElement.getRawModel();
+        GL30.glBindVertexArray(rawModel.getVaoID());
+        GL20.glEnableVertexAttribArray(0);
+        glEnable(GL_BLEND);
+        glDisable(GL_DEPTH_TEST);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, guiElement.getTexture().getTexID());
+        oceanShader.setUniform("textureSampler", 0);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, rawModel.getVertexCount());
+        guiShader.unbind();
+        glEnable(GL_DEPTH_TEST);
+        glDisable(GL_BLEND);
+        GL20.glDisableVertexAttribArray(0);
         GL30.glBindVertexArray(0);
     }
 }

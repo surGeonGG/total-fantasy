@@ -12,7 +12,6 @@ import static org.lwjgl.opengl.GL11.glGetLightf;
 public class Input {
 
     private Camera camera;
-    private World world;
     private Player player;
     private Light light;
     private Terrain[][] terrains;
@@ -20,6 +19,7 @@ public class Input {
     private long windowID;
     private long rebuildTimer = 0;
     private long moveTimer = 0;
+    private long zoomTimer = 0;
     private long clickTimer = 0;
 
     public Input(Camera camera, long windowID, Player player, Terrain[][] terrains, MousePicker mousePicker, Light light) {
@@ -46,11 +46,17 @@ public class Input {
         }
 
         if (glfwGetKey(windowID, GLFW_KEY_KP_ADD) == GL_TRUE) {
-            camera.zoom(1f);
+            if (System.currentTimeMillis() > zoomTimer+20) {
+                camera.zoom(2f);
+                zoomTimer = System.currentTimeMillis();
+            }
         }
 
         if (glfwGetKey(windowID, GLFW_KEY_KP_SUBTRACT) == GL_TRUE) {
-            camera.zoom(-1f);
+            if (System.currentTimeMillis() > zoomTimer+20) {
+                camera.zoom(-2f);
+                zoomTimer = System.currentTimeMillis();
+            }
         }
 
 //        if (glfwGetKey(windowID, GLFW_KEY_KP_2) == GL_TRUE) {
@@ -91,7 +97,7 @@ public class Input {
         if (glfwGetKey(windowID, GLFW_KEY_UP) == GL_TRUE) {
            if (System.currentTimeMillis() > moveTimer+200) {
 //                player.move(new Vector3f(0,0,1));
-               light.addPosition(new Vector3f(10,0,0));
+               light.addPosition(new Vector3f(1000,0,0));
                moveTimer = System.currentTimeMillis();
            }
         }
@@ -99,7 +105,7 @@ public class Input {
         if (glfwGetKey(windowID, GLFW_KEY_DOWN) == GL_TRUE) {
            if (System.currentTimeMillis() > moveTimer+200) {
 //                player.move(new Vector3f(0,0,-1));
-               light.addPosition(new Vector3f(-10,0,0));
+               light.addPosition(new Vector3f(-1000,0,0));
                moveTimer = System.currentTimeMillis();
            }
         }
@@ -107,17 +113,24 @@ public class Input {
         if (glfwGetKey(windowID, GLFW_KEY_LEFT) == GL_TRUE) {
             if (System.currentTimeMillis() > moveTimer+200) {
 //                player.move(new Vector3f(-1f,0,0));
-                light.addPosition(new Vector3f(0,0,-10));
+                light.addPosition(new Vector3f(0,0,-1000));
                 moveTimer = System.currentTimeMillis();
             }
         }
 
         if (glfwGetKey(windowID, GLFW_KEY_RIGHT) == GL_TRUE) {
             if (System.currentTimeMillis() > moveTimer+200) {
-//                player.move(new Vector3f(1f,0,0));
-                light.addPosition(new Vector3f(0,0,10));
+                light.addPosition(new Vector3f(0,0,1000));
                 moveTimer = System.currentTimeMillis();
             }
+        }
+
+        if (glfwGetKey(windowID, GLFW_KEY_KP_2) == GL_TRUE) {
+            terrains[0][0].changeSeason(-0.001f);
+        }
+
+        if (glfwGetKey(windowID, GLFW_KEY_KP_8) == GL_TRUE) {
+            terrains[0][0].changeSeason(0.001f);
         }
 
         if (glfwGetMouseButton(windowID, GLFW_MOUSE_BUTTON_2) == GL_TRUE) {

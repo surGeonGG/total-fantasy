@@ -8,7 +8,7 @@ import java.util.Random;
 public class SimplexNoiseGenerator {
 
 
-    private static int min = -10, max = 1;
+    private static int min = -10, max = 10;
     private static Random rand = new Random();
     private static float MOISTURE_SCATTERING = 0.02f, ELEVATION_SCATTERING = 0.00f;
 
@@ -26,7 +26,7 @@ public class SimplexNoiseGenerator {
             int y = rand.nextInt(islandShape.length);
             if (islandShape[x][y] > 0.01f) {
                 int range = rand.nextInt(100) + 10;
-                int size = (int) (range * 1f);
+                int size = range * 2;
                 boolean direction = rand.nextBoolean();
                 int plusOrMinus = rand.nextInt(2) * 2 - 1;
                 float a = (float) (Math.random() - 0.5f) / 7;
@@ -44,16 +44,17 @@ public class SimplexNoiseGenerator {
                                 + Math.pow(b * randomizer, 2) + c * randomizer * Math.sin(Math.random()*100)) * plusOrMinus;
                     }
                     if (x2 > 1 && y2 > 1 && x2 < islandShape.length - 1 && y2 < islandShape.length - 1) {
+                        float increase = 0.01f;
                         if (islandShape[x2][y2] > 0.01f) {
-                            islandShape[x2][y2] += 0.2f;
-                            islandShape[x2 + 1][y2 + 1] += 0.1f;
-                            islandShape[x2 - 1][y2 + 1] += 0.1f;
-                            islandShape[x2 + 1][y2 - 1] += 0.1f;
-                            islandShape[x2 - 1][y2 - 1] += 0.1f;
-                            islandShape[x2][y2 + 1] += 0.1f;
-                            islandShape[x2][y2 - 1] += 0.1f;
-                            islandShape[x2 - 1][y2] += 0.1f;
-                            islandShape[x2 + 1][y2] += 0.1f;
+                            islandShape[x2][y2] += 2 * increase;
+                            islandShape[x2 + 1][y2 + 1] += increase;
+                            islandShape[x2 - 1][y2 + 1] += increase;
+                            islandShape[x2 + 1][y2 - 1] += increase;
+                            islandShape[x2 - 1][y2 - 1] += increase;
+                            islandShape[x2][y2 + 1] += increase;
+                            islandShape[x2][y2 - 1] += increase;
+                            islandShape[x2 - 1][y2] += increase;
+                            islandShape[x2 + 1][y2] += increase;
                         }
                     }
                 }
@@ -95,6 +96,25 @@ public class SimplexNoiseGenerator {
                         + e8 * SimplexNoise.noise(nx * 256 * freq, ny * 256 * freq)
                         + e9 * SimplexNoise.noise(nx * 512 * freq, ny * 512 * freq)
                         + e10 * SimplexNoise.noise(nx * 1024 * freq, ny * 1024 * freq));
+//                tempMap[x][y] = tempMap[x][y] / (e0+e1+e2+e3+e4+e5+e6+e7+e8+e9+e10);
+//                tempMap[x][y] = tempMap[x][y] + 0.4f;
+//                tempMap[x][y] = adjust(tempMap[x][y]);
+//                tempMap[x][y] = (float) Math.pow(tempMap[x][y], 2);
+//                if (tempMap[x][y] > BiomeGenerator.OCEAN_LEVEL+0.05f)
+//                    tempMap[x][y] = tempMap[x][y] + (rand.nextFloat() - 0.5f) * ELEVATION_SCATTERING;
+//
+//                //distance from center
+//                float xDist = (float) x / width;
+//                float yDist = (float) y / height;
+//                float dist = (float)(Math.sqrt(Math.pow(Math.abs(xDist - 0.5f),2) + Math.pow(Math.abs(yDist - 0.5f),2)));
+//                tempMap[x][y] -= Math.pow(dist+0.5f, 3);
+//                tempMap[x][y] /= 3;
+////                if (tempMap[x][y] <= 0) tempMap[x][y] = -10;
+//                tempMap[x][y] = DiverseUtilities.clamp(tempMap[x][y], min, 0.25f);
+
+
+
+
                 tempMap[x][y] = tempMap[x][y] / (e0+e1+e2+e3+e4+e5+e6+e7+e8+e9+e10);
                 tempMap[x][y] = tempMap[x][y] + 0.4f;
                 tempMap[x][y] = adjust(tempMap[x][y]);
@@ -102,14 +122,17 @@ public class SimplexNoiseGenerator {
                 if (tempMap[x][y] > BiomeGenerator.OCEAN_LEVEL+0.05f)
                     tempMap[x][y] = tempMap[x][y] + (rand.nextFloat() - 0.5f) * ELEVATION_SCATTERING;
 
+//
                 //distance from center
                 float xDist = (float) x / width;
                 float yDist = (float) y / height;
                 float dist = (float)(Math.sqrt(Math.pow(Math.abs(xDist - 0.5f),2) + Math.pow(Math.abs(yDist - 0.5f),2)));
                 tempMap[x][y] -= Math.pow(dist+0.5f, 3);
-                tempMap[x][y] /= 3;
-                if (tempMap[x][y] <= 0) tempMap[x][y] = -1;
-                tempMap[x][y] = DiverseUtilities.clamp(tempMap[x][y], min, 0.25f);
+                if (tempMap[x][y] > 0) {
+                    tempMap[x][y] = (float) Math.pow(tempMap[x][y], 2);
+                }
+                tempMap[x][y] *= 2;
+
             }
         }
         return tempMap;

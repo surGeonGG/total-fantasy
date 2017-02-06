@@ -7,17 +7,17 @@ import org.joml.Vector3f;
 public class Camera {
 
     private final float FOV = 70f ;
-    private final float NEAR_PLANE = 0.1f;
-    private final float FAR_PLANE = 10000f;
+    private final float NEAR_PLANE = 4f;
+    private final float FAR_PLANE = 1000f;
     private float aspectRatio;
     private float distanceFromPlayer = 50f;
     private float angleAroundPlayer = 0f;
     private float pitch = 20f;
     private float yaw = 0f;
 
-    Matrix4f projection;
-    Vector3f position = new Vector3f(0f,0f,0f);
-    Vector3f rotation;
+    private Matrix4f projection;
+    private Vector3f position = new Vector3f(0f,0f,0f);
+    private Vector3f rotation;
 
     private Player player;
 

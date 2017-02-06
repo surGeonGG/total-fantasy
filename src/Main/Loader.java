@@ -3,6 +3,8 @@ package Main;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.nuklear.*;
+import org.lwjgl.system.MemoryStack;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -13,19 +15,25 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.lwjgl.nuklear.Nuklear.*;
 import static org.lwjgl.opengl.GL11.*;
 
+import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE9;
+import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glDeleteVertexArrays;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
+import static org.lwjgl.system.MemoryStack.stackPush;
 
 
 public class Loader {
 
     private List<Integer> vaos = new ArrayList<Integer>();
     private List<Integer> vbos = new ArrayList<Integer>();
+
 
     public RawModel createRawModel(float[] coordinates, int[] indices) {
         int vaoID = createVAO();
@@ -35,13 +43,11 @@ public class Loader {
         return new RawModel(vaoID, indices.length);
     }
 
-    public RawModel createRawModel(float[] coordinates, int[] indices, float[] texCoords) {
+    public RawModel createRawModel(float[] coordinates) {
         int vaoID = createVAO();
-        bindIndicesBuffer(indices);
-        storeDataInAttributeList(0, 3, coordinates);
-        storeDataInAttributeList(1, 2, texCoords);
+        storeDataInAttributeList(0, 2, coordinates);
         unbindVAO();
-        return new RawModel(vaoID, indices.length);
+        return new RawModel(vaoID, coordinates.length/2);
     }
 
     public RawModel createRawModel(float[] coordinates, int[] indices, float[] texCoords, float[] normals) {
@@ -125,6 +131,33 @@ public class Loader {
         return byteBuffer;
     }
 
+    public ByteBuffer loadArrayToByteBuffer(int[] array) {
+        ByteBuffer byteBuffer = BufferUtils.createByteBuffer(array.length * 4);
+        for (int i = 0; i < array.length/4; i++) {
+            byteBuffer.put((byte) array[i*4]); //red
+            byteBuffer.put((byte) array[i*4+1]); //green
+            byteBuffer.put((byte) array[i*4+2]); //blue
+            byteBuffer.put((byte) array[i*4+3]); //alpha
+        }
+        byteBuffer.flip();
+        return byteBuffer;
+    }
+
+    public ByteBuffer initPermTexture(int[] perm, int[][] grad3) {
+        ByteBuffer byteBuffer = BufferUtils.createByteBuffer(perm.length * perm.length * 4);
+        for (int i = 0; i < perm.length; i++) {
+            for (int j = 0; j < perm.length; j++) {
+                int value = perm[(j+perm[i]) & 0xFF];
+                byteBuffer.put((byte) (grad3[value & 0x0F][0] * 64 + 64));   // Gradient x
+                byteBuffer.put((byte) (grad3[value & 0x0F][1] * 64 + 64)); // Gradient y
+                byteBuffer.put((byte) (grad3[value & 0x0F][2] * 64 + 64)); // Gradient z
+                byteBuffer.put((byte) value);                     // Permuted index
+            }
+        }
+        byteBuffer.flip();
+        return byteBuffer;
+    }
+
 
 //    public Texture loadImageFileToArray(String path) {
 //        BufferedImage bufferedImage = loadFileToBufferedImage(path);
@@ -199,12 +232,21 @@ public class Loader {
         return createRawModel(verticesArray, indicesArray, textureArray, normalsArray);
     }
 
-    public Texture createTextureFromByteBuffer(ByteBuffer texture, int width, int height) {
+    public Texture create2DTextureFromByteBuffer(ByteBuffer texture, int width, int height) {
         int texID = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, texID);
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE , texture);
+        return new Texture(texID);
+    }
+
+    public Texture create1DTextureFromByteBuffer(ByteBuffer texture, int length) {
+        int texID = glGenTextures();
+        glBindTexture(GL_TEXTURE_1D, texID);
+        glTexParameterf(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameterf(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexImage1D(GL_TEXTURE_1D, 0, GL_RGBA, length, 0, GL_RGBA, GL_UNSIGNED_BYTE , texture);
         return new Texture(texID);
     }
 
@@ -275,6 +317,6 @@ public class Loader {
 
     public Texture createTextureFromImageFile(String filename, int width, int height) {
         ByteBuffer texByteBuffer = loadImageFileToByteBuffer(filename);
-        return createTextureFromByteBuffer(texByteBuffer, width, height);
+        return create2DTextureFromByteBuffer(texByteBuffer, width, height);
     }
 }

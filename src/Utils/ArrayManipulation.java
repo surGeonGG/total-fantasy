@@ -8,20 +8,84 @@ public class ArrayManipulation {
         float[][] tempArray = array;
         for (int i = 1; i < tempArray.length-1; i++) {
             for (int j = 1; j < tempArray.length-1; j++) {
-                array[i][j] = (
-                        tempArray[i+1][j+1] +
-                        tempArray[i-1][j-1] +
-                        tempArray[i-1][j+1] +
-                        tempArray[i+1][j-1] +
-                        tempArray[i+1][j] +
-                        tempArray[i-1][j] +
-                        tempArray[i][j+1] +
-                        tempArray[i][j-1] +
-                        tempArray[i][j] * 4
+                array[j][i] = (
+                        tempArray[j+1][i+1] +
+                        tempArray[j-1][i-1] +
+                        tempArray[j-1][i+1] +
+                        tempArray[j+1][i-1] +
+                        tempArray[j+1][i] +
+                        tempArray[j-1][i] +
+                        tempArray[j][i+1] +
+                        tempArray[j][i-1] +
+                        tempArray[j][i] * 4
                 ) / 12;
             }
         }
         return array;
+    }
+
+    public static float[][] maskedGaussianBlur2Df(float[][] array, float[][] mask) {
+        float[][] tempArray = array;
+        for (int i = 1; i < tempArray.length-1; i++) {
+            for (int j = 1; j < tempArray.length-1; j++) {
+                if (mask[j][i] > 0.01f) {
+                    array[j][i] = (
+                            tempArray[j + 1][i + 1] +
+                                    tempArray[j - 1][i - 1] +
+                                    tempArray[j - 1][i + 1] +
+                                    tempArray[j + 1][i - 1] +
+                                    tempArray[j + 1][i] +
+                                    tempArray[j - 1][i] +
+                                    tempArray[j][i + 1] +
+                                    tempArray[j][i - 1] +
+                                    tempArray[j][i] * 4
+                    ) / 12;
+                }
+            }
+        }
+        return array;
+    }
+
+    public static float[][] getMask2Df(float[][] array) {
+        float[][] mask = new float[array.length][array.length];
+        for (int i = 1; i < mask.length-1; i++) {
+            for (int j = 1; j < mask.length-1; j++) {
+                mask[j][i] = 1f;
+                if (array[j][i] > 0.01f ||
+                        array[j+1][i+1] > 0.01f ||
+                        array[j-1][i-1] > 0.01f ||
+                        array[j-1][i+1] > 0.01f ||
+                        array[j+1][i-1] > 0.01f ||
+                        array[j+1][i] > 0.01f ||
+                        array[j-1][i] > 0.01f ||
+                        array[j][i+1] > 0.01f ||
+                        array[j][i-1] > 0.01f) {
+                    mask[j][i] = 0f;
+                }
+            }
+        }
+        return mask;
+    }
+
+    public static float[][] getMask2Df(float[][] array, float threshold) {
+        float[][] mask = new float[array.length][array.length];
+        for (int i = 1; i < array.length-1; i++) {
+            for (int j = 1; j < array.length-1; j++) {
+                mask[j][i] = 1f;
+                if (array[j][i] > threshold ||
+                        array[j+1][i+1] > threshold ||
+                        array[j-1][i-1] > threshold ||
+                        array[j-1][i+1] > threshold ||
+                        array[j+1][i-1] > threshold ||
+                        array[j+1][i] > threshold ||
+                        array[j-1][i] > threshold ||
+                        array[j][i+1] > threshold ||
+                        array[j][i-1] > threshold) {
+                    mask[j][i] = 0f;
+                }
+            }
+        }
+        return mask;
     }
 
     public static int[][] gaussianBlur2Di(int[][] array) {

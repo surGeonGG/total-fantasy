@@ -8,8 +8,6 @@ import org.lwjgl.BufferUtils;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Random;
@@ -290,7 +288,7 @@ public class World {
             }
         }
         texture.flip();
-        return loader.createTextureFromByteBuffer(texture, mapCoords.length, mapCoords[0].length);
+        return loader.create2DTextureFromByteBuffer(texture, mapCoords.length, mapCoords[0].length);
     }
 
     public void rebuild() {

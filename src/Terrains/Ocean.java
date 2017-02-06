@@ -6,11 +6,10 @@ import org.joml.Vector3f;
 public class Ocean {
 
 
-    private static Texture waterTexture;
-    private static Loader loader;
+    private Texture waterTexture;
+    private Loader loader;
 
     private RawModel rawModel;
-    private Renderer renderer;
     private float rx = 0, ry = 0, rz = 0, scale = Game.WIDTH / 2;
     private Vector3f position = new Vector3f(scale,-0.2f,scale);
 
@@ -37,14 +36,13 @@ public class Ocean {
             0,1,0
     };
 
-    public Ocean(Renderer renderer) {
-        this.renderer = renderer;
+    public Ocean() {
         loader = new Loader();
         waterTexture = loader.createTextureFromImageFile("ocean.png", 1024, 1024);
         rawModel = loader.createRawModel(vertices,indices,textureCoords,normals);
     }
 
-    public static Texture getWaterTexture() {
+    public Texture getWaterTexture() {
         return waterTexture;
     }
 
