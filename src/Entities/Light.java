@@ -32,12 +32,8 @@ public class Light {
         timeOfDay += time;
         Quaternionf quaternionf = new Quaternionf(0,0,0.0002f,1f);
         position.rotate(quaternionf);
-        if (position.y < 0.2f) {
-            if (position.x < 0)
-                color.sub(0.01f,0.01f,0.005f);
-            else
-                color.add(0.01f,0.01f,0.005f);
-        }
+
+
     }
 
     public Vector3f getColor() {
