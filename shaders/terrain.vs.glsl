@@ -14,7 +14,6 @@ out vec3 pass_normal;
 out vec3 pass_towardsLightVector;
 
 void main() {
-
     vec4 worldPosition = transformationMatrix * vec4(coordinates, 1);
     gl_Position = projectionMatrix * viewMatrix * worldPosition;
     pass_texCoords = texCoords;

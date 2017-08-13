@@ -4,7 +4,7 @@ import Entities.Entity;
 import Gui.GuiElement;
 import Main.Camera;
 import Terrains.Ocean;
-import Terrains.Terrain;
+import Terrains.TerrainTile;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
@@ -52,14 +52,14 @@ public class DiverseUtilities {
         return targetMatrix;
     }
 
-    public static Matrix4f createTransformationMatrix(Terrain terrain) {
+    public static Matrix4f createTransformationMatrix(TerrainTile terrainTile) {
         Matrix4f targetMatrix = new Matrix4f();
         targetMatrix.identity();
-        targetMatrix.translate(terrain.getPosition());
-        targetMatrix.rotate((float) Math.toRadians(terrain.getRx()), new Vector3f(1,0,0));
-        targetMatrix.rotate((float) Math.toRadians(terrain.getRy()), new Vector3f(0,1,0));
-        targetMatrix.rotate((float) Math.toRadians(terrain.getRz()), new Vector3f(0,0,1));
-        targetMatrix.scale(new Vector3f(terrain.getScale(), terrain.getScale(), terrain.getScale()));
+        targetMatrix.translate(terrainTile.getPosition());
+        targetMatrix.rotate((float) Math.toRadians(terrainTile.getRx()), new Vector3f(1,0,0));
+        targetMatrix.rotate((float) Math.toRadians(terrainTile.getRy()), new Vector3f(0,1,0));
+        targetMatrix.rotate((float) Math.toRadians(terrainTile.getRz()), new Vector3f(0,0,1));
+        targetMatrix.scale(new Vector3f(terrainTile.getScale(), terrainTile.getScale(), terrainTile.getScale()));
         return targetMatrix;
     }
 

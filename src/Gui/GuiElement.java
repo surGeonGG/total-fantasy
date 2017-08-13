@@ -22,7 +22,7 @@ public class GuiElement {
         this.position = new Vector3f(position.x, position.y, 0);
         Loader loader = new Loader();
         texture = loader.createTextureFromImageFile("ocean.png", 1024, 1024);
-        rawModel = loader.createRawModel(vertices);
+        rawModel = loader.createRawModel(vertices, 2);
     }
 
     public Texture getTexture() {

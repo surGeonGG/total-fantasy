@@ -3,58 +3,23 @@ package Main;
 public class BiomeGenerator {
 
     public static final float OCEAN_LEVEL = 0.4f, SNOW_LEVEL = 0.95f, MOISTURE_SNOW_LEVEL = 0.2f;
-    public static final float OCEAN = 0f;
+    public static final float OCEAN = 0.1f;
+    public static final float LAND = 0.2f;
     public static final float DESERT = 0.1f;
-    public static final float GRASSLAND = 0.2f;
     public static final float MOUNTAIN = 0.3f;
     public static final float SNOW = 0.5f;
 
-    public static void generateBiome(float[][] heightMap, float[][] moistureMap, float[][] grassMap,
-                                     float[][] desertMap, float[][] mountainMap, float[][] snowMap,
-                                     float[][] waterMap, float[][] forestMap) {
+    public static String generateBiome(float height, float moisture) {
 
-//        float mountainLevel = 0.3f;
-//        latitude = ((latitude-0.5f)*3)+0.5f;
-////        float latitude2 = -((latitude-0.5f))+0.5f;
-//        float snowLine = -(latitude-1)+0.2f;
-//        float desertLine = -(latitude-1)-0.5f;
-////        float southernBiome = -(latitude2-1)-0.1f;
-//        float southernBiome = 0.1f;
-//        float northernBiome = -(latitude-1)-0.1f;
-
-        for (int i = 0; i < heightMap.length; i++) {
-            for (int j = 0; j < heightMap[i].length; j++) {
-                float latitude = ((float) i / (float) heightMap.length + (float) j / (float) heightMap[i].length) / 2;
-                latitude = ((latitude-0.5f)*3)+0.7f;
-                float height = heightMap[j][i];
-                float moisture = moistureMap[j][i];
-                float snowLine = -(latitude-1)+0.2f;
-                grassMap[j][i] = 0;
-                desertMap[j][i] = 0;
-                mountainMap[j][i] = 0;
-                snowMap[j][i] = 0;
-                waterMap[j][i] = 0;
-                forestMap[j][i] = 0;
-//                if (height < 0)
-//                    desertMap[j][i] = 1f;
-                if (height >= snowLine) {
-                    if (moisture > 0.5f)
-                        snowMap[j][i] = 1f;
-                    else
-                        mountainMap[j][i] = 1f;
-                }
-                else if (height > 0.25f) {
-                    mountainMap[j][i] = 1f;
-                }
-                else if (height >= 0.1f && moisture > 0.6f) {
-                    forestMap[j][i] = 1f;
-                }
-                else if (moisture > 0.5f) {
-                    grassMap[j][i] = 1f;
-                }
-                else
-                    desertMap[j][i] = 1f;
-            }
+        if (height < SimplexNoiseGenerator.OCEAN_LIMIT) return "OCEAN";
+        else if (height < SimplexNoiseGenerator.FLATLAND_LIMIT) {
+            if (moisture < 0.4f) {
+                return "DESERT";
+            } else return "GRASSLAND";
+        } else {
+            if (moisture < 0.4f) {
+                return "DESERT_MOUNTAIN";
+            } else return "MOUNTAIN";
         }
     }
 

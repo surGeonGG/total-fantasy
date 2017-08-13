@@ -1,6 +1,6 @@
 package Main;
 
-import Terrains.Terrain;
+import Terrains.TerrainTile;
 import Utils.DiverseUtilities;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
@@ -10,7 +10,6 @@ import org.lwjgl.BufferUtils;
 
 import java.nio.DoubleBuffer;
 import java.nio.IntBuffer;
-import java.util.List;
 
 import static org.lwjgl.glfw.GLFW.glfwGetCursorPos;
 import static org.lwjgl.glfw.GLFW.glfwGetWindowSize;
@@ -19,7 +18,7 @@ public class MousePicker {
 
     private static final int RECURSION_COUNT = 40;
     private static final float RAY_RANGE = 6000;
-    private Terrain[][] terrains;
+    private TerrainTile[][] terrainTiles;
     private Vector3f currentTerrainPoint;
     Vector3f currentRay;
     Camera camera;
@@ -27,10 +26,10 @@ public class MousePicker {
     Matrix4f projectionMatrix;
     long windowID;
 
-    public MousePicker(Camera camera, long windowID, Terrain[][] terrains) {
+    public MousePicker(Camera camera, long windowID, TerrainTile[][] terrainTiles) {
         this.windowID = windowID;
         this.camera = camera;
-        this.terrains = terrains;
+        this.terrainTiles = terrainTiles;
         viewMatrix = DiverseUtilities.createViewMatrix(camera);
         projectionMatrix = camera.getProjectionMatrix();
     }
@@ -107,8 +106,8 @@ public class MousePicker {
         float half = start + ((finish - start) / 2f);
         if (count >= RECURSION_COUNT) {
             Vector3f endPoint = getPointOnRay(ray, half);
-            Terrain terrain = getMap(endPoint.x, endPoint.z);
-            if (terrain != null) {
+            TerrainTile terrainTile = getMap(endPoint.x, endPoint.z);
+            if (terrainTile != null) {
                 return endPoint;
             } else {
                 return null;
@@ -132,10 +131,10 @@ public class MousePicker {
     }
 
     private boolean isUnderGround(Vector3f testPoint) {
-        Terrain terrain = getMap(testPoint.x, testPoint.z);
+        TerrainTile terrainTile = getMap(testPoint.x, testPoint.z);
         float height = 0;
-        if (terrain != null) {
-            height = terrain.getHeight((int) testPoint.x, (int) testPoint.z);
+        if (terrainTile != null) {
+            height = terrainTile.getHeight((int) testPoint.x, (int) testPoint.z);
         }
         if (testPoint.y < height) {
             return true;
@@ -144,9 +143,9 @@ public class MousePicker {
         }
     }
 
-    private Terrain getMap(float worldX, float worldZ) {
-        int widthPerTile = Game.WIDTH/Game.NUMBER_OF_TILES_X;
-        int heightPerTile = Game.HEIGHT/Game.NUMBER_OF_TILES_Y;
+    private TerrainTile getMap(float worldX, float worldZ) {
+        int widthPerTile = Game.TILE_WIDTH /Game.NUMBER_OF_TILES_X;
+        int heightPerTile = Game.TILE_HEIGHT /Game.NUMBER_OF_TILES_Y;
         int x = (int) (worldX / widthPerTile);
         int y = (int) (worldZ / heightPerTile);
         if (x > Game.NUMBER_OF_TILES_X - 1)
@@ -157,7 +156,7 @@ public class MousePicker {
             x = 0;
         if (y < 0)
             y = 0;
-        return  terrains[x][y];
+        return  terrainTiles[x][y];
     }
 
     public Vector3f getCurrentTerrainPoint() {

@@ -10,14 +10,14 @@ public class Ocean {
     private Loader loader;
 
     private RawModel rawModel;
-    private float rx = 0, ry = 0, rz = 0, scale = Game.WIDTH / 2;
-    private Vector3f position = new Vector3f(scale,-0.2f,scale);
+    private float rx = 0, ry = 0, rz = 0, scale = 1f;
+    private Vector3f position = new Vector3f(0,0.8f,0);
 
     private float[] vertices = {
-            -1f,0f,1f,
-            1f,0f,1f,
-            1f,0f,-1f,
-            -1f,0f,-1f
+            (float) 0,0f,Game.WIDTH,
+            (float) Game.HEIGHT,0f,Game.WIDTH,
+            (float) Game.HEIGHT,0f,0,
+            (float) 0,0f,0
     };
     private int[] indices = {
             0,1,2,

@@ -58,32 +58,32 @@ public class Wind {
         int windY = (int) y* (moisture.length / 23);*/
         float evaporation = 1;
         float[][] result = new float[moisture.length][moisture[0].length];
-        for (int i = 0; i < moisture.length; i++) {
+        for (int i = 0; i < moisture[0].length; i++) {
             for (int j = 0; j < moisture.length; j++) {
-                if (ocean[i][j] > 0f) {
-                    result[i][j] = 1f; // ocean
+                if (ocean[j][i] > 0f) {
+                    result[j][i] = 1f; // ocean
                 }
-                result[i][j] += moisture[i][j] - evaporation/255;
+                result[j][i] += moisture[j][i] - evaporation/255;
                 // Dampen the randomness
 //                float wx = (float) ((1000.0 + Math.random() + Math.random()) / 1001.0);
 //                float wy = (float) ((1000.0 + Math.random() + Math.random()) / 1001.0);
 //                int i2 = i + (int) (windX * wx);
 //                int j2 = j + (int) (windY * wy);
-                int i2 = i + (int) (windX);
-                int j2 = j + (int) (windY);
+                int i2 = i + (int) (windY);
+                int j2 = j + (int) (windX);
 //                i2 %= moisture.length;
 //                j2 %= moisture.length;
                 if (j2 < 0 || j2 > moisture.length-1) continue;
                 if (i2 < 0 || i2 > moisture.length-1) continue;
                 if (i != i2 && j != j2) {
-                    float transfer = moisture[i][j] / 9;
-                    float speed = (float) ((30.0 + ocean[i][j]) / (30.0 + ocean[i2][j2]));
+                    float transfer = moisture[j][i] / 9;
+                    float speed = (float) ((30.0 + ocean[j][i]) / (30.0 + ocean[j2][i2]));
                     if (speed > 1.0) speed = 1.0f;
                     /* speed is lower if going uphill */
                     transfer = transfer * speed;
 
-                    result[i][j] -= transfer;
-                    result[i2][j2] += transfer;
+                    result[j][i] -= transfer;
+                    result[j2][i2] += transfer;
                 }
             }
         }

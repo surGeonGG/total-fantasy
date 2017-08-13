@@ -43,11 +43,11 @@ public class Loader {
         return new RawModel(vaoID, indices.length);
     }
 
-    public RawModel createRawModel(float[] coordinates) {
+    public RawModel createRawModel(float[] coordinates, int dimensions) {
         int vaoID = createVAO();
-        storeDataInAttributeList(0, 2, coordinates);
+        storeDataInAttributeList(0, dimensions, coordinates);
         unbindVAO();
-        return new RawModel(vaoID, coordinates.length/2);
+        return new RawModel(vaoID, coordinates.length/dimensions);
     }
 
     public RawModel createRawModel(float[] coordinates, int[] indices, float[] texCoords, float[] normals) {
@@ -119,8 +119,8 @@ public class Loader {
 
     public ByteBuffer loadArrayToByteBuffer(float[][] array, float[][] array2) {
         ByteBuffer byteBuffer = BufferUtils.createByteBuffer(array.length * array[0].length * 4);
-        for (int i = 0; i < array.length; i++) {
-            for (int j = 0; j < array[i].length; j++) {
+        for (int i = 0; i < array[0].length; i++) {
+            for (int j = 0; j < array.length; j++) {
                 byteBuffer.put((byte) (array[j][i] * (float) 255)); //red
                 byteBuffer.put((byte) (array2[j][i] * (float) 255)); //green
                 byteBuffer.put((byte) (array[j][i] * (float) 255)); //blue
@@ -158,9 +158,9 @@ public class Loader {
         return byteBuffer;
     }
 
-
+    //        BufferedImage bufferedImage = loadFileToBufferedImage(path);
 //    public Texture loadImageFileToArray(String path) {
-//        BufferedImage bufferedImage = loadFileToBufferedImage(path);
+
 //    }
 
     public RawModel loadOBJ(String filename) {

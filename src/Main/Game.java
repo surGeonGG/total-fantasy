@@ -5,11 +5,11 @@ import Entities.Light;
 import Entities.Player;
 import Gui.GuiElement;
 import Terrains.Ocean;
-import Terrains.Terrain;
+import Terrains.TerrainSquare;
+import Terrains.TerrainTile;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -23,9 +23,19 @@ import static org.lwjgl.opengl.GL11.*;
 public class Game {
 
     public static final float HEIGHT_MULTIPLIER = 20;
-    public static final int WIDTH = 1024, HEIGHT = 1024;
-    public static final int NUMBER_OF_TILES_X = 4;
-    public static final int NUMBER_OF_TILES_Y = 4;
+    public static final int X_SQUARES_PER_TILE = 200;
+    public static final int Z_SQUARES_PER_TILE = 200;
+    public static final int SQUARES_PER_TILE = X_SQUARES_PER_TILE * Z_SQUARES_PER_TILE;
+    public static final int X_VERTICES_PER_SQUARE = 5;
+    public static final int Z_VERTICES_PER_SQUARE = 5;
+    public static final int VERTICES_PER_SQUARE = X_VERTICES_PER_SQUARE * Z_VERTICES_PER_SQUARE;
+    public static final int TILE_WIDTH = X_SQUARES_PER_TILE * X_VERTICES_PER_SQUARE;
+    public static final int TILE_HEIGHT = Z_SQUARES_PER_TILE * Z_VERTICES_PER_SQUARE;
+    public static final int VERTICES_PER_TILE = TILE_HEIGHT * TILE_WIDTH;
+    public static final int NUMBER_OF_TILES_X = 1;
+    public static final int NUMBER_OF_TILES_Y = 1;
+    public static final int WIDTH = NUMBER_OF_TILES_X * TILE_HEIGHT;
+    public static final int HEIGHT = NUMBER_OF_TILES_Y * TILE_WIDTH;
 
     private Camera camera;
     private Window window;
@@ -39,23 +49,19 @@ public class Game {
     public Game(Window window) {
         this.window = window;
         camera = new Camera(Main.WINDOW_WIDTH, Main.WINDOW_HEIGHT);
-        light = new Light(new Vector3f(512,5000,512), new Vector3f(1,1,1));
+        light = new Light(new Vector3f(512,500,512), new Vector3f(1,1,1));
         loader = new Loader();
         renderer = new Renderer(camera);
-        player = new Player(new Vector3f(500,1,500), camera, loader, renderer);
+        player = new Player(new Vector3f(WIDTH/2,0,HEIGHT/2), camera, loader, renderer);
         camera.followPlayer(player);
-        Terrain.generateTerrain();
         Random random = new Random();
-//        RawModel rawModel = loader.loadOBJ("pine");
-//        ByteBuffer texByteBuffer = loader.loadImageFileToByteBuffer("pine.png");
-//        Texture texture = loader.create2DTextureFromByteBuffer(texByteBuffer, 512, 512);
-//        TexturedModel texturedModel = new TexturedModel(rawModel, texture);
-        Terrain[][] terrains = new Terrain[NUMBER_OF_TILES_X][NUMBER_OF_TILES_Y];
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 4; j++) {
-                terrains[j][i] = new Terrain(renderer, j, i);
+        TerrainTile[][] terrainTiles = new TerrainTile[NUMBER_OF_TILES_X][NUMBER_OF_TILES_Y];
+        for (int i = 0; i < 1; i++) {
+            for (int j = 0; j < 1; j++) {
+                terrainTiles[j][i] = new TerrainTile(j, i);
             }
         }
+        RawModel outlines = terrainTiles[0][0].getSquareOutlines();
         Ocean ocean = new Ocean();
         List<Entity> entities = new ArrayList<>();
         List<GuiElement> guiElements = new ArrayList<>();
@@ -63,15 +69,16 @@ public class Game {
 //        for (int i = 0; i < 1000; i++) {
 //            int x = random.nextInt(1000);
 //            int z = random.nextInt(1000);
-//            entities.add(new Entity(texturedModel, new Vector3f(x, Terrain.getHeight(x, z), z), 0f, 0f, 0f, 0.1f));
+//            entities.add(new Entity(texturedModel, new Vector3f(x, TerrainTile.getHeightRelCoords(x, z), z), 0f, 0f, 0f, 0.1f));
 //        }
-        mousePicker = new MousePicker(camera, window.getWindowID(), terrains);
-        input = new Input(camera, window.getWindowID(), player, terrains, mousePicker, light);
-        gameLoop(entities, guiElements, terrains, ocean, light);
+        mousePicker = new MousePicker(camera, window.getWindowID(), terrainTiles);
+        input = new Input(camera, window.getWindowID(), player, terrainTiles, mousePicker, light);
+        gameLoop(entities, guiElements, terrainTiles, ocean, light, outlines);
         cleanUp();
     }
 
-    private void gameLoop(List<Entity> entities, List<GuiElement> guiElements, Terrain[][] terrains, Ocean ocean, Light light) {
+    private void gameLoop(List<Entity> entities, List<GuiElement> guiElements, TerrainTile[][] terrainTiles,
+                          Ocean ocean, Light light, RawModel outlines) {
         long delta = 0;
         long sysTime = System.currentTimeMillis();
         while (!glfwWindowShouldClose(window.getWindowID())) {
@@ -80,7 +87,7 @@ public class Game {
             if (delta > 1000 / 120) {
                 //System.out.println("delta: " + delta);
                 delta = 0;
-                update(terrains, light);
+                update(terrainTiles, light);
                 render();
                 for (Entity entity : entities) {
                     if (entity.getPosition().x < player.getPosition().x + 100
@@ -90,15 +97,12 @@ public class Game {
                         renderer.renderEntity(entity, light);
                 }
                 renderer.renderOcean(ocean, light);
-                for (Terrain[] terrains2 : terrains) {
-                    for (Terrain terrain : terrains2) {
-//                    if (terrain.getPosition().x < player.getPosition().x + 100
-//                            && terrain.getPosition().x > player.getPosition().x - 100
-//                            && terrain.getPosition().z < player.getPosition().z + 100
-//                            && terrain.getPosition().z > player.getPosition().z - 100)
-                        renderer.renderTerrain(terrain, light);
+                for (TerrainTile[] terrainTiles2 : terrainTiles) {
+                    for (TerrainTile terrainTile : terrainTiles2) {
+                        renderer.renderTerrain(terrainTile, light);
                     }
                 }
+                renderer.renderOutline(outlines);
                 for (GuiElement guiElement : guiElements) {
                     renderer.renderGui(guiElement);
                 }
@@ -107,12 +111,10 @@ public class Game {
         }
     }
 
-    public void update(Terrain[][] terrains, Light light) {
+    public void update(TerrainTile[][] terrainTiles, Light light) {
         window.update();
         input.update();
         camera.calculateCameraPosition();
-        terrains[0][0].changeSeason(0.0001f);
-        light.advanceTime(0.001f);
 
     }
 

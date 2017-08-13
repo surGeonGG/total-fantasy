@@ -8,7 +8,7 @@ public class Camera {
 
     private final float FOV = 70f ;
     private final float NEAR_PLANE = 4f;
-    private final float FAR_PLANE = 1000f;
+    private final float FAR_PLANE = 3000f;
     private float aspectRatio;
     private float distanceFromPlayer = 50f;
     private float angleAroundPlayer = 0f;

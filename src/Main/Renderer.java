@@ -3,7 +3,7 @@ package Main;
 import Entities.Entity;
 import Entities.Light;
 import Terrains.Ocean;
-import Terrains.Terrain;
+import Terrains.TerrainTile;
 import Utils.DiverseUtilities;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
@@ -13,12 +13,12 @@ import org.lwjgl.opengl.GL31;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.*;
-import static org.lwjgl.opengles.GLES20.GL_TEXTURE3;
 
 public class Renderer {
 
     private Camera camera;
     private Shader terrainShader;
+    private Shader lineShader;
     private Shader entityShader;
     private Shader oceanShader;
     private Shader guiShader;
@@ -30,13 +30,16 @@ public class Renderer {
         entityShader = new Shader("entity");
         oceanShader = new Shader("ocean");
         guiShader = new Shader("gui");
+        lineShader = new Shader("line");
         terrainShader.bind();
         terrainShader.setUniform("projectionMatrix", camera.getProjectionMatrix());
         entityShader.bind();
         entityShader.setUniform("projectionMatrix", camera.getProjectionMatrix());
         oceanShader.bind();
         oceanShader.setUniform("projectionMatrix", camera.getProjectionMatrix());
-        guiShader.bind();
+        lineShader.bind();
+        lineShader.setUniform("projectionMatrix", camera.getProjectionMatrix());
+
     }
 
     public void prepare(){
@@ -95,35 +98,25 @@ public class Renderer {
         GL30.glBindVertexArray(0);
     }
 
-    public void renderTerrain(Terrain terrain, Light light){
-        Matrix4f transformationMatrix = DiverseUtilities.createTransformationMatrix(terrain);
+    public void renderTerrain(TerrainTile terrainTile, Light light){
+        Matrix4f transformationMatrix = DiverseUtilities.createTransformationMatrix(terrainTile);
         terrainShader.bind();
         terrainShader.setUniform("transformationMatrix", transformationMatrix);
         terrainShader.setUniform("viewMatrix", DiverseUtilities.createViewMatrix(camera));
         terrainShader.setUniform("lightPosition", light.getPosition());
         terrainShader.setUniform("lightColor", light.getColor());
-        terrainShader.setUniform("season", terrain.getSeason());
-        RawModel rawModel = terrain.getRawModel();
+        RawModel rawModel = terrainTile.getRawModel();
         GL30.glBindVertexArray(rawModel.getVaoID());
-        GL20.glEnableVertexAttribArray(0);
+        GL20.glEnableVertexAttribArray(
+                0);
         GL20.glEnableVertexAttribArray(1);
         GL20.glEnableVertexAttribArray(2);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, terrain.getMountainTexture().getTexID());
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, terrain.getGrassTexture().getTexID());
-        glActiveTexture(GL_TEXTURE2);
-        glBindTexture(GL_TEXTURE_2D, terrain.getDesertTexture().getTexID());
-        glActiveTexture(GL_TEXTURE3);
-        glBindTexture(GL_TEXTURE_2D, terrain.getSnowTexture().getTexID());
         glActiveTexture(GL_TEXTURE4);
-        glBindTexture(GL_TEXTURE_2D, terrain.getHeightMoisture().getTexID());
-        glActiveTexture(GL_TEXTURE5);
-        glBindTexture(GL_TEXTURE_2D, terrain.getForestTexture().getTexID());
+        glBindTexture(GL_TEXTURE_2D, terrainTile.getHeightMoisture().getTexID());
         glActiveTexture(GL_TEXTURE6);
-        glBindTexture(GL_TEXTURE_2D, terrain.getPermTexture().getTexID());
+        glBindTexture(GL_TEXTURE_2D, terrainTile.getPermTexture().getTexID());
         glActiveTexture(GL_TEXTURE7);
-        glBindTexture(GL_TEXTURE_1D, terrain.getSimplexTexture().getTexID());
+        glBindTexture(GL_TEXTURE_1D, terrainTile.getSimplexTexture().getTexID());
         terrainShader.setUniform("mountainTextureSampler", 0);
         terrainShader.setUniform("grassTextureSampler", 1);
         terrainShader.setUniform("desertTextureSampler", 2);
@@ -183,5 +176,22 @@ public class Renderer {
         glDisable(GL_BLEND);
         GL20.glDisableVertexAttribArray(0);
         GL30.glBindVertexArray(0);
+    }
+
+    public void renderOutline(RawModel outline) {
+        lineShader.bind();
+        lineShader.setUniform("viewMatrix", DiverseUtilities.createViewMatrix(camera));
+        GL30.glBindVertexArray(outline.getVaoID());
+        GL20.glEnableVertexAttribArray(0);
+        int skip = outline.getVertexCount() / Game.SQUARES_PER_TILE;
+        for (int i = 0; i < Game.SQUARES_PER_TILE; i++) {
+            glDrawArrays(GL_TRIANGLE_STRIP, i*skip, skip);
+        }
+        lineShader.unbind();
+        GL20.glDisableVertexAttribArray(0);
+        GL30.glBindVertexArray(0);
+
+
+
     }
 }
