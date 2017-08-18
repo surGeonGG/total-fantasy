@@ -163,10 +163,10 @@ void main() {
 //    vec4 height_moistureTOT = (height_moistureLL + height_moistureLR
 //                            + height_moistureUL + height_moistureUR);
 
-    float height_level_0 = -10.0;
-    float height_level_1 = 0.4f;
-    float height_level_2 = 0.8f;
-    float height_level_3 = 10.0;
+    float height_level_0 = -10;
+    float height_level_1 = 0.6f;
+    float height_level_2 = 0.8;
+    float height_level_3 = 1.0;
 
     float moist_level_0 = -10.0;
     float moist_level_1 = 0.5;

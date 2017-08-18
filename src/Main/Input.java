@@ -28,116 +28,76 @@ public class Input {
         this.terrainTiles = terrainTiles;
         this.light = light;
         this.mousePicker = mousePicker;
-    }
 
-    public void update() {
-        if (glfwGetKey(windowID, GLFW_KEY_A) == GL_TRUE) {
-            camera.rotate(-1f);
-        }
-        if (glfwGetKey(windowID, GLFW_KEY_D) == GL_TRUE) {
-            camera.rotate(1f);
-        }
-        if (glfwGetKey(windowID, GLFW_KEY_S) == GL_TRUE) {
-            camera.changePitch(-1f);
-        }
-        if (glfwGetKey(windowID, GLFW_KEY_W) == GL_TRUE) {
-            camera.changePitch(1f);
-        }
-
-        if (glfwGetKey(windowID, GLFW_KEY_KP_ADD) == GL_TRUE) {
-            if (System.currentTimeMillis() > zoomTimer+20) {
-                camera.zoom(2f);
-                zoomTimer = System.currentTimeMillis();
+        glfwSetMouseButtonCallback(windowID, (long window, int button, int action, int mods) -> {
+            switch (button) {
+                case GLFW_MOUSE_BUTTON_RIGHT:
+                    if (System.currentTimeMillis() > clickTimer+200) {
+                        mousePicker.update();
+                        Vector3f mapPoint = mousePicker.getCurrentTerrainPoint();
+                        if (mapPoint != null) {
+                            player.setPosition(mapPoint);
+                        }
+                        clickTimer = System.currentTimeMillis();
+                    }
+                    break;
+                case GLFW_MOUSE_BUTTON_LEFT:
+                    if (System.currentTimeMillis() > clickTimer+200) {
+                        mousePicker.update();
+                        Vector3f mapPoint = mousePicker.getCurrentTerrainPoint();
+                        if (mapPoint != null) {
+                            player.moveTo(mapPoint);
+                        }
+                        clickTimer = System.currentTimeMillis();
+                    }
+                    break;
             }
-        }
 
-        if (glfwGetKey(windowID, GLFW_KEY_KP_SUBTRACT) == GL_TRUE) {
-            if (System.currentTimeMillis() > zoomTimer+20) {
-                camera.zoom(-2f);
-                zoomTimer = System.currentTimeMillis();
+        });
+
+        glfwSetKeyCallback(windowID, (long window, int key, int scancode, int action, int mods) -> {
+            switch (key) {
+                case GLFW_KEY_A:
+                    if (action == GLFW_PRESS)
+                        camera.setYawRate(-1);
+                    if (action == GLFW_RELEASE)
+                        camera.setYawRate(0);
+                    break;
+                case GLFW_KEY_D:
+                    if (action == GLFW_PRESS)
+                        camera.setYawRate(1);
+                    if (action == GLFW_RELEASE)
+                        camera.setYawRate(0);
+                    break;
+                case GLFW_KEY_W:
+                    if (action == GLFW_PRESS)
+                        camera.setPitchRate(1);
+                    if (action == GLFW_RELEASE)
+                        camera.setPitchRate(0);
+                    break;
+                case GLFW_KEY_S:
+                    if (action == GLFW_PRESS)
+                        camera.setPitchRate(-1);
+                    if (action == GLFW_RELEASE)
+                        camera.setPitchRate(0);
+                    break;
+                case GLFW_KEY_KP_ADD:
+                    if (action == GLFW_PRESS)
+                        camera.setZoomRate(1);
+                    if (action == GLFW_RELEASE)
+                        camera.setZoomRate(0);
+                    break;
+                case GLFW_KEY_KP_SUBTRACT:
+                    if (action == GLFW_PRESS)
+                        camera.setZoomRate(-1);
+                    if (action == GLFW_RELEASE)
+                        camera.setZoomRate(0);
+                    break;
+                case GLFW_KEY_SPACE:
+                    camera.setPitch(90);
+                    camera.setYaw(0);
+                    break;
             }
-        }
-
-//        if (glfwGetKey(windowID, GLFW_KEY_KP_2) == GL_TRUE) {
-//            if (camera.getPosition().z >= -1000) camera.addPitch(-1f);
-//        }
-//
-//        if (glfwGetKey(windowID, GLFW_KEY_KP_8) == GL_TRUE) {
-//            if (camera.getPosition().z >= -1000) camera.addPitch(1f);
-//        }
-//
-//        if (glfwGetKey(windowID, GLFW_KEY_KP_4) == GL_TRUE) {
-//            if (camera.getPosition().z >= -1000) camera.addYaw(-1f);
-//        }
-//
-//        if (glfwGetKey(windowID, GLFW_KEY_KP_6) == GL_TRUE) {
-//            if (camera.getPosition().z >= -1000) camera.addYaw(1f);
-//        }
-
-        if (glfwGetKey(windowID, GLFW_KEY_SPACE) == GL_TRUE) {
-            camera.printPosition();
-            player.printPosition();
-            camera.setPitch(90);
-            camera.setYaw(0);
-        }
-
-
-        if (glfwGetKey(windowID, GLFW_KEY_UP) == GL_TRUE) {
-           if (System.currentTimeMillis() > moveTimer+200) {
-//                player.move(new Vector3f(0,0,1));
-               light.addPosition(new Vector3f(1000,0,0));
-               moveTimer = System.currentTimeMillis();
-           }
-        }
-
-        if (glfwGetKey(windowID, GLFW_KEY_DOWN) == GL_TRUE) {
-           if (System.currentTimeMillis() > moveTimer+200) {
-//                player.move(new Vector3f(0,0,-1));
-               light.addPosition(new Vector3f(-1000,0,0));
-               moveTimer = System.currentTimeMillis();
-           }
-        }
-
-        if (glfwGetKey(windowID, GLFW_KEY_LEFT) == GL_TRUE) {
-            if (System.currentTimeMillis() > moveTimer+200) {
-//                player.move(new Vector3f(-1f,0,0));
-                light.addPosition(new Vector3f(0,0,-1000));
-                moveTimer = System.currentTimeMillis();
-            }
-        }
-
-        if (glfwGetKey(windowID, GLFW_KEY_RIGHT) == GL_TRUE) {
-            if (System.currentTimeMillis() > moveTimer+200) {
-                light.addPosition(new Vector3f(0,0,1000));
-                moveTimer = System.currentTimeMillis();
-            }
-        }
-
-
-        if (glfwGetMouseButton(windowID, GLFW_MOUSE_BUTTON_2) == GL_TRUE) {
-//            camera.printPosition();
-            if (System.currentTimeMillis() > clickTimer+200) {
-                mousePicker.update();
-                Vector3f mapPoint = mousePicker.getCurrentTerrainPoint();
-                if (mapPoint != null) {
-                    player.setPosition(mapPoint);
-                }
-                clickTimer = System.currentTimeMillis();
-            }
-            camera.calculateCameraPosition();
-        }
-
-        if (glfwGetMouseButton(windowID, GLFW_MOUSE_BUTTON_1) == GL_TRUE) {
-//            camera.printPosition();
-            if (System.currentTimeMillis() > clickTimer+200) {
-                mousePicker.update();
-                Vector3f mapPoint = mousePicker.getCurrentTerrainPoint();
-                if (mapPoint != null) {
-                    player.moveTo(mapPoint);
-                }
-                clickTimer = System.currentTimeMillis();
-            }
-            camera.calculateCameraPosition();
-        }
+        });
     }
 }

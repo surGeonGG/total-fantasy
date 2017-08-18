@@ -9,7 +9,9 @@ import java.util.Random;
 public class SimplexNoiseGenerator {
 
     public static final float OCEAN_LIMIT = 0.4f;
-    public static final float FLATLAND_LIMIT = 0.8f;
+    public static final float FLATLAND_LIMIT = 0.6f;
+    public static final float MOUNTAIN_LIMIT = 0.8f;
+    public static final float HIGH_MOUNTAIN_LIMIT = 0.9f;
 //    public static final float MOUNTAIN_LIMIT = -0.1f;
 
     private static int min = -10, max = 10;
@@ -24,36 +26,24 @@ public class SimplexNoiseGenerator {
 
     public float[][] buildBiome(int width, int height, float biome) {
         float[][] islandShape;
-        if (biome < -0.1f) {
+        if (biome < OCEAN_LIMIT) {
             islandShape = generateOcean(rand.nextInt(), width, height);
         }
-        else if (biome < 0.5f) {
+        else if (biome < FLATLAND_LIMIT) {
             islandShape = generateLand(rand.nextInt(), width, height);
-        }
-        else {
+        } else if (biome < MOUNTAIN_LIMIT) {
             islandShape = generateMountain(rand.nextInt(), width, height);
+        } else {
+            islandShape = generateHighMountain(rand.nextInt(), width, height);
         }
         return islandShape;
     }
 
     public float[][] generateOcean(int seed, int width, int height) {
-        new SimplexNoise(seed);
         float[][] tempMap = new float[width][height];
-        float freq = 2f;
-        float weight = 0.2f;
-        float e0 = 1f;
-        float e1 = 0.5f;
-        float e2 = (float) (weight * Math.pow(0.5, 2));
-        float e3 = (float) (weight * Math.pow(0.5, 3));
-        float e4 = (float) (weight * Math.pow(0.5, 4));
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-                float nx = (float) x / width, ny = (float) y / height;
-                tempMap[x][y] = (float) (e0 * SimplexNoise.noise(nx * freq, ny * freq)
-                        + e1 * SimplexNoise.noise(nx * 2 * freq, ny * 2 * freq)
-                        + e2 * SimplexNoise.noise(nx * 4 * freq, ny * 4 * freq)
-                        + e3 * SimplexNoise.noise(nx * 8 * freq, ny * 8 * freq)
-                        + e4 * SimplexNoise.noise(nx * 16 * freq, ny * 16 * freq)) / 20 - 0.2f;
+                tempMap[x][y] = 0.2f;
             }
         }
         return tempMap;
@@ -91,7 +81,6 @@ public class SimplexNoiseGenerator {
                         + e10 * SimplexNoise.noise(nx * 1024 * freq, ny * 1024 * freq)) / 10 + 0.1f;
                 tempMap[x][y] = DiverseUtilities.clamp(tempMap[x][y], OCEAN_LIMIT + 0.05f, 99f);
                 tempMap[x][y] = adjust(tempMap[x][y]);
-
             }
         }
         return tempMap;
@@ -115,21 +104,31 @@ public class SimplexNoiseGenerator {
         float e10 = (float) (weight * Math.pow(0.5, 10));
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-                float nx = (float) x / width, ny = (float) y / height;
-                tempMap[x][y] = (float) (e0 * SimplexNoise.noise(nx * freq, ny * freq)
-                        + e1 * SimplexNoise.noise(nx * 2 * freq, ny * 2 * freq)
-                        + e2 * SimplexNoise.noise(nx * 4 * freq, ny * 4 * freq)
-                        + e3 * SimplexNoise.noise(nx * 8 * freq, ny * 8 * freq)
-                        + e4 * SimplexNoise.noise(nx * 16 * freq, ny * 16 * freq)
-                        + e5 * SimplexNoise.noise(nx * 32 * freq, ny * 32 * freq)
-                        + e6 * SimplexNoise.noise(nx * 64 * freq, ny * 64 * freq)
-                        + e7 * SimplexNoise.noise(nx * 128 * freq, ny * 128 * freq)
-                        + e8 * SimplexNoise.noise(nx * 256 * freq, ny * 256 * freq)
-                        + e9 * SimplexNoise.noise(nx * 512 * freq, ny * 512 * freq)
-                        + e10 * SimplexNoise.noise(nx * 1024 * freq, ny * 1024 * freq) * 6);
-                tempMap[x][y] = DiverseUtilities.clamp(tempMap[x][y], OCEAN_LIMIT+0.1f, 99f);
-                tempMap[x][y] = adjust(tempMap[x][y]);
+//                float nx = (float) x / width, ny = (float) y / height;
+//                tempMap[x][y] = (float) (e0 * SimplexNoise.noise(nx * freq, ny * freq)
+//                        + e1 * SimplexNoise.noise(nx * 2 * freq, ny * 2 * freq)
+//                        + e2 * SimplexNoise.noise(nx * 4 * freq, ny * 4 * freq)
+//                        + e3 * SimplexNoise.noise(nx * 8 * freq, ny * 8 * freq)
+//                        + e4 * SimplexNoise.noise(nx * 16 * freq, ny * 16 * freq)
+//                        + e5 * SimplexNoise.noise(nx * 32 * freq, ny * 32 * freq)
+//                        + e6 * SimplexNoise.noise(nx * 64 * freq, ny * 64 * freq)
+//                        + e7 * SimplexNoise.noise(nx * 128 * freq, ny * 128 * freq)
+//                        + e8 * SimplexNoise.noise(nx * 256 * freq, ny * 256 * freq)
+//                        + e9 * SimplexNoise.noise(nx * 512 * freq, ny * 512 * freq)
+//                        + e10 * SimplexNoise.noise(nx * 1024 * freq, ny * 1024 * freq) * 6);
+//                tempMap[x][y] = DiverseUtilities.clamp(tempMap[x][y], OCEAN_LIMIT+0.1f, 99f);
+//                tempMap[x][y] = adjust(tempMap[x][y]);
+                tempMap[x][y] = MOUNTAIN_LIMIT-0.01f;
+            }
+        }
+        return tempMap;
+    }
 
+    private float[][] generateHighMountain(int i, int width, int height) {
+        float[][] tempMap = new float[width][height];
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                tempMap[x][y] = HIGH_MOUNTAIN_LIMIT-0.01f;
             }
         }
         return tempMap;
@@ -169,7 +168,6 @@ public class SimplexNoiseGenerator {
                 tempMap[x][y] = adjust(tempMap[x][y]);
             }
         }
-
         return tempMap;
     }
 

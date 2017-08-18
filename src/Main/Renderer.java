@@ -117,12 +117,7 @@ public class Renderer {
         glBindTexture(GL_TEXTURE_2D, terrainTile.getPermTexture().getTexID());
         glActiveTexture(GL_TEXTURE7);
         glBindTexture(GL_TEXTURE_1D, terrainTile.getSimplexTexture().getTexID());
-        terrainShader.setUniform("mountainTextureSampler", 0);
-        terrainShader.setUniform("grassTextureSampler", 1);
-        terrainShader.setUniform("desertTextureSampler", 2);
-        terrainShader.setUniform("snowTextureSampler", 3);
         terrainShader.setUniform("height_moisture", 4);
-        terrainShader.setUniform("forestTextureSampler", 5);
         terrainShader.setUniform("permTexture", 6);
         terrainShader.setUniform("simplexTexture", 7);
         glDrawElements(GL_TRIANGLES, rawModel.getVertexCount(), GL_UNSIGNED_INT, 0);
@@ -190,8 +185,5 @@ public class Renderer {
         lineShader.unbind();
         GL20.glDisableVertexAttribArray(0);
         GL30.glBindVertexArray(0);
-
-
-
     }
 }

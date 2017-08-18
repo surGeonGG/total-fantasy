@@ -13,11 +13,13 @@ public class Camera {
     private float distanceFromPlayer = 50f;
     private float angleAroundPlayer = 0f;
     private float pitch = 20f;
+    private float pitchRate = 0f;
     private float yaw = 0f;
+    private float yawRate = 0f;
+    private float zoomRate = 0f;
 
     private Matrix4f projection;
     private Vector3f position = new Vector3f(0f,0f,0f);
-    private Vector3f rotation;
 
     private Player player;
 
@@ -42,6 +44,9 @@ public class Camera {
     }
 
     public void calculateCameraPosition() {
+        angleAroundPlayer += yawRate;
+        pitch += pitchRate;
+        zoom(zoomRate);
         float horizontalDistance = (float) (distanceFromPlayer * Math.cos(Math.toRadians(pitch)));
         float verticalDistance = (float) (distanceFromPlayer * Math.sin(Math.toRadians(pitch)));
         float theta = player.getRy() + angleAroundPlayer;
@@ -59,20 +64,9 @@ public class Camera {
 
     public void zoom(float zoom) {
         distanceFromPlayer -= zoom;
-        calculateCameraPosition();
         if (distanceFromPlayer < 1) {
             distanceFromPlayer = 1;
         }
-    }
-
-    public void changePitch(float rotation) {
-        pitch += rotation;
-        calculateCameraPosition();
-    }
-
-    public void rotate(float rotation) {
-        angleAroundPlayer += rotation;
-        calculateCameraPosition();
     }
 
     public Vector3f getPosition() { return position; }
@@ -97,5 +91,17 @@ public class Camera {
 
     public float getYaw() {
         return yaw;
+    }
+
+    public void setPitchRate(float pitchRate) {
+        this.pitchRate = pitchRate;
+    }
+
+    public void setYawRate(float yawRate) {
+        this.yawRate = yawRate;
+    }
+
+    public void setZoomRate(float zoomRate) {
+        this.zoomRate = zoomRate;
     }
 }

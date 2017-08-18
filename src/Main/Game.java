@@ -22,9 +22,8 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class Game {
 
-    public static final float HEIGHT_MULTIPLIER = 20;
-    public static final int X_SQUARES_PER_TILE = 200;
-    public static final int Z_SQUARES_PER_TILE = 200;
+    public static final int X_SQUARES_PER_TILE = 150;
+    public static final int Z_SQUARES_PER_TILE = 100;
     public static final int SQUARES_PER_TILE = X_SQUARES_PER_TILE * Z_SQUARES_PER_TILE;
     public static final int X_VERTICES_PER_SQUARE = 5;
     public static final int Z_VERTICES_PER_SQUARE = 5;
@@ -113,7 +112,6 @@ public class Game {
 
     public void update(TerrainTile[][] terrainTiles, Light light) {
         window.update();
-        input.update();
         camera.calculateCameraPosition();
 
     }

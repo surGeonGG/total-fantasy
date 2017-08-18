@@ -70,7 +70,8 @@ public class TerrainTile {
     public void generateModel() {
         simplexNoiseGenerator = new SimplexNoiseGenerator();
         loader = new Loader();
-        heightMap = simplexNoiseGenerator.buildNoise(Game.X_SQUARES_PER_TILE * Game.NUMBER_OF_TILES_X,Game.Z_SQUARES_PER_TILE * Game.NUMBER_OF_TILES_Y);
+        heightMap = simplexNoiseGenerator.buildNoise(Game.X_SQUARES_PER_TILE * Game.NUMBER_OF_TILES_X,
+                Game.Z_SQUARES_PER_TILE * Game.NUMBER_OF_TILES_Y);
         moistureMap = new float[Game.X_SQUARES_PER_TILE][Game.Z_SQUARES_PER_TILE];
         squares = new TerrainSquare[Game.X_SQUARES_PER_TILE][Game.Z_SQUARES_PER_TILE];
         vertices = new float[Game.VERTICES_PER_TILE * 3];
@@ -113,8 +114,8 @@ public class TerrainTile {
                 vertices[vertexPointer++] = x;
                 vertices[vertexPointer++] = getSquare(x, z).getHeightAbsCoords(x, z);
                 vertices[vertexPointer++] = z;
-                textureCoords[texCoordPointer++] = ((float) z / ((float) Game.TILE_WIDTH - 1));
-                textureCoords[texCoordPointer++] = ((float) x / ((float) Game.TILE_HEIGHT - 1));
+                textureCoords[texCoordPointer++] = ((float) x / ((float) Game.TILE_WIDTH - 1));
+                textureCoords[texCoordPointer++] = ((float) z / ((float) Game.TILE_HEIGHT - 1));
                 Vector3f normal = calculateNormal(x, z);
                 normals[normalsPointer++] = normal.x;
                 normals[normalsPointer++] = normal.y;
