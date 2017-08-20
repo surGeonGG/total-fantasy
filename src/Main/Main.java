@@ -41,11 +41,8 @@ public class Main {
         glClearColor(0.53f, 0.8f, 0.92f, 1);
         game = new Game(window);
     }
+
     public static void main(String[] args) {
-//
-//        System.out.println(749 / 5);
-//        System.out.println((float) 749 / 5);
-//        System.out.println(Math.ceil((float)749 / 5));
         new Main();
     }
 }

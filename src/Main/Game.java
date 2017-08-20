@@ -14,15 +14,13 @@ import java.util.List;
 import java.util.Random;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
-import static org.lwjgl.glfw.GLFW.glfwSetErrorCallback;
-import static org.lwjgl.glfw.GLFW.glfwTerminate;
-import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
+import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 
 public class Game {
 
-    public static final int X_SQUARES_PER_TILE = 150;
-    public static final int Z_SQUARES_PER_TILE = 100;
+    public static final int X_SQUARES_PER_TILE = 200;
+    public static final int Z_SQUARES_PER_TILE = 150;
     public static final int SQUARES_PER_TILE = X_SQUARES_PER_TILE * Z_SQUARES_PER_TILE;
     public static final int X_VERTICES_PER_SQUARE = 5;
     public static final int Z_VERTICES_PER_SQUARE = 5;
@@ -88,8 +86,11 @@ public class Game {
             if (delta > 1000 / 120) {
                 //System.out.println("delta: " + delta);
                 delta = 0;
-                update(terrainTiles, light);
-                render();
+                glfwPollEvents();
+                camera.calculateCameraPosition();
+                player.update();
+                glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+                renderer.renderEntity(player, light);
                 for (Entity entity : entities) {
                     if (entity.getPosition().x < player.getPosition().x + 100
                             && entity.getPosition().x > player.getPosition().x - 100
@@ -112,19 +113,6 @@ public class Game {
                 window.swapBuffers();
             }
         }
-    }
-
-    public void update(TerrainTile[][] terrainTiles, Light light) {
-        window.update();
-        camera.calculateCameraPosition();
-
-    }
-
-    public void render(){
-        glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-        player.update();
-        renderer.renderEntity(player, light);
-//        gui.renderEntity();
     }
 
     private void cleanUp() {

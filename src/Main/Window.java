@@ -69,10 +69,6 @@ public class Window {
         return windowID;
     }
 
-    public static void update() {
-        glfwPollEvents();
-    }
-
     public static void swapBuffers() {
         glfwSwapBuffers(windowID);
     }

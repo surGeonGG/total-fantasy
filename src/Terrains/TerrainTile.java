@@ -64,12 +64,13 @@ public class TerrainTile {
         this.tileX = tileX;
         this.tileZ = tileZ;
         position = new Vector3f(0, 0, 0);
+        loader = new Loader();
+        buildTerrainMaps();
         generateModel();
     }
 
-    public void generateModel() {
+    private void buildTerrainMaps() {
         simplexNoiseGenerator = new SimplexNoiseGenerator();
-        loader = new Loader();
         heightMap = simplexNoiseGenerator.buildNoise(Game.X_SQUARES_PER_TILE * Game.NUMBER_OF_TILES_X,
                 Game.Z_SQUARES_PER_TILE * Game.NUMBER_OF_TILES_Y);
         moistureMap = new float[Game.X_SQUARES_PER_TILE][Game.Z_SQUARES_PER_TILE];
@@ -77,24 +78,26 @@ public class TerrainTile {
         vertices = new float[Game.VERTICES_PER_TILE * 3];
         textureCoords = new float[Game.VERTICES_PER_TILE * 2];
         normals = new float[Game.VERTICES_PER_TILE * 3];
-        int numberOfIndices = (Game.Z_VERTICES_PER_TILE - 1) * (Game.X_VERTICES_PER_TILE - 1) * 6; //xPerSquare/Z - 1 = number of quads in axis
-        indices = new int[numberOfIndices];
         for (int i = 0; i < heightMap[0].length; i++) {
             for (int j = 0; j < heightMap.length; j++) {
                 moistureMap[j][i] = 0f;
-                if (heightMap[j][i] < SimplexNoiseGenerator.OCEAN_LIMIT)
+                if (heightMap[j][i] < SimplexNoiseGenerator.OCEAN_LIMIT) {
                     moistureMap[j][i] = 1f;
+                }
             }
         }
         float[][] ocean = moistureMap;
         int r1 = random.nextInt(2) * 2 - 1;
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 15; i++) {
             moistureMap = Wind.spreadMoisture(moistureMap, ocean, -1, -1);
             moistureMap = ArrayManipulation.clampf(moistureMap, 1f, 0f);
         }
         moistureMap = Wind.spreadMoisture(moistureMap, ocean, 1, -1);
         moistureMap = Wind.spreadMoisture(moistureMap, ocean, 1, -1);
         moistureMap = ArrayManipulation.clampf(moistureMap, 1f, 0f);
+    }
+
+    public void generateModel() {
         for (int i = 0; i < heightMap[0].length; i++) {
             for (int j = 0; j < heightMap.length; j++) {
                 float[][] localHeightMap = simplexNoiseGenerator.buildBiome(Game.X_VERTICES_PER_SQUARE,
@@ -122,8 +125,8 @@ public class TerrainTile {
                 normals[normalsPointer++] = normal.z;
             }
         }
-
-
+        int numberOfIndices = (Game.Z_VERTICES_PER_TILE - 1) * (Game.X_VERTICES_PER_TILE - 1) * 6; //xPerSquare/Z - 1 = number of quads in axis
+        indices = new int[numberOfIndices];
         int indicesPointer = 0;
         for (int i = 0; i < Game.Z_VERTICES_PER_TILE - 1; i++) {
             for (int j = 0; j < Game.X_VERTICES_PER_TILE - 1; j++) {
@@ -139,7 +142,6 @@ public class TerrainTile {
                 indices[indicesPointer++] = bottomRight;
             }
         }
-
         ByteBuffer texByteBuffer = loader.loadArrayToByteBuffer(heightMap, moistureMap);
         heightMoisture = loader.create2DTextureFromByteBuffer(texByteBuffer, heightMap.length, heightMap[0].length);
         texByteBuffer = loader.initPermTexture(perm, grad3);
@@ -148,7 +150,6 @@ public class TerrainTile {
         simplexTexture = loader.create1DTextureFromByteBuffer(texByteBuffer, simplex4.length / 4);
 
         rawModel = loader.createRawModel(vertices, indices, textureCoords, normals);
-
     }
 
 
@@ -267,5 +268,10 @@ public class TerrainTile {
 
     public void toggleLines() {
         showLines = !showLines;
+    }
+
+    public void reload() {
+        buildTerrainMaps();
+        generateModel();
     }
 }

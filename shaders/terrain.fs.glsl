@@ -128,7 +128,7 @@ void main() {
     vec3 unitNormal = normalize(pass_normal);
     vec3 unitTowardsLightVector = normalize(pass_towardsLightVector);
     float brightness = dot(unitNormal, unitTowardsLightVector);
-    brightness = max(brightness, 0.0);
+    brightness = max(brightness, 0.2);
     //texturing
     vec2 scaledTexCoords;
     scaledTexCoords.x = pass_texCoords.x * 200;

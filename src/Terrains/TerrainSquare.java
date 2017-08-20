@@ -13,18 +13,15 @@ public class TerrainSquare {
     private float x0;
     private float z0;
     private float[] outline;
-    private float lw = 0.2f;
+    private float lw = 0.1f;
     private boolean showLine = false;
 
     public TerrainSquare(float[][] heightMap, float heightMultiplier, int x, int z, String biome) {
         this.heightMap = heightMap;
-//        int zOffset = Math.floorDiv(z, Game.Z_VERTICES_PER_SQUARE);
-//        int xOffset = Math.floorDiv(x, Game.X_VERTICES_PER_SQUARE);
         x0 = x * Game.X_VERTICES_PER_SQUARE - x;
         z0 = z * Game.Z_VERTICES_PER_SQUARE - z;
         this.biome = biome;
         this.heightMultiplier = heightMultiplier;
-        int vPerSide = Game.X_VERTICES_PER_SQUARE;
         int vPerSideM1 = Game.X_VERTICES_PER_SQUARE - 1;
         int vcount = (vPerSideM1 * 24) + 6;
         outline = new float[vcount];

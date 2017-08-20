@@ -59,37 +59,37 @@ public class Input {
             switch (key) {
                 case GLFW_KEY_A:
                     if (action == GLFW_PRESS)
-                        camera.setYawRate(-1);
+                        camera.setYawRate(-5);
                     if (action == GLFW_RELEASE)
                         camera.setYawRate(0);
                     break;
                 case GLFW_KEY_D:
                     if (action == GLFW_PRESS)
-                        camera.setYawRate(1);
+                        camera.setYawRate(5);
                     if (action == GLFW_RELEASE)
                         camera.setYawRate(0);
                     break;
                 case GLFW_KEY_W:
                     if (action == GLFW_PRESS)
-                        camera.setPitchRate(1);
+                        camera.setPitchRate(5);
                     if (action == GLFW_RELEASE)
                         camera.setPitchRate(0);
                     break;
                 case GLFW_KEY_S:
                     if (action == GLFW_PRESS)
-                        camera.setPitchRate(-1);
+                        camera.setPitchRate(-5);
                     if (action == GLFW_RELEASE)
                         camera.setPitchRate(0);
                     break;
                 case GLFW_KEY_KP_ADD:
                     if (action == GLFW_PRESS)
-                        camera.setZoomRate(1);
+                        camera.setZoomRate(5);
                     if (action == GLFW_RELEASE)
                         camera.setZoomRate(0);
                     break;
                 case GLFW_KEY_KP_SUBTRACT:
                     if (action == GLFW_PRESS)
-                        camera.setZoomRate(-1);
+                        camera.setZoomRate(-5);
                     if (action == GLFW_RELEASE)
                         camera.setZoomRate(0);
                     break;
@@ -100,6 +100,11 @@ public class Input {
                 case GLFW_KEY_L:
                     if (action == GLFW_PRESS) {
                         terrainTiles[0][0].toggleLines();
+                    }
+                    break;
+                case GLFW_KEY_F5:
+                    if (action == GLFW_PRESS) {
+                        terrainTiles[0][0].reload();
                     }
                     break;
             }
