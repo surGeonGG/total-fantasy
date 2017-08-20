@@ -159,9 +159,9 @@ void main() {
     vec4 height_moistureLR = texture(height_moisture, pass_texCoords) * weightLR;
     vec4 height_moistureUL = texture(height_moisture, pass_texCoords) * weightUL;
     vec4 height_moistureUR = texture(height_moisture, pass_texCoords) * weightUR;
-    vec4 height_moistureTOT = texture(height_moisture, pass_texCoords);
-//    vec4 height_moistureTOT = (height_moistureLL + height_moistureLR
-//                            + height_moistureUL + height_moistureUR);
+//    vec4 height_moistureTOT = texture(height_moisture, pass_texCoords);
+    vec4 height_moistureTOT = (height_moistureLL + height_moistureLR
+                            + height_moistureUL + height_moistureUR);
 
     float height_level_0 = -10;
     float height_level_1 = 0.6f;

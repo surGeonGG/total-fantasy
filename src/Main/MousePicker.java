@@ -134,7 +134,7 @@ public class MousePicker {
         TerrainTile terrainTile = getMap(testPoint.x, testPoint.z);
         float height = 0;
         if (terrainTile != null) {
-            height = terrainTile.getHeight((int) testPoint.x, (int) testPoint.z);
+            height = terrainTile.getHeightFromMapCoords((int) testPoint.x, (int) testPoint.z);
         }
         if (testPoint.y < height) {
             return true;
@@ -144,8 +144,8 @@ public class MousePicker {
     }
 
     private TerrainTile getMap(float worldX, float worldZ) {
-        int widthPerTile = Game.TILE_WIDTH /Game.NUMBER_OF_TILES_X;
-        int heightPerTile = Game.TILE_HEIGHT /Game.NUMBER_OF_TILES_Y;
+        int widthPerTile = Game.X_VERTICES_PER_TILE /Game.NUMBER_OF_TILES_X;
+        int heightPerTile = Game.Z_VERTICES_PER_TILE /Game.NUMBER_OF_TILES_Y;
         int x = (int) (worldX / widthPerTile);
         int y = (int) (worldZ / heightPerTile);
         if (x > Game.NUMBER_OF_TILES_X - 1)

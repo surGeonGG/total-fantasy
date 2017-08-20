@@ -42,10 +42,12 @@ public class Player extends Entity {
     }
 
     public void move() {
-        Vector3f vector = new Vector3f();
-        moveTo.sub(getPosition(), vector);
-        vector.normalize().mul(travelspeed);
-        addPosition(vector);
+        if (getPosition().distance(moveTo) > 0.1f) {
+            Vector3f vector = new Vector3f();
+            moveTo.sub(getPosition(), vector);
+            vector.normalize().mul(travelspeed);
+            addPosition(vector);
+        }
     }
 
     public void moveTo(Vector3f moveTo) {

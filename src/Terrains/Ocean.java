@@ -11,12 +11,12 @@ public class Ocean {
 
     private RawModel rawModel;
     private float rx = 0, ry = 0, rz = 0, scale = 1f;
-    private Vector3f position = new Vector3f(0,SimplexNoiseGenerator.OCEAN_LIMIT,0);
+    private Vector3f position = new Vector3f(0,SimplexNoiseGenerator.OCEAN_HEIGHT_MULTIPLIER,0);
 
     private float[] vertices = {
-            (float) 0,0f,Game.WIDTH,
-            (float) Game.HEIGHT,0f,Game.WIDTH,
-            (float) Game.HEIGHT,0f,0,
+            (float) 0,0f,Game.HEIGHT,
+            (float) Game.WIDTH,0f,Game.HEIGHT,
+            (float) Game.WIDTH,0f,0,
             (float) 0,0f,0
     };
     private int[] indices = {

@@ -2,7 +2,6 @@ package Terrains;
 
 import Main.Game;
 import Main.Loader;
-import Main.RawModel;
 import Utils.DiverseUtilities;
 
 public class TerrainSquare {
@@ -14,49 +13,53 @@ public class TerrainSquare {
     private float x0;
     private float z0;
     private float[] outline;
-    private float lw = 0.05f;
+    private float lw = 0.2f;
+    private boolean showLine = false;
 
     public TerrainSquare(float[][] heightMap, float heightMultiplier, int x, int z, String biome) {
         this.heightMap = heightMap;
-        x0 = x * Game.X_VERTICES_PER_SQUARE;
-        z0 = z * Game.Z_VERTICES_PER_SQUARE;
+//        int zOffset = Math.floorDiv(z, Game.Z_VERTICES_PER_SQUARE);
+//        int xOffset = Math.floorDiv(x, Game.X_VERTICES_PER_SQUARE);
+        x0 = x * Game.X_VERTICES_PER_SQUARE - x;
+        z0 = z * Game.Z_VERTICES_PER_SQUARE - z;
         this.biome = biome;
         this.heightMultiplier = heightMultiplier;
-        int sideMinus1 = Game.X_VERTICES_PER_SQUARE - 1;
-        int vcount = (sideMinus1 * 4 + sideMinus1 * 4) * 3 + 6;
+        int vPerSide = Game.X_VERTICES_PER_SQUARE;
+        int vPerSideM1 = Game.X_VERTICES_PER_SQUARE - 1;
+        int vcount = (vPerSideM1 * 24) + 6;
         outline = new float[vcount];
-        for (int i = 0; i < sideMinus1; i++) {
+        for (int i = 0; i < vPerSideM1; i++) {
             outline[i*6  ] = x0 + i;
             outline[i*6+1] = DiverseUtilities.clamp(heightMap[0][i], 0f, 99f) + 0.05f;
-            outline[i*6+2] = z0;
+            outline[i*6+2] = z0 - lw;
             outline[i*6+3] = x0 + i;
             outline[i*6+4] = DiverseUtilities.clamp(heightMap[0][i], 0f, 99f) + 0.05f;
             outline[i*6+5] = z0 + lw;
 
-            outline[i*6   + sideMinus1 * 6] = x0 + sideMinus1;
-            outline[i*6+1 + sideMinus1 * 6] = DiverseUtilities.clamp(heightMap[i][sideMinus1], 0f, 99f) + 0.05f;
-            outline[i*6+2 + sideMinus1 * 6] = z0 + i;
-            outline[i*6+3 + sideMinus1 * 6] = x0 + sideMinus1 - lw;
-            outline[i*6+4 + sideMinus1 * 6] = DiverseUtilities.clamp(heightMap[i][sideMinus1], 0f, 99f) + 0.05f;
-            outline[i*6+5 + sideMinus1 * 6] = z0 + i;
+            outline[i*6   + vPerSideM1 * 6] = x0 + vPerSideM1 + lw;
+            outline[i*6+1 + vPerSideM1 * 6] = DiverseUtilities.clamp(heightMap[i][vPerSideM1], 0f, 99f) + 0.05f;
+            outline[i*6+2 + vPerSideM1 * 6] = z0 + i;
+            outline[i*6+3 + vPerSideM1 * 6] = x0 + vPerSideM1 - lw;
+            outline[i*6+4 + vPerSideM1 * 6] = DiverseUtilities.clamp(heightMap[i][vPerSideM1], 0f, 99f) + 0.05f;
+            outline[i*6+5 + vPerSideM1 * 6] = z0 + i;
 
-            outline[i*6   + sideMinus1 * 12] = x0 + sideMinus1 - i;
-            outline[i*6+1 + sideMinus1 * 12] = DiverseUtilities.clamp(heightMap[sideMinus1][sideMinus1 - i], 0f, 99f) + 0.05f;
-            outline[i*6+2 + sideMinus1 * 12] = z0 + sideMinus1;
-            outline[i*6+3 + sideMinus1 * 12] = x0 + sideMinus1 - i;
-            outline[i*6+4 + sideMinus1 * 12] = DiverseUtilities.clamp(heightMap[sideMinus1][sideMinus1 - i], 0f, 99f) + 0.05f;
-            outline[i*6+5 + sideMinus1 * 12] = z0 + sideMinus1 - lw;
+            outline[i*6   + vPerSideM1 * 12] = x0 + vPerSideM1 - i;
+            outline[i*6+1 + vPerSideM1 * 12] = DiverseUtilities.clamp(heightMap[vPerSideM1][vPerSideM1 - i], 0f, 99f) + 0.05f;
+            outline[i*6+2 + vPerSideM1 * 12] = z0 + vPerSideM1 + lw;
+            outline[i*6+3 + vPerSideM1 * 12] = x0 + vPerSideM1 - i;
+            outline[i*6+4 + vPerSideM1 * 12] = DiverseUtilities.clamp(heightMap[vPerSideM1][vPerSideM1 - i], 0f, 99f) + 0.05f;
+            outline[i*6+5 + vPerSideM1 * 12] = z0 + vPerSideM1 - lw;
 
-            outline[i*6   + sideMinus1 * 18] = x0;
-            outline[i*6+1 + sideMinus1 * 18] = DiverseUtilities.clamp(heightMap[sideMinus1 - i][0], 0f, 99f) + 0.05f;
-            outline[i*6+2 + sideMinus1 * 18] = z0 + sideMinus1 - i;
-            outline[i*6+3 + sideMinus1 * 18] = x0 + lw;
-            outline[i*6+4 + sideMinus1 * 18] = DiverseUtilities.clamp(heightMap[sideMinus1 - i][0], 0f, 99f) + 0.05f;
-            outline[i*6+5 + sideMinus1 * 18] = z0 + sideMinus1 - i;
+            outline[i*6   + vPerSideM1 * 18] = x0 - lw;
+            outline[i*6+1 + vPerSideM1 * 18] = DiverseUtilities.clamp(heightMap[vPerSideM1 - i][0], 0f, 99f) + 0.05f;
+            outline[i*6+2 + vPerSideM1 * 18] = z0 + vPerSideM1 - i;
+            outline[i*6+3 + vPerSideM1 * 18] = x0 + lw;
+            outline[i*6+4 + vPerSideM1 * 18] = DiverseUtilities.clamp(heightMap[vPerSideM1 - i][0], 0f, 99f) + 0.05f;
+            outline[i*6+5 + vPerSideM1 * 18] = z0 + vPerSideM1 - i;
         }
         outline[vcount-6] = x0;
         outline[vcount-5] = DiverseUtilities.clamp(heightMap[0][0], 0f, 99f) + 0.05f;
-        outline[vcount-4] = z0;
+        outline[vcount-4] = z0 - lw;
         outline[vcount-3] = x0;
         outline[vcount-2] = DiverseUtilities.clamp(heightMap[0][0], 0f, 99f) + 0.05f;
         outline[vcount-1] = z0 + lw;
@@ -76,13 +79,18 @@ public class TerrainSquare {
     }
 
     public int getIndex(int x, int y) {
-        return y * Game.TILE_WIDTH + x;
+        return y * Game.X_VERTICES_PER_TILE + x;
     }
 
     public float[] getOutline() {
         return outline;
     }
 
+    public boolean isShown() {
+        return showLine;
+    }
 
-
+    public void toggleLines() {
+        showLine = !showLine;
+    }
 }

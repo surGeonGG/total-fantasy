@@ -42,6 +42,10 @@ public class Main {
         game = new Game(window);
     }
     public static void main(String[] args) {
+//
+//        System.out.println(749 / 5);
+//        System.out.println((float) 749 / 5);
+//        System.out.println(Math.ceil((float)749 / 5));
         new Main();
     }
 }

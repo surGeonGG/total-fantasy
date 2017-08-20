@@ -97,6 +97,11 @@ public class Input {
                     camera.setPitch(90);
                     camera.setYaw(0);
                     break;
+                case GLFW_KEY_L:
+                    if (action == GLFW_PRESS) {
+                        terrainTiles[0][0].toggleLines();
+                    }
+                    break;
             }
         });
     }

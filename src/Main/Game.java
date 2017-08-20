@@ -5,7 +5,6 @@ import Entities.Light;
 import Entities.Player;
 import Gui.GuiElement;
 import Terrains.Ocean;
-import Terrains.TerrainSquare;
 import Terrains.TerrainTile;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -27,14 +26,18 @@ public class Game {
     public static final int SQUARES_PER_TILE = X_SQUARES_PER_TILE * Z_SQUARES_PER_TILE;
     public static final int X_VERTICES_PER_SQUARE = 5;
     public static final int Z_VERTICES_PER_SQUARE = 5;
+    public static final int Z_VERTICES_PER_SQUARE_M1 = X_VERTICES_PER_SQUARE - 1;
+    public static final int X_VERTICES_PER_SQUARE_M1 = Z_VERTICES_PER_SQUARE - 1;
     public static final int VERTICES_PER_SQUARE = X_VERTICES_PER_SQUARE * Z_VERTICES_PER_SQUARE;
-    public static final int TILE_WIDTH = X_SQUARES_PER_TILE * X_VERTICES_PER_SQUARE;
-    public static final int TILE_HEIGHT = Z_SQUARES_PER_TILE * Z_VERTICES_PER_SQUARE;
-    public static final int VERTICES_PER_TILE = TILE_HEIGHT * TILE_WIDTH;
+    public static final int X_VERTICES_PER_TILE = X_SQUARES_PER_TILE * X_VERTICES_PER_SQUARE;
+    public static final int Z_VERTICES_PER_TILE = Z_SQUARES_PER_TILE * Z_VERTICES_PER_SQUARE;
+    public static final int TILE_WIDTH = X_VERTICES_PER_TILE - X_SQUARES_PER_TILE;
+    public static final int TILE_HEIGHT = Z_VERTICES_PER_TILE - Z_SQUARES_PER_TILE;
+    public static final int VERTICES_PER_TILE = Z_VERTICES_PER_TILE * X_VERTICES_PER_TILE;
     public static final int NUMBER_OF_TILES_X = 1;
     public static final int NUMBER_OF_TILES_Y = 1;
-    public static final int WIDTH = NUMBER_OF_TILES_X * TILE_HEIGHT;
-    public static final int HEIGHT = NUMBER_OF_TILES_Y * TILE_WIDTH;
+    public static final int WIDTH = NUMBER_OF_TILES_X * TILE_WIDTH;
+    public static final int HEIGHT = NUMBER_OF_TILES_Y * TILE_HEIGHT;
 
     private Camera camera;
     private Window window;
@@ -60,7 +63,6 @@ public class Game {
                 terrainTiles[j][i] = new TerrainTile(j, i);
             }
         }
-        RawModel outlines = terrainTiles[0][0].getSquareOutlines();
         Ocean ocean = new Ocean();
         List<Entity> entities = new ArrayList<>();
         List<GuiElement> guiElements = new ArrayList<>();
@@ -72,12 +74,12 @@ public class Game {
 //        }
         mousePicker = new MousePicker(camera, window.getWindowID(), terrainTiles);
         input = new Input(camera, window.getWindowID(), player, terrainTiles, mousePicker, light);
-        gameLoop(entities, guiElements, terrainTiles, ocean, light, outlines);
+        gameLoop(entities, guiElements, terrainTiles, ocean, light);
         cleanUp();
     }
 
     private void gameLoop(List<Entity> entities, List<GuiElement> guiElements, TerrainTile[][] terrainTiles,
-                          Ocean ocean, Light light, RawModel outlines) {
+                          Ocean ocean, Light light) {
         long delta = 0;
         long sysTime = System.currentTimeMillis();
         while (!glfwWindowShouldClose(window.getWindowID())) {
@@ -99,9 +101,11 @@ public class Game {
                 for (TerrainTile[] terrainTiles2 : terrainTiles) {
                     for (TerrainTile terrainTile : terrainTiles2) {
                         renderer.renderTerrain(terrainTile, light);
+                        if (terrainTile.linesShown()) {
+                            renderer.renderOutline(terrainTile.getSquareOutlines());
+                        }
                     }
                 }
-                renderer.renderOutline(outlines);
                 for (GuiElement guiElement : guiElements) {
                     renderer.renderGui(guiElement);
                 }
