@@ -1,6 +1,6 @@
 #version 400 core
 
-uniform sampler2D height_moisture;
+uniform sampler2D biomes;
 
 uniform sampler2D permTexture;
 uniform sampler1D simplexTexture;
@@ -24,6 +24,13 @@ out vec4 out_color;
 
 float blendEval(float begin, float end, float x) {
     return smoothstep(begin - 0.05, begin + 0.05, x) * smoothstep(-end - 0.05, -end + 0.05, -x);
+}
+
+int isSame(int edge, float x) {
+    float evalLarger = step(float(-edge), -x);
+    float evalSmaller = step(float(edge), x);
+    float eval = evalSmaller * evalLarger;
+    return int(eval);
 }
 
 float blendEval(float begin, float end, float x, float blendRange) {
@@ -155,24 +162,15 @@ void main() {
     float weightUL = (yDistanceFromD / length) * (xDistanceFromR / length);
     float weightUR = (yDistanceFromD / length) * (xDistanceFromL / length);
 
-    vec4 height_moistureLL = texture(height_moisture, pass_texCoords) * weightLL;
-    vec4 height_moistureLR = texture(height_moisture, pass_texCoords) * weightLR;
-    vec4 height_moistureUL = texture(height_moisture, pass_texCoords) * weightUL;
-    vec4 height_moistureUR = texture(height_moisture, pass_texCoords) * weightUR;
-//    vec4 height_moistureTOT = texture(height_moisture, pass_texCoords);
-    vec4 height_moistureTOT = (height_moistureLL + height_moistureLR
-                            + height_moistureUL + height_moistureUR);
+//    vec4 height_moistureLL = texture(biomes, pass_texCoords) * weightLL;
+//    vec4 height_moistureLR = texture(biomes, pass_texCoords) * weightLR;
+//    vec4 height_moistureUL = texture(biomes, pass_texCoords) * weightUL;
+//    vec4 height_moistureUR = texture(biomes, pass_texCoords) * weightUR;
+    vec4 biome = texture(biomes, pass_texCoords);
+//    vec4 biome = (height_moistureLL + height_moistureLR
+//                            + height_moistureUL + height_moistureUR);
 
-    float height_level_0 = -10;
-    float height_level_1 = 0.6f;
-    float height_level_2 = 0.8;
-    float height_level_3 = 1.0;
-
-    float moist_level_0 = -10.0;
-    float moist_level_1 = 0.5;
-    float moist_level_2 = 10.0;
-
-    float moist_blend_str = 0.05;
+    float moist_blend_str = 0.25;
 
     vec4 grassland = vec4(0.533, 0.666, 0.333, 1);
     vec4 desert = vec4(0.839, 0.733, 0.615, 1);
@@ -181,47 +179,31 @@ void main() {
     vec4 forest = vec4(0.392, 0.568, 0.372, 1);
     vec4 tropical_forest = vec4(0.333, 0.600, 0.266, 1);
     vec4 tropical_deep_forest = vec4(0.200, 0.470, 0.333, 1);
-    vec4 mountain = vec4(0.666, 0.576, 0.513, 1);
+    vec4 stony = vec4(0.666, 0.576, 0.513, 1);
     vec4 snow = vec4(0.98, 0.98, 0.98, 1);
 
+    int GRASSLAND = 0;
+    int DESERT = 1;
+    int FOREST = 2;
+    int JUNGLE = 3;
+    int SWAMPLAND = 4;
+    int BADLANDS = 5;
+    int STONY = 6;
+    int OCEAN = 7;
+    int DEEP_FOREST = 8;
 
-    vec4 blendDesert = desert
-            * blendEval(height_level_0, height_level_2, height_moistureTOT.x)
-            * blendEval(moist_level_0, moist_level_1, height_moistureTOT.y, moist_blend_str);
-    vec4 blendGrassland = grassland
-            * blendEval(height_level_0, height_level_2, height_moistureTOT.x)
-            * blendEval(moist_level_1, moist_level_2, height_moistureTOT.y, moist_blend_str);
-//    vec4 blendDesertMountain = elevatedDesert
-//            * blendEval(height_level_2, height_level_3, height_moistureTOT.x)
-//            * blendEval(moist_level_0, moist_level_1, height_moistureTOT.y, moist_blend_str);
-    vec4 blendMountain = mountain
-            * blendEval(height_level_2, height_level_3, height_moistureTOT.x)
-            * blendEval(moist_level_0, moist_level_2, height_moistureTOT.y, moist_blend_str);
-//    vec4 blendForest = forest
-//                * blendEval(height_level_1, height_level_2, height_moistureTOT.x)
-//                * blendEval(moist_level_2, moist_level_3, height_moistureTOT.y, moist_blend_str)
-//                * latitude;
-//    vec4 blendDeepForest = deep_forest
-//                * blendEval(height_level_2, height_level_3, height_moistureTOT.x)
-//                * blendEval(moist_level_2, moist_level_3, height_moistureTOT.y, moist_blend_str)
-//                * latitude;
-//
-//    vec4 blendDeepTropicalForest = tropical_deep_forest
-//                * blendEval(height_level_2, height_level_3, height_moistureTOT.x)
-//                * blendEval(moist_level_2, moist_level_3, height_moistureTOT.y, moist_blend_str)
-//                * (1 - latitude);
-//    vec4 blendMountain = mountain
-//            * blendEval(height_level_3, height_level_5, height_moistureTOT.x);
-//    vec4 blendSnow = snow * snowReach;
+    float biomex = biome.x * 255;
 
-//    out_color = (
-//                ((blendGrassland)
-//                + (blendForest + blendTropicalForest)
-//                + blendDesert + blendDeepForest + blendDeepTropicalForest + blendElevatedDesert + blendMountain) * (1 - snowReach)
-//                + blendSnow)
-//                * brightness
-//                * vec4(lightColor, 1);
+    vec4 blendDesert = desert * isSame(DESERT, biomex);
+    vec4 blendGrassland = grassland * isSame(GRASSLAND, biomex);
+    vec4 blendForest = forest * isSame(FOREST, biomex);
+    vec4 blendBadlands = desert * isSame(BADLANDS, biomex);
+    vec4 blendStony = stony * isSame(STONY, biomex);
+    vec4 blendOcean = desert * isSame(OCEAN, biomex);
+    vec4 blendDeepForest = deep_forest * isSame(DEEP_FOREST, biomex);
 
-//    out_color = (height_moistureTOT.x * grassland) * brightness * vec4(lightColor, 1);
-    out_color = (blendGrassland + blendDesert + blendMountain) * brightness * vec4(lightColor, 1);
+
+    out_color = (blendGrassland + blendDesert + blendForest +
+                 blendBadlands + blendStony + blendOcean + blendDeepForest)
+                 * brightness * vec4(lightColor, 1);
 }

@@ -9,8 +9,10 @@ import java.util.Random;
 
 public class TerrainTile {
     private static float[][] heightMap;
+    private static float[][] specialMap;
     private static float[][] moistureMap;
-    private static Texture heightMoisture;
+    private static int[][] biomeMap;
+    private static Texture biomes;
     private static Texture permTexture;
     private static Texture simplexTexture;
     private TerrainSquare[][] squares;
@@ -65,19 +67,20 @@ public class TerrainTile {
         this.tileZ = tileZ;
         position = new Vector3f(0, 0, 0);
         loader = new Loader();
-        buildTerrainMaps();
-        generateModel();
-    }
-
-    private void buildTerrainMaps() {
-        simplexNoiseGenerator = new SimplexNoiseGenerator();
-        heightMap = simplexNoiseGenerator.buildNoise(Game.X_SQUARES_PER_TILE * Game.NUMBER_OF_TILES_X,
-                Game.Z_SQUARES_PER_TILE * Game.NUMBER_OF_TILES_Y);
-        moistureMap = new float[Game.X_SQUARES_PER_TILE][Game.Z_SQUARES_PER_TILE];
         squares = new TerrainSquare[Game.X_SQUARES_PER_TILE][Game.Z_SQUARES_PER_TILE];
         vertices = new float[Game.VERTICES_PER_TILE * 3];
         textureCoords = new float[Game.VERTICES_PER_TILE * 2];
         normals = new float[Game.VERTICES_PER_TILE * 3];
+        simplexNoiseGenerator = new SimplexNoiseGenerator();
+        buildHeightMap();
+        buildMoistureMap();
+        buildSpecialMap();
+        buildSquares();
+        generateModel();
+    }
+
+    private void buildMoistureMap() {
+        moistureMap = new float[Game.X_SQUARES_PER_TILE][Game.Z_SQUARES_PER_TILE];
         for (int i = 0; i < heightMap[0].length; i++) {
             for (int j = 0; j < heightMap.length; j++) {
                 moistureMap[j][i] = 0f;
@@ -87,8 +90,8 @@ public class TerrainTile {
             }
         }
         float[][] ocean = moistureMap;
-        int r1 = random.nextInt(2) * 2 - 1;
-        for (int i = 0; i < 15; i++) {
+//        int r1 = random.nextInt(2) * 2 - 1;
+        for (int i = 0; i < 25; i++) {
             moistureMap = Wind.spreadMoisture(moistureMap, ocean, -1, -1);
             moistureMap = ArrayManipulation.clampf(moistureMap, 1f, 0f);
         }
@@ -97,16 +100,37 @@ public class TerrainTile {
         moistureMap = ArrayManipulation.clampf(moistureMap, 1f, 0f);
     }
 
-    public void generateModel() {
+    private void buildHeightMap() {
+        heightMap = simplexNoiseGenerator.buildHeightMap(Game.X_SQUARES_PER_TILE,
+                Game.Z_SQUARES_PER_TILE);
+
+//        heightMap = simplexNoiseGenerator.generateForest(random.nextInt(9999), heightMap, moistureMap);
+    }
+
+    private void buildSpecialMap() {
+        specialMap = simplexNoiseGenerator.generateNoise(random.nextInt(), Game.X_SQUARES_PER_TILE,
+                Game.Z_SQUARES_PER_TILE, 6, 1);
+    }
+
+    private void buildSquares() {
+        biomeMap = new int[heightMap.length][heightMap[0].length];
         for (int i = 0; i < heightMap[0].length; i++) {
             for (int j = 0; j < heightMap.length; j++) {
-                float[][] localHeightMap = simplexNoiseGenerator.buildBiome(Game.X_VERTICES_PER_SQUARE,
+                float[][] localHeightMap = simplexNoiseGenerator.buildMapHeight(Game.X_VERTICES_PER_SQUARE,
                         Game.Z_VERTICES_PER_SQUARE, heightMap[j][i]);
-                float heightMultiplier = 1;
-                String biome = BiomeGenerator.generateBiome(heightMap[j][i], moistureMap[j][i]);
-                squares[j][i] = new TerrainSquare(localHeightMap, heightMultiplier, j, i, biome);
+                int biome = BiomeGenerator.generateBiome(heightMap[j][i], moistureMap[j][i], specialMap[j][i]);
+                biomeMap[j][i] = biome;
+                System.out.println(biome);
+                squares[j][i] = new TerrainSquare(localHeightMap, j, i, biome);
             }
         }
+    }
+
+
+
+
+    public void generateModel() {
+
         int vertexPointer = 0;
         int texCoordPointer = 0;
         int normalsPointer = 0;
@@ -142,8 +166,8 @@ public class TerrainTile {
                 indices[indicesPointer++] = bottomRight;
             }
         }
-        ByteBuffer texByteBuffer = loader.loadArrayToByteBuffer(heightMap, moistureMap);
-        heightMoisture = loader.create2DTextureFromByteBuffer(texByteBuffer, heightMap.length, heightMap[0].length);
+        ByteBuffer texByteBuffer = loader.loadArrayToByteBuffer(biomeMap);
+        biomes = loader.create2DTextureFromByteBuffer(texByteBuffer, heightMap.length, heightMap[0].length);
         texByteBuffer = loader.initPermTexture(perm, grad3);
         permTexture = loader.create2DTextureFromByteBuffer(texByteBuffer, 256, 256);
         texByteBuffer = loader.loadArrayToByteBuffer(simplex4);
@@ -258,8 +282,8 @@ public class TerrainTile {
         return loader.createRawModel(outlines, 3);
     }
 
-    public Texture getHeightMoisture() {
-        return heightMoisture;
+    public Texture getBiomesTexture() {
+        return biomes;
     }
 
     public boolean linesShown() {
@@ -271,7 +295,10 @@ public class TerrainTile {
     }
 
     public void reload() {
-        buildTerrainMaps();
+        buildHeightMap();
+        buildMoistureMap();
+        buildSpecialMap();
+        buildSquares();
         generateModel();
     }
 }

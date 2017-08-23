@@ -7,21 +7,19 @@ import Utils.DiverseUtilities;
 public class TerrainSquare {
 
     private static Loader loader = new Loader();
-    private String biome;
+    private int biome;
     private float[][] heightMap;
-    private float heightMultiplier;
     private float x0;
     private float z0;
     private float[] outline;
     private float lw = 0.1f;
     private boolean showLine = false;
 
-    public TerrainSquare(float[][] heightMap, float heightMultiplier, int x, int z, String biome) {
+    public TerrainSquare(float[][] heightMap, int x, int z, int biome) {
         this.heightMap = heightMap;
         x0 = x * Game.X_VERTICES_PER_SQUARE - x;
         z0 = z * Game.Z_VERTICES_PER_SQUARE - z;
         this.biome = biome;
-        this.heightMultiplier = heightMultiplier;
         int vPerSideM1 = Game.X_VERTICES_PER_SQUARE - 1;
         int vcount = (vPerSideM1 * 24) + 6;
         outline = new float[vcount];
@@ -68,11 +66,11 @@ public class TerrainSquare {
     }
 
     public float getHeightRelCoords(int x, int z) {
-        return heightMap[x][z] * heightMultiplier;
+        return heightMap[x][z];
     }
 
     public float getHeightAbsCoords(int z, int x) {
-        return heightMap[x % Game.X_VERTICES_PER_SQUARE][z % Game.Z_VERTICES_PER_SQUARE] * heightMultiplier;
+        return heightMap[x % Game.X_VERTICES_PER_SQUARE][z % Game.Z_VERTICES_PER_SQUARE];
     }
 
     public int getIndex(int x, int y) {

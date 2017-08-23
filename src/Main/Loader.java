@@ -131,6 +131,20 @@ public class Loader {
         return byteBuffer;
     }
 
+    public ByteBuffer loadArrayToByteBuffer(int[][] array) {
+        ByteBuffer byteBuffer = BufferUtils.createByteBuffer(array.length * array[0].length * 4);
+        for (int i = 0; i < array[0].length; i++) {
+            for (int j = 0; j < array.length; j++) {
+                byteBuffer.put((byte) array[j][i]); //red
+                byteBuffer.put((byte) array[j][i]); //green
+                byteBuffer.put((byte) array[j][i]); //blue
+                byteBuffer.put((byte) array[j][i]); //alpha
+            }
+        }
+        byteBuffer.flip();
+        return byteBuffer;
+    }
+
     public ByteBuffer loadArrayToByteBuffer(int[] array) {
         ByteBuffer byteBuffer = BufferUtils.createByteBuffer(array.length * 4);
         for (int i = 0; i < array.length/4; i++) {
@@ -142,6 +156,8 @@ public class Loader {
         byteBuffer.flip();
         return byteBuffer;
     }
+
+
 
     public ByteBuffer initPermTexture(int[] perm, int[][] grad3) {
         ByteBuffer byteBuffer = BufferUtils.createByteBuffer(perm.length * perm.length * 4);

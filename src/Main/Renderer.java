@@ -112,12 +112,12 @@ public class Renderer {
         GL20.glEnableVertexAttribArray(1);
         GL20.glEnableVertexAttribArray(2);
         glActiveTexture(GL_TEXTURE4);
-        glBindTexture(GL_TEXTURE_2D, terrainTile.getHeightMoisture().getTexID());
+        glBindTexture(GL_TEXTURE_2D, terrainTile.getBiomesTexture().getTexID());
         glActiveTexture(GL_TEXTURE6);
         glBindTexture(GL_TEXTURE_2D, terrainTile.getPermTexture().getTexID());
         glActiveTexture(GL_TEXTURE7);
         glBindTexture(GL_TEXTURE_1D, terrainTile.getSimplexTexture().getTexID());
-        terrainShader.setUniform("height_moisture", 4);
+        terrainShader.setUniform("biomes", 4);
         terrainShader.setUniform("permTexture", 6);
         terrainShader.setUniform("simplexTexture", 7);
         glDrawElements(GL_TRIANGLES, rawModel.getVertexCount(), GL_UNSIGNED_INT, 0);

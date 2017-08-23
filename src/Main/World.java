@@ -59,7 +59,6 @@ public class World {
 //        islandShape = simplexNoiseGenerator.generateElevation(rand.nextInt(), NOISEMAPLENGTH, NOISEMAPLENGTH);
         moisture = new float[NOISEMAPLENGTH][NOISEMAPLENGTH];
         temprature = new float[NOISEMAPLENGTH][NOISEMAPLENGTH];
-        smoothElevation = BiomeGenerator.smoothElevation(islandShape);
         //builds mountains
         for (int i = 0; i < 200; i++) {
             int x = rand.nextInt(islandShape.length);
