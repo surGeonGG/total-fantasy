@@ -1,10 +1,14 @@
 package Terrains;
 
 import Main.*;
+import Tests.NoiseMapWindow;
 import Utils.ArrayManipulation;
+import Utils.DiverseUtilities;
 import org.joml.Vector3f;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class TerrainTile {
@@ -68,9 +72,8 @@ public class TerrainTile {
         position = new Vector3f(0, 0, 0);
         loader = new Loader();
         squares = new TerrainSquare[Game.X_SQUARES_PER_TILE][Game.Z_SQUARES_PER_TILE];
-        vertices = new float[Game.VERTICES_PER_TILE * 3];
-        textureCoords = new float[Game.VERTICES_PER_TILE * 2];
-        normals = new float[Game.VERTICES_PER_TILE * 3];
+
+
         simplexNoiseGenerator = new SimplexNoiseGenerator();
         buildHeightMap();
         buildMoistureMap();
@@ -79,49 +82,36 @@ public class TerrainTile {
         generateModel();
     }
 
-    private void buildMoistureMap() {
-        moistureMap = new float[Game.X_SQUARES_PER_TILE][Game.Z_SQUARES_PER_TILE];
-        for (int i = 0; i < heightMap[0].length; i++) {
-            for (int j = 0; j < heightMap.length; j++) {
-                moistureMap[j][i] = 0f;
-                if (heightMap[j][i] < SimplexNoiseGenerator.OCEAN_LIMIT) {
-                    moistureMap[j][i] = 1f;
-                }
-            }
-        }
-        float[][] ocean = moistureMap;
-//        int r1 = random.nextInt(2) * 2 - 1;
-        for (int i = 0; i < 25; i++) {
-            moistureMap = Wind.spreadMoisture(moistureMap, ocean, -1, -1);
-            moistureMap = ArrayManipulation.clampf(moistureMap, 1f, 0f);
-        }
-        moistureMap = Wind.spreadMoisture(moistureMap, ocean, 1, -1);
-        moistureMap = Wind.spreadMoisture(moistureMap, ocean, 1, -1);
-        moistureMap = ArrayManipulation.clampf(moistureMap, 1f, 0f);
-    }
-
     private void buildHeightMap() {
         heightMap = simplexNoiseGenerator.buildHeightMap(Game.X_SQUARES_PER_TILE,
                 Game.Z_SQUARES_PER_TILE);
-
+//        NoiseMapWindow noiseMapWindow = new NoiseMapWindow();
+//        noiseMapWindow.loadImage(noiseMapWindow.loadNoiseMap(heightMap));
 //        heightMap = simplexNoiseGenerator.generateForest(random.nextInt(9999), heightMap, moistureMap);
+    }
+
+    private void buildMoistureMap() {
+        moistureMap = new float[Game.X_SQUARES_PER_TILE][Game.Z_SQUARES_PER_TILE];
+        moistureMap = simplexNoiseGenerator.generateNoise(random.nextInt(9999),
+                moistureMap.length, moistureMap[0].length, 3, 1);
+//        NoiseMapWindow noiseMapWindow = new NoiseMapWindow();
+//        noiseMapWindow.loadImage(noiseMapWindow.loadNoiseMap(moistureMap));
     }
 
     private void buildSpecialMap() {
         specialMap = simplexNoiseGenerator.generateNoise(random.nextInt(), Game.X_SQUARES_PER_TILE,
-                Game.Z_SQUARES_PER_TILE, 6, 1);
+                Game.Z_SQUARES_PER_TILE, 20, 1);
     }
 
     private void buildSquares() {
         biomeMap = new int[heightMap.length][heightMap[0].length];
+        int c = 0;
         for (int i = 0; i < heightMap[0].length; i++) {
             for (int j = 0; j < heightMap.length; j++) {
-                float[][] localHeightMap = simplexNoiseGenerator.buildMapHeight(Game.X_VERTICES_PER_SQUARE,
-                        Game.Z_VERTICES_PER_SQUARE, heightMap[j][i]);
                 int biome = BiomeGenerator.generateBiome(heightMap[j][i], moistureMap[j][i], specialMap[j][i]);
                 biomeMap[j][i] = biome;
-                System.out.println(biome);
-                squares[j][i] = new TerrainSquare(localHeightMap, j, i, biome);
+                squares[j][i] = new TerrainSquare(heightMap[j][i], j * 5,
+                        i * 5, biome, 20*c++);
             }
         }
     }
@@ -130,42 +120,42 @@ public class TerrainTile {
 
 
     public void generateModel() {
-
-        int vertexPointer = 0;
-        int texCoordPointer = 0;
-        int normalsPointer = 0;
-        for (int i = 0; i < Game.Z_VERTICES_PER_TILE; i++) {
-            int z = convertZToMapCoord(i);
-            for (int j = 0; j < Game.X_VERTICES_PER_TILE; j++) {
-                int x = convertXToMapCoord(j);
-                vertices[vertexPointer++] = x;
-                vertices[vertexPointer++] = getSquareFromVertexOrder(j, i).getHeightAbsCoords(j, i);
-                vertices[vertexPointer++] = z;
-                textureCoords[texCoordPointer++] = ((float) x / ((float) Game.TILE_WIDTH));
-                textureCoords[texCoordPointer++] = ((float) z / ((float) Game.TILE_HEIGHT));
-                Vector3f normal = calculateNormal(j, i);
-                normals[normalsPointer++] = normal.x;
-                normals[normalsPointer++] = normal.y;
-                normals[normalsPointer++] = normal.z;
+        int c = 0;
+        for (int i = 0; i < squares[0].length; i++) {
+            for (int j = 0; j < squares.length; j++) {
+                if (squares[j][i].getHeight() > 0f) {
+                    c++;
+                }
             }
         }
-        int numberOfIndices = (Game.Z_VERTICES_PER_TILE - 1) * (Game.X_VERTICES_PER_TILE - 1) * 6; //xPerSquare/Z - 1 = number of quads in axis
-        indices = new int[numberOfIndices];
-        int indicesPointer = 0;
-        for (int i = 0; i < Game.Z_VERTICES_PER_TILE - 1; i++) {
-            for (int j = 0; j < Game.X_VERTICES_PER_TILE - 1; j++) {
-                int topLeft = getSquareFromVertexOrder(j, i).getIndex(j, i);
-                int topRight = getSquareFromVertexOrder(j + 1, i).getIndex(j + 1, i);
-                int bottomLeft = getSquareFromVertexOrder(j, i + 1).getIndex(j, i + 1);
-                int bottomRight = getSquareFromVertexOrder(j + 1, i + 1).getIndex(j + 1, i + 1);
-                indices[indicesPointer++] = topLeft;
-                indices[indicesPointer++] = bottomLeft;
-                indices[indicesPointer++] = topRight;
-                indices[indicesPointer++] = topRight;
-                indices[indicesPointer++] = bottomLeft;
-                indices[indicesPointer++] = bottomRight;
+        vertices = new float[c * 60];
+        textureCoords = new float[c * 40];
+        normals = new float[c * 60];
+        indices = new int[c * 30];
+        c = 0;
+        int sum = 0;
+        for (int i = 0; i < squares[0].length; i++) {
+            for (int j = 0; j < squares.length; j++) {
+                if (squares[j][i].getHeight() > 0f) {
+                    float[] squareVertices = squares[j][i].getVertices();
+                    float[] squareTexCoords = squares[j][i].getTextureCoords();
+                    float[] squareNormals = squares[j][i].getNormals();
+                    int[] squareIndices = squares[j][i].getIndices();
+                    DiverseUtilities.addArrayToArray(squareVertices, vertices, c * Game.VERTICES_PER_SQUARE * 3);
+                    DiverseUtilities.addArrayToArray(squareTexCoords, textureCoords, c * Game.VERTICES_PER_SQUARE * 2);
+                    DiverseUtilities.addArrayToArray(squareNormals, normals, c * Game.VERTICES_PER_SQUARE * 3);
+                    DiverseUtilities.addArrayToArray(squareIndices, indices, c * 30);
+                    c++;
+                    sum++;
+                }
             }
         }
+        System.out.println(sum + " of " + squares[0].length * squares.length + " rendered");
+        System.out.println(c + " of " + squares[0].length * squares.length + " rendered");
+        System.out.println(vertices.length/60);
+        System.out.println(textureCoords.length/40);
+        System.out.println(normals.length/60);
+        System.out.println(indices.length/30);
         ByteBuffer texByteBuffer = loader.loadArrayToByteBuffer(biomeMap);
         biomes = loader.create2DTextureFromByteBuffer(texByteBuffer, heightMap.length, heightMap[0].length);
         texByteBuffer = loader.initPermTexture(perm, grad3);
@@ -176,61 +166,21 @@ public class TerrainTile {
         rawModel = loader.createRawModel(vertices, indices, textureCoords, normals);
     }
 
-
-    private Vector3f calculateNormal(int x, int z) {
-        float heightL = getHeightFromVertexOrder(x - 1, z);
-        float heightR = getHeightFromVertexOrder(x + 1, z);
-        float heightD = getHeightFromVertexOrder(x, z - 1);
-        float heightU = getHeightFromVertexOrder(x, z + 1);
-        Vector3f normal = new Vector3f(heightL - heightR, 2f, heightD - heightU);
-        normal.normalize();
-        return normal;
-    }
-
     public float getHeightFromMapCoords(int x, int z) {
         try {
-            return getSquareFromVertexOrder(convertXToVertexOrder(x), convertZToVertexOrder(z)).getHeightAbsCoords(x, z);
-        } catch (IllegalArgumentException e) {
+            return squares[x / 5][z / 5].getHeight();
+        } catch (ArrayIndexOutOfBoundsException e) {
             return 0;
         }
     }
 
-    public float getHeightFromVertexOrder(int x, int z) {
-        try {
-            return getSquareFromVertexOrder(x, z).getHeightAbsCoords(x, z);
-        } catch (IllegalArgumentException e) {
-            return 0;
-        }
-    }
-
-    public TerrainSquare getSquareFromVertexOrder(int x, int z) {
-        if (x < 0 || x >= Game.X_VERTICES_PER_TILE || z < 0 || z >= Game.Z_VERTICES_PER_TILE) {
-            throw new IllegalArgumentException("x was " + x + " and z was " + z + ". They must be between 0 and " + Game.TILE_WIDTH);
-        }
-        int i = Math.floorDiv(x, Game.X_VERTICES_PER_SQUARE);
-        int j = Math.floorDiv(z, Game.Z_VERTICES_PER_SQUARE);
-        return squares[i][j];
-    }
-
-    public int convertXToMapCoord(int x) {
-        int xOffset = Math.floorDiv(x, Game.X_VERTICES_PER_SQUARE);
-        return x - xOffset;
-    }
-
-    public int convertZToMapCoord(int z) {
-        int zOffset = Math.floorDiv(z, Game.Z_VERTICES_PER_SQUARE);
-        return z - zOffset;
-    }
-
-    public int convertXToVertexOrder(int x) {
-        int xOffset = Math.floorDiv(x, Game.X_VERTICES_PER_SQUARE_M1);
-        return x + xOffset;
-    }
-
-    public int convertZToVertexOrder(int z) {
-        int zOffset = Math.floorDiv(z, Game.Z_VERTICES_PER_SQUARE_M1);
-        return z + zOffset;
-    }
+//    public float getHeightFromVertexOrder(int x, int z) {
+//        try {
+//            return getSquareFromVertexOrder(x, z).getHeightAbsCoords(x, z);
+//        } catch (IllegalArgumentException e) {
+//            return 0;
+//        }
+//    }
 
     public RawModel getRawModel() {
         return rawModel;
@@ -300,5 +250,9 @@ public class TerrainTile {
         buildSpecialMap();
         buildSquares();
         generateModel();
+    }
+
+    public static float[][] getMoistureMap() {
+        return moistureMap;
     }
 }

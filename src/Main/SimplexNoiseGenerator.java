@@ -2,13 +2,7 @@ package Main;
 
 
 import Utils.DiverseUtilities;
-import com.sun.org.apache.xpath.internal.operations.Div;
 
-import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.awt.image.WritableRaster;
 import java.util.Random;
 
 public class SimplexNoiseGenerator {
@@ -18,16 +12,18 @@ public class SimplexNoiseGenerator {
     public static final float FOREST_MOISTURE_LIMIT = 0.6f;
     public static final float FLATLAND_LIMIT = 0.8f;
     public static final float MOUNTAIN_LIMIT = 0.9f;
-    public static final float HIGH_MOUNTAIN_LIMIT = 0.95f;
+    public static final float TALL_MOUNTAIN_LIMIT = 0.95f;
+    public static final float TALLER_MOUNTAIN_LIMIT = 0.999f;
 
     public static final float OCEAN_HEIGHT_MULTIPLIER = 0f;
     public static final float FLATLAND_HEIGHT_MULTIPLIER = 1f;
-    public static final float MOUNTAIN_HEIGHT_MULTIPLIER = 5f;
-    public static final float HIGH_MOUNTAIN_HEIGHT_MULTIPLIER = 10f;
+    public static final float MOUNTAIN_HEIGHT = 3f;
+    public static final float TALL_MOUNTAIN_HEIGHT = 6f;
+    public static final float TALLER_MOUNTAIN_HEIGHT = 9f;
 
     private static int min = -10, max = 10;
     private static Random rand = new Random();
-    private static float MOISTURE_SCATTERING = 0.02f, ELEVATION_SCATTERING = 0.05f;
+    private static float MOISTURE_SCATTERING = 0.02f, ELEVATION_SCATTERING = 0.2f;
 
     public SimplexNoiseGenerator() {
 
@@ -83,11 +79,6 @@ public class SimplexNoiseGenerator {
                     tempMap[x][y] = 0.6f;
                 else
                     tempMap[x][y] = 0;
-
-//                tempMap[x][y] /= 3;
-//                if (tempMap[x][y] <= 0) tempMap[x][y] = -10;
-//                tempMap[x][y] = DiverseUtilities.clamp(tempMap[x][y], min, 0.25f);
-
             }
         }
         return tempMap;
@@ -96,7 +87,7 @@ public class SimplexNoiseGenerator {
     public float[][] generateElevation(int seed, float[][] islandShape, int width, int height) {
         new SimplexNoise(seed);
         float[][] tempMap = new float[width][height];
-        float freq = 5f;
+        float freq = 6f;
         float weight = 1f;
         float e0 = 1f;
         float e1 = 0.5f;
@@ -112,7 +103,7 @@ public class SimplexNoiseGenerator {
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 if (islandShape[x][y] < OCEAN_LIMIT) {
-                    tempMap[x][y] = 0;
+                    tempMap[x][y] = -1;
                     continue;
                 }
                 float nx = (float) x / width, ny = (float) y / height;
@@ -127,21 +118,9 @@ public class SimplexNoiseGenerator {
                         + e8 * SimplexNoise.noise(nx * 256 * freq, ny * 256 * freq)
                         + e9 * SimplexNoise.noise(nx * 512 * freq, ny * 512 * freq)
                         + e10 * SimplexNoise.noise(nx * 1024 * freq, ny * 1024 * freq));
-                tempMap[x][y] = tempMap[x][y] + (((float) Math.random() * 2 - 1) * ELEVATION_SCATTERING);
+                tempMap[x][y] += (((float) Math.random() * 2 - 1) * ELEVATION_SCATTERING);
                 tempMap[x][y] = adjust(tempMap[x][y]);
-                tempMap[x][y] = DiverseUtilities.clamp(tempMap[x][y], OCEAN_LIMIT, 1);
-            }
-        }
-        return tempMap;
-    }
-
-    public float[][] generateForest(int seed, float[][] island, float[][] moisture) {
-        float[][] tempMap = new float[island.length][island[0].length];
-        for (int y = 0; y < island[0].length; y++) {
-            for (int x = 0; x < island.length; x++) {
-                if (island[x][y] > FOREST_LIMIT && moisture[x][y] > FOREST_MOISTURE_LIMIT) {
-                    tempMap[x][y] = FOREST_LIMIT;
-                }
+                tempMap[x][y] = DiverseUtilities.clamp(tempMap[x][y], 0.1f, 1);
             }
         }
         return tempMap;
@@ -149,14 +128,16 @@ public class SimplexNoiseGenerator {
 
     public float[][] buildMapHeight(int width, int height, float biome) {
         float[][] islandShape;
-        if (biome < OCEAN_LIMIT) {
+        if (biome < 0.1f) {
             islandShape = generateOcean(rand.nextInt(), width, height);
         } else if (biome < FLATLAND_LIMIT) {
-            islandShape = generateLand(rand.nextInt(), width, height);
+            islandShape = generateTerrain(rand.nextInt(), width, height, 0.1f);
         } else if (biome < MOUNTAIN_LIMIT) {
-            islandShape = generateMountain(rand.nextInt(), width, height);
+            islandShape = generateTerrain(rand.nextInt(), width, height, MOUNTAIN_HEIGHT);
+        } else if (biome < TALL_MOUNTAIN_LIMIT) {
+            islandShape = generateTerrain(rand.nextInt(), width, height, TALL_MOUNTAIN_HEIGHT);
         } else {
-            islandShape = generateHighMountain(rand.nextInt(), width, height);
+            islandShape = generateTerrain(rand.nextInt(), width, height, TALLER_MOUNTAIN_HEIGHT);
         }
         return islandShape;
     }
@@ -171,7 +152,7 @@ public class SimplexNoiseGenerator {
         return tempMap;
     }
 
-    public float[][] generateLand(int seed, int width, int height) {
+    public float[][] generateTerrain(int seed, int width, int height, float terrainHeight) {
         new SimplexNoise(seed);
         float[][] tempMap = new float[width][height];
         float freq = 2f;
@@ -200,57 +181,10 @@ public class SimplexNoiseGenerator {
                         + e7 * SimplexNoise.noise(nx * 128 * freq, ny * 128 * freq)
                         + e8 * SimplexNoise.noise(nx * 256 * freq, ny * 256 * freq)
                         + e9 * SimplexNoise.noise(nx * 512 * freq, ny * 512 * freq)
-                        + e10 * SimplexNoise.noise(nx * 1024 * freq, ny * 1024 * freq)) / 10 + 0.1f;
-                tempMap[x][y] = DiverseUtilities.clamp(tempMap[x][y], OCEAN_LIMIT + 0.05f, 99f);
+                        + e10 * SimplexNoise.noise(nx * 1024 * freq, ny * 1024 * freq) * 6);
+                tempMap[x][y] = DiverseUtilities.clamp(tempMap[x][y], OCEAN_LIMIT+0.1f, 99f);
                 tempMap[x][y] = adjust(tempMap[x][y]);
-            }
-        }
-        return tempMap;
-    }
-
-    public float[][] generateMountain(int seed, int width, int height) {
-        new SimplexNoise(seed);
-        float[][] tempMap = new float[width][height];
-        float freq = 2f;
-        float weight = 1f;
-        float e0 = 1f;
-        float e1 = 0.5f;
-        float e2 = (float) (weight * Math.pow(0.5, 2));
-        float e3 = (float) (weight * Math.pow(0.5, 3));
-        float e4 = (float) (weight * Math.pow(0.5, 4));
-        float e5 = (float) (weight * Math.pow(0.5, 5));
-        float e6 = (float) (weight * Math.pow(0.5, 6));
-        float e7 = (float) (weight * Math.pow(0.5, 7));
-        float e8 = (float) (weight * Math.pow(0.5, 8));
-        float e9 = (float) (weight * Math.pow(0.5, 9));
-        float e10 = (float) (weight * Math.pow(0.5, 10));
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-//                float nx = (float) x / width, ny = (float) y / height;
-//                tempMap[x][y] = (float) (e0 * SimplexNoise.noise(nx * freq, ny * freq)
-//                        + e1 * SimplexNoise.noise(nx * 2 * freq, ny * 2 * freq)
-//                        + e2 * SimplexNoise.noise(nx * 4 * freq, ny * 4 * freq)
-//                        + e3 * SimplexNoise.noise(nx * 8 * freq, ny * 8 * freq)
-//                        + e4 * SimplexNoise.noise(nx * 16 * freq, ny * 16 * freq)
-//                        + e5 * SimplexNoise.noise(nx * 32 * freq, ny * 32 * freq)
-//                        + e6 * SimplexNoise.noise(nx * 64 * freq, ny * 64 * freq)
-//                        + e7 * SimplexNoise.noise(nx * 128 * freq, ny * 128 * freq)
-//                        + e8 * SimplexNoise.noise(nx * 256 * freq, ny * 256 * freq)
-//                        + e9 * SimplexNoise.noise(nx * 512 * freq, ny * 512 * freq)
-//                        + e10 * SimplexNoise.noise(nx * 1024 * freq, ny * 1024 * freq) * 6);
-//                tempMap[x][y] = DiverseUtilities.clamp(tempMap[x][y], OCEAN_LIMIT+0.1f, 99f);
-//                tempMap[x][y] = adjust(tempMap[x][y]);
-                tempMap[x][y] = MOUNTAIN_HEIGHT_MULTIPLIER;
-            }
-        }
-        return tempMap;
-    }
-
-    private float[][] generateHighMountain(int i, int width, int height) {
-        float[][] tempMap = new float[width][height];
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                tempMap[x][y] = HIGH_MOUNTAIN_HEIGHT_MULTIPLIER;
+                tempMap[x][y] = terrainHeight;
             }
         }
         return tempMap;

@@ -144,8 +144,8 @@ public class MousePicker {
     }
 
     private TerrainTile getMap(float worldX, float worldZ) {
-        int widthPerTile = Game.X_VERTICES_PER_TILE /Game.NUMBER_OF_TILES_X;
-        int heightPerTile = Game.Z_VERTICES_PER_TILE /Game.NUMBER_OF_TILES_Y;
+        int widthPerTile = Game.WIDTH /Game.NUMBER_OF_TILES_X;
+        int heightPerTile = Game.HEIGHT /Game.NUMBER_OF_TILES_Y;
         int x = (int) (worldX / widthPerTile);
         int y = (int) (worldZ / heightPerTile);
         if (x > Game.NUMBER_OF_TILES_X - 1)

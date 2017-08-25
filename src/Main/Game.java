@@ -19,23 +19,19 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class Game {
 
-    public static final int X_SQUARES_PER_TILE = 200;
-    public static final int Z_SQUARES_PER_TILE = 150;
+    public static final int X_SQUARES_PER_TILE = 400;
+    public static final int Z_SQUARES_PER_TILE = 300;
+    public static final int SQUARE_WIDTH = 5;
+    public static final int WIDTH = X_SQUARES_PER_TILE * SQUARE_WIDTH;
+    public static final int HEIGHT = Z_SQUARES_PER_TILE * SQUARE_WIDTH;
+    public static final int VERTICES_PER_SQUARE = 20;
+
     public static final int SQUARES_PER_TILE = X_SQUARES_PER_TILE * Z_SQUARES_PER_TILE;
-    public static final int X_VERTICES_PER_SQUARE = 5;
-    public static final int Z_VERTICES_PER_SQUARE = 5;
-    public static final int Z_VERTICES_PER_SQUARE_M1 = X_VERTICES_PER_SQUARE - 1;
-    public static final int X_VERTICES_PER_SQUARE_M1 = Z_VERTICES_PER_SQUARE - 1;
-    public static final int VERTICES_PER_SQUARE = X_VERTICES_PER_SQUARE * Z_VERTICES_PER_SQUARE;
-    public static final int X_VERTICES_PER_TILE = X_SQUARES_PER_TILE * X_VERTICES_PER_SQUARE;
-    public static final int Z_VERTICES_PER_TILE = Z_SQUARES_PER_TILE * Z_VERTICES_PER_SQUARE;
-    public static final int TILE_WIDTH = X_VERTICES_PER_TILE - X_SQUARES_PER_TILE;
-    public static final int TILE_HEIGHT = Z_VERTICES_PER_TILE - Z_SQUARES_PER_TILE;
-    public static final int VERTICES_PER_TILE = Z_VERTICES_PER_TILE * X_VERTICES_PER_TILE;
+
+
+
     public static final int NUMBER_OF_TILES_X = 1;
     public static final int NUMBER_OF_TILES_Y = 1;
-    public static final int WIDTH = NUMBER_OF_TILES_X * TILE_WIDTH;
-    public static final int HEIGHT = NUMBER_OF_TILES_Y * TILE_HEIGHT;
 
     private Camera camera;
     private Window window;

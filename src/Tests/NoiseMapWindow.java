@@ -4,13 +4,14 @@ import Main.SimplexNoiseGenerator;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.util.Random;
 
-public class NoiseTest {
+
+
+public class NoiseMapWindow {
 
     JFrame frame = new JFrame();
     float freq = 3;
@@ -19,41 +20,17 @@ public class NoiseTest {
     BufferedImage image;
     JLabel jlabel;
 
-    public static void main(String[] args) {
-        new NoiseTest();
-    }
-
-    public NoiseTest() {
+    public NoiseMapWindow() {
         Random random = new Random();
         seed = random.nextInt();
 
         frame = new JFrame();
         frame.setSize(400,400);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setTitle("noise map tester");
+        frame.setTitle("noise map window");
         frame.setLayout(new FlowLayout());
-        jlabel = new JLabel(loadNoiseMap());
+        jlabel = new JLabel();
         frame.add(jlabel);
-        JSlider freqSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, 3);
-        JSlider weightSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, 1);
-        freqSlider.setMajorTickSpacing(1);
-        freqSlider.setMinorTickSpacing(1);
-        weightSlider.setMajorTickSpacing(1);
-        weightSlider.setMinorTickSpacing(1);
-
-        freqSlider.setPaintTicks(true);
-        weightSlider.setPaintTicks(true);
-        frame.add(freqSlider);
-        frame.add(weightSlider);
-        freqSlider.addChangeListener((ChangeEvent changeEvent) -> {
-                freq = (float) freqSlider.getValue() / 10;
-                reload();
-        });
-        weightSlider.addChangeListener((ChangeEvent changeEvent) -> {
-                weight = (float) weightSlider.getValue() / 10;
-                reload();
-
-        });
         frame.setVisible(true);
     }
 
@@ -70,19 +47,18 @@ public class NoiseTest {
         return arr;
     }
 
-    private ImageIcon loadNoiseMap() {
+    public ImageIcon loadNoiseMap(float[][] map) {
         SimplexNoiseGenerator simplexNoiseGenerator = new SimplexNoiseGenerator();
         image = new BufferedImage(200, 150, BufferedImage.TYPE_INT_RGB);
         WritableRaster raster = image.getRaster();
-        float[] pixels = collapseArray(simplexNoiseGenerator.generateIslandShape(seed, 200, 150));
-        raster.setPixels(0, 0, 200, 150, pixels);
+        float[] pixels = collapseArray(map);
+        raster.setPixels(0, 0, map.length, map[0].length, pixels);
         image.setData(raster);
         return new ImageIcon(image);
     }
 
-    private void reload() {
-        jlabel.setIcon(loadNoiseMap());
+    public void loadImage(ImageIcon imageIcon) {
+        jlabel.setIcon(imageIcon);
     }
-
 
 }

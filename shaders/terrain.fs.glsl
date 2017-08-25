@@ -179,31 +179,38 @@ void main() {
     vec4 forest = vec4(0.392, 0.568, 0.372, 1);
     vec4 tropical_forest = vec4(0.333, 0.600, 0.266, 1);
     vec4 tropical_deep_forest = vec4(0.200, 0.470, 0.333, 1);
-    vec4 stony = vec4(0.666, 0.576, 0.513, 1);
+    vec4 stony = vec4(0.51, 0.572, 0.62, 1);
+    vec4 badlands = vec4(0.5, 0.42, 0.36, 1);
     vec4 snow = vec4(0.98, 0.98, 0.98, 1);
+    vec4 swampland = vec4(0.51, 0.55, 0.32, 1);
+
 
     int GRASSLAND = 0;
     int DESERT = 1;
     int FOREST = 2;
-    int JUNGLE = 3;
+    int TROPICAL_FOREST = 3;
     int SWAMPLAND = 4;
     int BADLANDS = 5;
     int STONY = 6;
     int OCEAN = 7;
     int DEEP_FOREST = 8;
+    int SNOW = 9;
 
     float biomex = biome.x * 255;
 
     vec4 blendDesert = desert * isSame(DESERT, biomex);
     vec4 blendGrassland = grassland * isSame(GRASSLAND, biomex);
     vec4 blendForest = forest * isSame(FOREST, biomex);
-    vec4 blendBadlands = desert * isSame(BADLANDS, biomex);
+    vec4 blendBadlands = badlands * isSame(BADLANDS, biomex);
     vec4 blendStony = stony * isSame(STONY, biomex);
     vec4 blendOcean = desert * isSame(OCEAN, biomex);
     vec4 blendDeepForest = deep_forest * isSame(DEEP_FOREST, biomex);
-
+    vec4 blendSwampland = swampland * isSame(SWAMPLAND, biomex);
+    vec4 blendTropicalForest = tropical_forest * isSame(TROPICAL_FOREST, biomex);
+    vec4 blendSnow = snow * isSame(SNOW, biomex);
 
     out_color = (blendGrassland + blendDesert + blendForest +
-                 blendBadlands + blendStony + blendOcean + blendDeepForest)
+                 blendBadlands + blendStony + blendOcean +
+                 blendDeepForest + blendSwampland + blendTropicalForest + blendSnow)
                  * brightness * vec4(lightColor, 1);
 }

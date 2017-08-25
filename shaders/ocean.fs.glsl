@@ -16,6 +16,6 @@ void main() {
     float brightness = dot(unitNormal, unitTowardsLightVector);
     brightness = max(brightness, 0.3);
     vec2 scaledTexCoords = pass_texCoords * 50;
-    out_color = texture(waterTextureSampler, scaledTexCoords) * brightness * vec4(lightColor, 1);
-//    out_color = vec4(0.266, 0.266, 0.478, 1) * brightness * vec4(lightColor, 1);
+//    out_color = texture(waterTextureSampler, scaledTexCoords) * brightness * vec4(lightColor, 1);
+    out_color = vec4(0.266, 0.266, 0.68, 1) * brightness * vec4(lightColor, 1);
 }

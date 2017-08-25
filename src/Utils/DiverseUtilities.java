@@ -93,6 +93,20 @@ public class DiverseUtilities {
         return targetMatrix;
     }
 
+    public static float[] addArrayToArray(float[] arr, float[] target, int index) {
+        for (int i = 0; i < arr.length; i++) {
+            target[index++] = arr[i];
+        }
+        return  target;
+    }
+
+    public static int[] addArrayToArray(int[] arr, int[] target, int index) {
+        for (int i = 0; i < arr.length; i++) {
+            target[index++] = arr[i];
+        }
+        return  target;
+    }
+
     private static ByteBuffer resizeBuffer(ByteBuffer buffer, int newCapacity) {
         ByteBuffer newBuffer = BufferUtils.createByteBuffer(newCapacity);
         buffer.flip();
