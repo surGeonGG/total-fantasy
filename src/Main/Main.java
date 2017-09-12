@@ -5,18 +5,16 @@ import org.lwjgl.opengl.GL;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL13.GL_MULTISAMPLE;
 
 
 public class Main {
 
-    public static final float min = -1.0f, max = 1.0f;
     public static final int WINDOW_WIDTH = 1920, WINDOW_HEIGHT = 1080;
-//    private static EventHandler eventHandler;
+    public static final float ASPECT_RATIO = WINDOW_WIDTH / WINDOW_HEIGHT;
     private static SQLite sqLite;
-//    private static World world;
     private static Game game;
     private static Window window;
-    private static int fps = 0;
 
     public Main() {
         if (!glfwInit()) {
@@ -24,8 +22,6 @@ public class Main {
             System.exit(1);
         }
         window = new Window(WINDOW_WIDTH, WINDOW_HEIGHT, "Game");
-//        world = new World(this);
-//        player = new Player(new Vector3f(500,500,0), this);
         sqLite = new SQLite();
         sqLite.getConnection();
         sqLite.getEvent("old_man");
@@ -33,6 +29,9 @@ public class Main {
         GL.createCapabilities();
         glEnable(GL_TEXTURE_2D);
         glEnable(GL_COLOR_MATERIAL);
+        glEnable(GL_MULTISAMPLE);
+
+//        glEnable(GL_POLYGON_SMOOTH);
 //        glEnable(GL_BLEND);
 //        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glCullFace(GL_BACK);
@@ -42,6 +41,15 @@ public class Main {
 
     public static void main(String[] args) {
 
+//        recursionTest(0);
+//        System.out.println((int) (78/0.9f));
         new Main();
     }
+
+    private static void recursionTest(int c) {
+        System.out.println(c++);
+        recursionTest(c);
+    }
+
+
 }

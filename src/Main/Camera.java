@@ -6,13 +6,13 @@ import org.joml.Vector3f;
 
 public class Camera {
 
-    private final float FOV = 70f ;
+    private final float FOV = 40f ;
     private final float NEAR_PLANE = 4f;
-    private final float FAR_PLANE = 3000f;
+    private final float FAR_PLANE = 10000f;
     private float aspectRatio;
     private float distanceFromPlayer = 50f;
     private float angleAroundPlayer = 0f;
-    private float pitch = 20f;
+    private float pitch = 40f;
     private float pitchRate = 0f;
     private float yaw = 0f;
     private float yawRate = 0f;
@@ -25,17 +25,18 @@ public class Camera {
 
     public Camera(int width, int height) {
         aspectRatio = (float) width / (float) height;
-        projection = new Matrix4f();
-        projection.identity();
-        float y_scale = (float) ((float) 1/Math.tan(Math.toRadians(FOV/2f)));
+        float y_scale = (float) (1f / Math.tan(Math.toRadians(FOV / 2f)));
+
         float x_scale = y_scale / aspectRatio;
         float frustum_length = FAR_PLANE - NEAR_PLANE;
-        projection.m00(x_scale);
-        projection.m11(y_scale);
-        projection.m22(-((FAR_PLANE + NEAR_PLANE) / frustum_length));
-        projection.m23(-1);
-        projection.m32(-((2 * NEAR_PLANE * FAR_PLANE) / frustum_length));
-        projection.m33(0);
+        float m22 = -((FAR_PLANE + NEAR_PLANE) / frustum_length);
+        float m32 = -((2 * NEAR_PLANE * FAR_PLANE) / frustum_length);
+        projection = new Matrix4f(
+                x_scale, 0, 0, 0,
+                0, y_scale, 0, 0,
+                0, 0, m22, -1,
+                0, 0, m32, 0
+        );
     }
 
     public void followPlayer(Player player) {
@@ -64,8 +65,14 @@ public class Camera {
 
     public void zoom(float zoom) {
         distanceFromPlayer -= zoom;
-        if (distanceFromPlayer < 1) {
-            distanceFromPlayer = 1;
+        if (distanceFromPlayer < 20) {
+            distanceFromPlayer = 20;
+        }
+        if (pitch > 90f) {
+            pitch = 90f;
+        }
+        if (pitch < 2f) {
+            pitch = 2f;
         }
     }
 

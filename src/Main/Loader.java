@@ -2,6 +2,8 @@ package Main;
 
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.joml.Vector3i;
+import org.joml.Vector4i;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.nuklear.*;
 import org.lwjgl.system.MemoryStack;
@@ -50,6 +52,17 @@ public class Loader {
         return new RawModel(vaoID, coordinates.length/dimensions);
     }
 
+    public RawModel createRawModel(List<Float> coordinates, int dimensions) {
+        int vaoID = createVAO();
+        float[] verts = new float[coordinates.size()];
+        for (int i = 0; i < verts.length; i++) {
+            verts[i] = coordinates.get(i);
+        }
+        storeDataInAttributeList(0, dimensions, verts);
+        unbindVAO();
+        return new RawModel(vaoID, verts.length/dimensions);
+    }
+
     public RawModel createRawModel(float[] coordinates, int[] indices, float[] texCoords, float[] normals) {
         int vaoID = createVAO();
         bindIndicesBuffer(indices);
@@ -60,6 +73,33 @@ public class Loader {
         return new RawModel(vaoID, indices.length);
     }
 
+    public RawModel createRawModel(List<Float> coordinates, List<Float> texCoords, List<Integer> indices) {
+        int vaoID = createVAO();
+        float[] vertices = new float[coordinates.size()];
+        for (int i = 0; i < vertices.length; i++) {
+            vertices[i] = coordinates.get(i);
+        }
+        float[] tc = new float[texCoords.size()];
+        for (int i = 0; i < tc.length; i++) {
+            tc[i] = texCoords.get(i);
+        }
+        int[] idx = new int[indices.size()];
+        for (int i = 0; i < idx.length; i++) {
+            idx[i] = indices.get(i);
+        }
+        bindIndicesBuffer(idx);
+        storeDataInAttributeList(0, 2, vertices);
+        storeDataInAttributeList(1, 2, tc);
+        unbindVAO();
+        return new RawModel(vaoID, indices.size());
+    }
+
+
+    public TexturedModel createTexturedModel(List<Float> coordinates, List<Float> texCoords, List<Integer> indices, Texture texture) {
+        RawModel model = createRawModel(coordinates, texCoords, indices);
+        TexturedModel texturedModel = new TexturedModel(model, texture);
+        return texturedModel;
+    }
 
     public TexturedModel createTexturedModel(RawModel model, Texture texture) {
         TexturedModel texturedModel = new TexturedModel(model, texture);
@@ -103,7 +143,7 @@ public class Loader {
         return byteBuffer;
     }
 
-    public ByteBuffer loadArrayToByteBuffer(float[][] array, float[][] array2, float[][] array3, float[][] array4) {
+    public ByteBuffer load2DArrayToByteBuffer(float[][] array, float[][] array2, float[][] array3, float[][] array4) {
         ByteBuffer byteBuffer = BufferUtils.createByteBuffer(array.length * array[0].length * 4);
         for (int i = 0; i < array.length; i++) {
             for (int j = 0; j < array[i].length; j++) {
@@ -117,7 +157,7 @@ public class Loader {
         return byteBuffer;
     }
 
-    public ByteBuffer loadArrayToByteBuffer(float[][] array, float[][] array2) {
+    public ByteBuffer load2DArrayToByteBuffer(float[][] array, float[][] array2) {
         ByteBuffer byteBuffer = BufferUtils.createByteBuffer(array.length * array[0].length * 4);
         for (int i = 0; i < array[0].length; i++) {
             for (int j = 0; j < array.length; j++) {
@@ -131,7 +171,7 @@ public class Loader {
         return byteBuffer;
     }
 
-    public ByteBuffer loadArrayToByteBuffer(int[][] array) {
+    public ByteBuffer load2DArrayToByteBuffer(int[][] array) {
         ByteBuffer byteBuffer = BufferUtils.createByteBuffer(array.length * array[0].length * 4);
         for (int i = 0; i < array[0].length; i++) {
             for (int j = 0; j < array.length; j++) {
@@ -145,7 +185,7 @@ public class Loader {
         return byteBuffer;
     }
 
-    public ByteBuffer loadArrayToByteBuffer(int[] array) {
+    public ByteBuffer load2DArrayToByteBuffer(int[] array) {
         ByteBuffer byteBuffer = BufferUtils.createByteBuffer(array.length * 4);
         for (int i = 0; i < array.length/4; i++) {
             byteBuffer.put((byte) array[i*4]); //red
@@ -174,10 +214,6 @@ public class Loader {
         return byteBuffer;
     }
 
-    //        BufferedImage bufferedImage = loadFileToBufferedImage(path);
-//    public Texture loadImageFileToArray(String path) {
-
-//    }
 
     public RawModel loadOBJ(String filename) {
         FileReader fileReader = null;
@@ -188,10 +224,10 @@ public class Loader {
             e.printStackTrace();
         }
         BufferedReader bufferedReader = new BufferedReader(fileReader);
-        List<Vector3f> vertices = new ArrayList<Vector3f>();
-        List<Vector2f> textures = new ArrayList<Vector2f>();
-        List<Vector3f> normals = new ArrayList<Vector3f>();
-        List<Integer> indices = new ArrayList<Integer>();
+        List<Vector3f> vertices = new ArrayList<>();
+        List<Vector2f> textures = new ArrayList<>();
+        List<Vector3f> normals = new ArrayList<>();
+        List<Integer> indices = new ArrayList<>();
         float[] verticesArray = null;
         float[] textureArray = null;
         float[] normalsArray = null;
@@ -248,26 +284,8 @@ public class Loader {
         return createRawModel(verticesArray, indicesArray, textureArray, normalsArray);
     }
 
-    public Texture create2DTextureFromByteBuffer(ByteBuffer texture, int width, int height) {
-        int texID = glGenTextures();
-        glBindTexture(GL_TEXTURE_2D, texID);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE , texture);
-        return new Texture(texID);
-    }
-
-    public Texture create1DTextureFromByteBuffer(ByteBuffer texture, int length) {
-        int texID = glGenTextures();
-        glBindTexture(GL_TEXTURE_1D, texID);
-        glTexParameterf(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameterf(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexImage1D(GL_TEXTURE_1D, 0, GL_RGBA, length, 0, GL_RGBA, GL_UNSIGNED_BYTE , texture);
-        return new Texture(texID);
-    }
-
     private void processVertex(String[] vertex, float[] textureArray, float[] normalsArray, List<Integer> indices,
-                                List<Vector2f> textures, List<Vector3f> normals) {
+                               List<Vector2f> textures, List<Vector3f> normals) {
         int currentVertexPointer = Integer.parseInt(vertex[0]) - 1;
         indices.add(currentVertexPointer);
         Vector2f currentTex = textures.get(Integer.parseInt(vertex[1]) - 1);
@@ -334,5 +352,33 @@ public class Loader {
     public Texture createTextureFromImageFile(String filename, int width, int height) {
         ByteBuffer texByteBuffer = loadImageFileToByteBuffer(filename);
         return create2DTextureFromByteBuffer(texByteBuffer, width, height);
+    }
+
+//    public Texture createTextureFromImageFile(String filename, int width, int height, Vector4i windowColor) {
+//        ByteBuffer texByteBuffer = loadImageFileToByteBuffer(filename);
+//        int p = width * height * 4 - 4;
+//        texByteBuffer.put(p, (byte) windowColor.x);
+//        texByteBuffer.put(p+1, (byte) windowColor.y);
+//        texByteBuffer.put(p+2, (byte) windowColor.z);
+//        texByteBuffer.put(p+3, (byte) windowColor.w);
+//        return create2DTextureFromByteBuffer(texByteBuffer, width, height);
+//    }
+
+    public Texture create2DTextureFromByteBuffer(ByteBuffer texture, int width, int height) {
+        int texID = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D, texID);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE , texture);
+        return new Texture(texID);
+    }
+
+    public Texture create1DTextureFromByteBuffer(ByteBuffer texture, int length) {
+        int texID = glGenTextures();
+        glBindTexture(GL_TEXTURE_1D, texID);
+        glTexParameterf(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameterf(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexImage1D(GL_TEXTURE_1D, 0, GL_RGBA, length, 0, GL_RGBA, GL_UNSIGNED_BYTE , texture);
+        return new Texture(texID);
     }
 }

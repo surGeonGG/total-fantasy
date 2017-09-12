@@ -23,7 +23,9 @@ public class SimplexNoiseGenerator {
 
     private static int min = -10, max = 10;
     private static Random rand = new Random();
-    private static float MOISTURE_SCATTERING = 0.02f, ELEVATION_SCATTERING = 0.2f;
+    private static float MOISTURE_SCATTERING = 0.02f;
+    private static float ELEVATION_SCATTERING = 0.2f;
+    private static float IS_SCATTERING = 0.05f;
 
     public SimplexNoiseGenerator() {
 
@@ -65,7 +67,7 @@ public class SimplexNoiseGenerator {
                         + e8 * SimplexNoise.noise(nx * 256 * freq, ny * 256 * freq)
                         + e9 * SimplexNoise.noise(nx * 512 * freq, ny * 512 * freq)
                         + e10 * SimplexNoise.noise(nx * 1024 * freq, ny * 1024 * freq));
-                tempMap[x][y] = tempMap[x][y] + (((float) Math.random() * 2 - 1) * 0.1f) + 0.6f;
+                tempMap[x][y] += (((float) Math.random() * 2 - 1) * IS_SCATTERING) + 0.6f;
                 tempMap[x][y] = adjust(tempMap[x][y]);
 
                 float halfWidth = width / 2;

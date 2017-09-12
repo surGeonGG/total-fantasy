@@ -1,6 +1,6 @@
 package Main;
 
-import Terrains.TerrainTile;
+import Terrains.Terrain;
 import Utils.DiverseUtilities;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
@@ -18,7 +18,7 @@ public class MousePicker {
 
     private static final int RECURSION_COUNT = 40;
     private static final float RAY_RANGE = 6000;
-    private TerrainTile[][] terrainTiles;
+    private Terrain[][] terrains;
     private Vector3f currentTerrainPoint;
     Vector3f currentRay;
     Camera camera;
@@ -26,10 +26,10 @@ public class MousePicker {
     Matrix4f projectionMatrix;
     long windowID;
 
-    public MousePicker(Camera camera, long windowID, TerrainTile[][] terrainTiles) {
+    public MousePicker(Camera camera, long windowID, Terrain[][] terrains) {
         this.windowID = windowID;
         this.camera = camera;
-        this.terrainTiles = terrainTiles;
+        this.terrains = terrains;
         viewMatrix = DiverseUtilities.createViewMatrix(camera);
         projectionMatrix = camera.getProjectionMatrix();
     }
@@ -106,8 +106,8 @@ public class MousePicker {
         float half = start + ((finish - start) / 2f);
         if (count >= RECURSION_COUNT) {
             Vector3f endPoint = getPointOnRay(ray, half);
-            TerrainTile terrainTile = getMap(endPoint.x, endPoint.z);
-            if (terrainTile != null) {
+            Terrain terrain = getMap(endPoint.x, endPoint.z);
+            if (terrain != null) {
                 return endPoint;
             } else {
                 return null;
@@ -131,10 +131,10 @@ public class MousePicker {
     }
 
     private boolean isUnderGround(Vector3f testPoint) {
-        TerrainTile terrainTile = getMap(testPoint.x, testPoint.z);
+        Terrain terrain = getMap(testPoint.x, testPoint.z);
         float height = 0;
-        if (terrainTile != null) {
-            height = terrainTile.getHeightFromMapCoords((int) testPoint.x, (int) testPoint.z);
+        if (terrain != null) {
+            height = terrain.getHeightFromMapCoords((int) testPoint.x, (int) testPoint.z);
         }
         if (testPoint.y < height) {
             return true;
@@ -143,7 +143,7 @@ public class MousePicker {
         }
     }
 
-    private TerrainTile getMap(float worldX, float worldZ) {
+    private Terrain getMap(float worldX, float worldZ) {
         int widthPerTile = Game.WIDTH /Game.NUMBER_OF_TILES_X;
         int heightPerTile = Game.HEIGHT /Game.NUMBER_OF_TILES_Y;
         int x = (int) (worldX / widthPerTile);
@@ -156,7 +156,7 @@ public class MousePicker {
             x = 0;
         if (y < 0)
             y = 0;
-        return  terrainTiles[x][y];
+        return  terrains[x][y];
     }
 
     public Vector3f getCurrentTerrainPoint() {

@@ -10,7 +10,7 @@ public class Player extends Entity {
     private float[] normals;
     private float[] colors;
     private Vector3f moveTo;
-    private float travelspeed = 0.01f;
+    private float travelspeed = 0.08f;
     private RawModel rawModel;
     private Camera camera;
     private Renderer renderer;

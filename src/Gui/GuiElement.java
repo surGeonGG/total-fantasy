@@ -4,43 +4,23 @@ import Main.*;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
-public class GuiElement {
+import java.util.List;
 
-    private Texture texture;
-    private RawModel rawModel;
-    private Vector2f scale = new Vector2f(1f, 1f);
-    private Vector3f position = new Vector3f(0f, 0f, 0f);
-    private float[] vertices = {
-            -1f,1f,
-            -1f,-1f,
-            1f,1f,
-            1f,-1f
-    };
-
-    public GuiElement(Vector2f position, Vector2f scale) {
-        this.scale = scale;
-        this.position = new Vector3f(position.x, position.y, 0);
-        Loader loader = new Loader();
-        texture = loader.createTextureFromImageFile("ocean.png", 1024, 1024);
-        rawModel = loader.createRawModel(vertices, 2);
-    }
-
-    public Texture getTexture() {
-        return texture;
-    }
-
-    public RawModel getRawModel() {
-        return rawModel;
-    }
-
-    public Vector3f getPosition() {
-        return position;
-    }
-
-    public Vector2f getScale() {
-        return scale;
-    }
+public abstract class GuiElement {
 
 
+    public abstract Vector2f getPosition();
+
+    public abstract TexturedModel getBoxModel();
+
+    public abstract TexturedModel getTextModel();
+
+    public abstract void addText(int index, String string, Font font, float fontSize);
+
+    public abstract Vector3f getTextColor();
+
+    public abstract Vector3f getBoxColor();
+
+    public abstract void changeText(int i, String s);
 }
 

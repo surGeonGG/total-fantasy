@@ -65,4 +65,35 @@ public class BiomeGenerator {
             return SNOW;
         }
     }
+
+    public static final float MOUNTAIN_HEIGHT = 3f;
+    public static final float TALL_MOUNTAIN_HEIGHT = 6f;
+    public static final float TALLER_MOUNTAIN_HEIGHT = 9f;
+
+    public static final float OCEAN_LIMIT = 0.5f;
+    public static final float FOREST_LIMIT = 0.6f;
+    public static final float FOREST_MOISTURE_LIMIT = 0.6f;
+    public static final float FLATLAND_LIMIT = 0.8f;
+    public static final float MOUNTAIN_LIMIT = 0.9f;
+    public static final float TALL_MOUNTAIN_LIMIT = 0.95f;
+    public static final float TALLER_MOUNTAIN_LIMIT = 0.999f;
+
+    public static float buildMapHeight(float height, int biome) {
+        float addedHeight = 0.5f;
+        if (biome == 2 || biome == 3 || biome == 8) {
+            addedHeight += 0.5f;
+        }
+
+        if (height < 0.1f) {
+            return 0;
+        } else if (height < FLATLAND_LIMIT) {
+            return addedHeight;
+        } else if (height < MOUNTAIN_LIMIT) {
+            return addedHeight + MOUNTAIN_HEIGHT;
+        } else if (height < TALL_MOUNTAIN_LIMIT) {
+            return addedHeight + TALL_MOUNTAIN_HEIGHT;
+        } else {
+            return addedHeight + TALLER_MOUNTAIN_HEIGHT;
+        }
+    }
 }

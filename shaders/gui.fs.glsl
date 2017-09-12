@@ -1,10 +1,14 @@
 #version 400 core
-
 uniform sampler2D textureSampler;
-in vec2 texCoords;
+uniform vec3 color;
+
+in vec2 pass_texCoords;
+
 out vec4 out_color;
 
 void main(){
-//   out_color = texture(textureSampler, texCoords);
-   out_color = vec4(1,1,1,0.5f);
+
+//   smoothstep();
+   out_color = texture(textureSampler, pass_texCoords);
+   out_color = vec4(color, out_color.w);
 }

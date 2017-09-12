@@ -2,18 +2,17 @@ package Main;
 
 import Entities.Light;
 import Entities.Player;
-import Terrains.TerrainTile;
+import Terrains.Terrain;
 import org.joml.Vector3f;
 
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.GL_TRUE;
 
 public class Input {
 
     private Camera camera;
     private Player player;
     private Light light;
-    private TerrainTile[][] terrainTiles;
+    private Terrain[][] terrains;
     private MousePicker mousePicker;
     private long windowID;
     private long rebuildTimer = 0;
@@ -21,11 +20,11 @@ public class Input {
     private long zoomTimer = 0;
     private long clickTimer = 0;
 
-    public Input(Camera camera, long windowID, Player player, TerrainTile[][] terrainTiles, MousePicker mousePicker, Light light) {
+    public Input(Camera camera, long windowID, Player player, Terrain[][] terrains, MousePicker mousePicker, Light light) {
         this.camera = camera;
         this.windowID = windowID;
         this.player = player;
-        this.terrainTiles = terrainTiles;
+        this.terrains = terrains;
         this.light = light;
         this.mousePicker = mousePicker;
 
@@ -83,13 +82,13 @@ public class Input {
                     break;
                 case GLFW_KEY_KP_ADD:
                     if (action == GLFW_PRESS)
-                        camera.setZoomRate(5);
+                        camera.setZoomRate(15);
                     if (action == GLFW_RELEASE)
                         camera.setZoomRate(0);
                     break;
                 case GLFW_KEY_KP_SUBTRACT:
                     if (action == GLFW_PRESS)
-                        camera.setZoomRate(-5);
+                        camera.setZoomRate(-15);
                     if (action == GLFW_RELEASE)
                         camera.setZoomRate(0);
                     break;
@@ -99,12 +98,12 @@ public class Input {
                     break;
                 case GLFW_KEY_L:
                     if (action == GLFW_PRESS) {
-                        terrainTiles[0][0].toggleLines();
+                        terrains[0][0].toggleLines();
                     }
                     break;
                 case GLFW_KEY_F5:
                     if (action == GLFW_PRESS) {
-                        terrainTiles[0][0].reload();
+                        terrains[0][0].reload();
                     }
                     break;
             }

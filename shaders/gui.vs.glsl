@@ -2,9 +2,12 @@
 uniform mat4 transformationMatrix;
 
 in vec2 coordinates;
-out vec2 texCoords;
+in vec2 texCoords;
+
+out vec2 pass_texCoords;
+
 
 void main() {
-    texCoords = vec2((coordinates.x+1)/2, 1-(coordinates.y+1)/2);
-    gl_Position = transformationMatrix * vec4(coordinates, 0, 1);
+    pass_texCoords = texCoords;
+    gl_Position = vec4(coordinates, 0, 1);
 }

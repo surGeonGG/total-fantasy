@@ -1,15 +1,20 @@
 package Main;
 
 import Entities.Entity;
+import Gui.Gui;
+import Gui.GuiElement;
 import Entities.Light;
 import Terrains.Ocean;
-import Terrains.TerrainTile;
+import Terrains.Terrain;
 import Utils.DiverseUtilities;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL31;
+
+import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.*;
@@ -98,28 +103,21 @@ public class Renderer {
         GL30.glBindVertexArray(0);
     }
 
-    public void renderTerrain(TerrainTile terrainTile, Light light){
-        Matrix4f transformationMatrix = DiverseUtilities.createTransformationMatrix(terrainTile);
+    public void renderTerrain(Terrain terrain, Light light){
+        Matrix4f transformationMatrix = DiverseUtilities.createTransformationMatrix(terrain);
         terrainShader.bind();
         terrainShader.setUniform("transformationMatrix", transformationMatrix);
         terrainShader.setUniform("viewMatrix", DiverseUtilities.createViewMatrix(camera));
         terrainShader.setUniform("lightPosition", light.getPosition());
         terrainShader.setUniform("lightColor", light.getColor());
-        RawModel rawModel = terrainTile.getRawModel();
+        RawModel rawModel = terrain.getRawModel();
         GL30.glBindVertexArray(rawModel.getVaoID());
-        GL20.glEnableVertexAttribArray(
-                0);
+        GL20.glEnableVertexAttribArray(0);
         GL20.glEnableVertexAttribArray(1);
         GL20.glEnableVertexAttribArray(2);
         glActiveTexture(GL_TEXTURE4);
-        glBindTexture(GL_TEXTURE_2D, terrainTile.getBiomesTexture().getTexID());
-        glActiveTexture(GL_TEXTURE6);
-        glBindTexture(GL_TEXTURE_2D, terrainTile.getPermTexture().getTexID());
-        glActiveTexture(GL_TEXTURE7);
-        glBindTexture(GL_TEXTURE_1D, terrainTile.getSimplexTexture().getTexID());
+        glBindTexture(GL_TEXTURE_2D, terrain.getBiomesTexture().getTexID());
         terrainShader.setUniform("biomes", 4);
-        terrainShader.setUniform("permTexture", 6);
-        terrainShader.setUniform("simplexTexture", 7);
         glDrawElements(GL_TRIANGLES, rawModel.getVertexCount(), GL_UNSIGNED_INT, 0);
         terrainShader.unbind();
         GL20.glDisableVertexAttribArray(0);
@@ -149,28 +147,46 @@ public class Renderer {
         GL20.glDisableVertexAttribArray(1);
         GL20.glDisableVertexAttribArray(2);
         GL30.glBindVertexArray(0);
+
     }
 
-    public void renderGui(Gui.GuiElement guiElement) {
-        Matrix4f transformationMatrix = DiverseUtilities.createTransformationMatrix(guiElement);
-        guiShader.bind();
-        guiShader.setUniform("transformationMatrix", transformationMatrix);
-//        guiShader.setUniform("viewMatrix", DiverseUtilities.createViewMatrix(camera));
-        RawModel rawModel = guiElement.getRawModel();
-        GL30.glBindVertexArray(rawModel.getVaoID());
-        GL20.glEnableVertexAttribArray(0);
+    public void renderGui(Gui gui) {
+        List<GuiElement> guiElements = gui.getGuiElements();
         glEnable(GL_BLEND);
-        glDisable(GL_DEPTH_TEST);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, guiElement.getTexture().getTexID());
-        oceanShader.setUniform("textureSampler", 0);
-        glDrawArrays(GL_TRIANGLE_STRIP, 0, rawModel.getVertexCount());
+        glDisable(GL_DEPTH_TEST);
+        guiShader.bind();
+        for (GuiElement guiElement : guiElements) {
+
+            TexturedModel boxModel = guiElement.getBoxModel();
+            TexturedModel textModel = guiElement.getTextModel();
+
+            GL30.glBindVertexArray(boxModel.getVaoID());
+            GL20.glEnableVertexAttribArray(0);
+            GL20.glEnableVertexAttribArray(1);
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, boxModel.getTexture().getTexID());
+            guiShader.setUniform("textureSampler", 0);
+            guiShader.setUniform("color", guiElement.getBoxColor());
+
+            glDrawElements(GL_TRIANGLES, boxModel.getVertexCount(), GL_UNSIGNED_INT, 0);
+
+            GL30.glBindVertexArray(textModel.getVaoID());
+            GL20.glEnableVertexAttribArray(0);
+            GL20.glEnableVertexAttribArray(1);
+            glBindTexture(GL_TEXTURE_2D, textModel.getTexture().getTexID());
+            guiShader.setUniform("color", guiElement.getTextColor());
+            guiShader.setUniform("textureSampler", 0);
+
+            glDrawElements(GL_TRIANGLES, textModel.getVertexCount(), GL_UNSIGNED_INT, 0);
+
+            GL20.glDisableVertexAttribArray(0);
+            GL20.glDisableVertexAttribArray(1);
+            GL30.glBindVertexArray(0);
+        }
         guiShader.unbind();
         glEnable(GL_DEPTH_TEST);
         glDisable(GL_BLEND);
-        GL20.glDisableVertexAttribArray(0);
-        GL30.glBindVertexArray(0);
     }
 
     public void renderOutline(RawModel outline) {

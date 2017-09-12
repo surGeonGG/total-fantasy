@@ -21,4 +21,12 @@ public class TexturedModel {
         return texture;
     }
 
+    public int getVertexCount() {
+        return rawModel.getVertexCount();
+    }
+
+    public int getVaoID() {
+        return rawModel.getVaoID();
+    }
+
 }
