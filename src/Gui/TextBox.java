@@ -1,37 +1,35 @@
 package Gui;
 
 import Main.Loader;
+import Main.Main;
 import Main.TexturedModel;
 import Main.Texture;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
+import org.lwjgl.opengl.GL30;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class TextBox extends GuiElement {
+public class TextBox extends GuiWindow {
 
     private Loader loader = new Loader();
-    private Vector2f scale;
-    private Vector2f position;
-    private Vector2f dimensions;
     private Vector3f textColor;
-    private Vector3f boxColor;
     private Texture boxtexture;
     private TexturedModel texturedBoxModel;
     private List<Float> vertices = new ArrayList<>();
     private List<Float> texCoords = new ArrayList<>();
     private List<Integer> indices = new ArrayList<>();
     private TextGraph textGraph;
+    private ShapeGraph shapeGraph;
     private float[] padding;
 
-    public TextBox(Vector2f position, Vector2f dimensions) {
+    public TextBox(Vector2f position, Vector2f dimensions, Vector4f color) {
+        super(position, dimensions, color);
         this.textColor = new Vector3f(1f,1f,1f);
-        this.boxColor = new Vector3f(0f,0f,0f);
-        this.position = position;
-        this.dimensions = dimensions;
-        this.scale = new Vector2f(1, 1);
         padding = new float[] {
                 0.02f, 0.02f, 0.02f, 0.02f
         };
@@ -59,23 +57,23 @@ public class TextBox extends GuiElement {
         vertices.addAll(Arrays.asList(
                 leftX, lowerY,
                 rightX, lowerY,
-                leftX, upperY,
-                rightX, upperY
+                rightX, upperY,
+                leftX, lowerY,
+                rightX, upperY,
+                leftX, upperY
         ));
         texCoords.addAll(Arrays.asList(
                 0f, 1f,
                 1f, 1f,
-                0f, 0f,
-                1f, 0f
+                1f, 0f,
+                0f, 1f,
+                1f, 0f,
+                0f, 0f
         ));
-        int lowerLeft = 0;
-        int lowerRight = 1;
-        int upperLeft = 2;
-        int upperRight = 3;
-        indices.addAll(Arrays.asList(
-                lowerLeft, lowerRight, upperRight,
-                lowerLeft, upperRight, upperLeft
-        ));
+//        indices.addAll(Arrays.asList(
+//                lowerLeft, lowerRight, upperRight,
+//                lowerLeft, upperRight, upperLeft
+//        ));
 
         texturedBoxModel = loader.createTexturedModel(vertices, texCoords, indices, boxtexture);
     }
@@ -109,8 +107,24 @@ public class TextBox extends GuiElement {
     }
 
     @Override
-    public Vector3f getBoxColor() {
-        return boxColor;
+    public GuiElement getElementAt(float mouseX, float mouseY) {
+        for (GuiElement guiElement : guiElements) {
+            if (guiElement.coordWithinElement(mouseX, mouseY)) {
+                return guiElement.getElementAt(mouseX, mouseY);
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void render(Main guiShader) {
+
+        GL30.glBindVertexArray(texturedBoxModel.getVaoID());
+        for (GuiElement guiElement : guiElements) {
+            guiElement.render(guiShader);
+        }
+        textGraph.render();
+        shapeGraph.render();
     }
 }
 

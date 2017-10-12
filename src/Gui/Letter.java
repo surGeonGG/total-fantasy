@@ -53,8 +53,10 @@ public class Letter {
         vertices.addAll(Arrays.asList(
                 leftX, lowerY,
                 rightX, lowerY,
-                leftX, upperY,
-                rightX, upperY
+                rightX, upperY,
+                leftX, lowerY,
+                rightX, upperY,
+                leftX, upperY
         ));
         leftX = font.getX(letter);
         lowerY = font.getY2(letter);
@@ -63,16 +65,10 @@ public class Letter {
         texCoords.addAll(Arrays.asList(
                 leftX, lowerY,
                 rightX, lowerY,
-                leftX, upperY,
-                rightX, upperY
-        ));
-        int lowerLeft =  (int) caret.z * 4;
-        int lowerRight = (int) caret.z * 4 + 1;
-        int upperLeft =  (int) caret.z * 4 + 2;
-        int upperRight = (int) caret.z * 4 + 3;
-        indices.addAll(Arrays.asList(
-                lowerLeft, lowerRight, upperRight,
-                lowerLeft, upperRight, upperLeft
+                rightX, upperY,
+                leftX, lowerY,
+                rightX, upperY,
+                leftX, upperY
         ));
     }
 

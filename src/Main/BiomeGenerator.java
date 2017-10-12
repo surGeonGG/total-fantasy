@@ -1,7 +1,5 @@
 package Main;
 
-import java.util.Random;
-
 public class BiomeGenerator {
     public static final int GRASSLAND = 0;
     public static final int DESERT = 1;
@@ -14,56 +12,32 @@ public class BiomeGenerator {
     public static final int DEEP_FOREST = 8;
     public static final int SNOW = 9;
 
+    public static final float BEACH_LINE = 0.0f;
+    public static final float LAND_LINE = 0.12f;
     public static final float TREE_LINE = 0.30f;
-    public static final float OCEAN_LINE = 0.1f;
+    public static final float STONY_LINE = 0.8f;
+    public static final float SNOW_LINE = 0.97f;
 
 
     public static int generateBiome(float height, float moisture, float special) {
-        Random random = new Random();
+        int biome = OCEAN;
 
-        if (random.nextInt(100) == 0) {
-            return 2;
+        if (height > BEACH_LINE) {
+            biome = OCEAN;
         }
-        if (height < OCEAN_LINE) return OCEAN;
-        else if (height < TREE_LINE) {
-            if (moisture < 0.3f) {
-                return DESERT;
-            } else if (moisture < 0.9f) {
-                return GRASSLAND;
-            } else {
-                return SWAMPLAND;
-            }
-        } else if (height < SimplexNoiseGenerator.FLATLAND_LIMIT) {
-            if (moisture < 0.15f) {
-                return DESERT;
-            } else if (moisture < 0.4f) {
-                return GRASSLAND;
-            } else if (moisture < 0.6f) {
-                return FOREST;
-            } else {
-                return DEEP_FOREST;
-            }
-        } else if (height < SimplexNoiseGenerator.MOUNTAIN_LIMIT) {
-            if (moisture < 0.2f) {
-                return STONY;
-            }
-            if (moisture < 0.4f) {
-                return FOREST;
-            } else {
-                return DEEP_FOREST;
-            }
-        } else if (height < SimplexNoiseGenerator.TALL_MOUNTAIN_LIMIT) {
-            if (moisture < 0.4f) {
-                return STONY;
-            }
-            if (moisture < 0.7f) {
-                return FOREST;
-            } else {
-                return DEEP_FOREST;
-            }
-        } else {
-            return SNOW;
+        if (height > LAND_LINE) {
+            biome = GRASSLAND;
         }
+        if (height > TREE_LINE) {
+            biome = FOREST;
+        }
+        if (height > STONY_LINE) {
+            biome = STONY;
+        }
+        if (height > SNOW_LINE) {
+            biome = SNOW;
+        }
+        return biome;
     }
 
     public static final float MOUNTAIN_HEIGHT = 3f;
@@ -83,7 +57,6 @@ public class BiomeGenerator {
         if (biome == 2 || biome == 3 || biome == 8) {
             addedHeight += 0.5f;
         }
-
         if (height < 0.1f) {
             return 0;
         } else if (height < FLATLAND_LIMIT) {

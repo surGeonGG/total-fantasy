@@ -101,6 +101,5 @@ void main() {
                  blendDeepForest + blendSwampland + blendTropicalForest + blendSnow)
                  * brightness * vec4(lightColor, 1);
 
-    out_color = mix(vec4(skyColor, 1.0), out_color, pass_visibility);
-
+//    out_color = mix(vec4(skyColor, 1.0), out_color, pass_visibility);
 }

@@ -8,21 +8,12 @@ import org.joml.Vector4f;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TextGraph {
+public class ShapeGraph {
 
     private TexturedModel textModel;
-    private Vector2f position;
-    private Vector2f dimensions;
-    private Font font;
-    private List<Float> vertices;
-    private List<Float> texCoords;
-    private List<Integer> indices;
-    private List<Text> texts;
 
+    public ShapeGraph() {
 
-    public TextGraph(Vector2f position, Vector2f dimensions) {
-        this.position = position;
-        this.dimensions = dimensions;
         vertices = new ArrayList<>();
         texCoords = new ArrayList<>();
         indices = new ArrayList<>();
@@ -42,23 +33,8 @@ public class TextGraph {
         textModel = loader.createTexturedModel(vertices, texCoords, indices, font.getFontTexture());
     }
 
-    public void addText(int index, String string, Font font, float fontSize) {
-        this.font = font;
-        texts.add(index, new Text(string, position, dimensions, font, fontSize, new Vector4f(1,1,1,1)));
-        refresh();
-    }
-
-    public void removeText(int index) {
-        texts.remove(index);
-        refresh();
-    }
-
     public TexturedModel getTextModel() {
         return textModel;
     }
 
-    public void changeText(int i, String s) {
-        texts.get(i).changeText(s);
-        refresh();
-    }
 }

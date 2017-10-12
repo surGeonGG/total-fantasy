@@ -309,7 +309,7 @@ public class Tile {
     }
 
     public boolean isWater() {
-        return height < BiomeGenerator.OCEAN_LINE;
+        return height < BiomeGenerator.LAND_LINE;
     }
 
     public void setHeight(float height) {

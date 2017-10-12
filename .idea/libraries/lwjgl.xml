@@ -26,35 +26,7 @@
       <root url="jar://$PROJECT_DIR$/libs/lwjgl-yoga.jar!/" />
       <root url="jar://$PROJECT_DIR$/libs/lwjgl.jar!/" />
     </CLASSES>
-    <JAVADOC>
-      <root url="jar://$PROJECT_DIR$/libs/lwjgl-assimp-javadoc.jar!/" />
-      <root url="jar://$PROJECT_DIR$/libs/lwjgl-bgfx-javadoc.jar!/" />
-      <root url="jar://$PROJECT_DIR$/libs/lwjgl-egl-javadoc.jar!/" />
-      <root url="jar://$PROJECT_DIR$/libs/lwjgl-glfw-javadoc.jar!/" />
-      <root url="jar://$PROJECT_DIR$/libs/lwjgl-javadoc.jar!/" />
-      <root url="jar://$PROJECT_DIR$/libs/lwjgl-jawt-javadoc.jar!/" />
-      <root url="jar://$PROJECT_DIR$/libs/lwjgl-jemalloc-javadoc.jar!/" />
-      <root url="jar://$PROJECT_DIR$/libs/lwjgl-lmdb-javadoc.jar!/" />
-      <root url="jar://$PROJECT_DIR$/libs/lwjgl-nanovg-javadoc.jar!/" />
-      <root url="jar://$PROJECT_DIR$/libs/lwjgl-nfd-javadoc.jar!/" />
-      <root url="jar://$PROJECT_DIR$/libs/lwjgl-nuklear-javadoc.jar!/" />
-      <root url="jar://$PROJECT_DIR$/libs/lwjgl-openal-javadoc.jar!/" />
-      <root url="jar://$PROJECT_DIR$/libs/lwjgl-opencl-javadoc.jar!/" />
-      <root url="jar://$PROJECT_DIR$/libs/lwjgl-opengl-javadoc.jar!/" />
-      <root url="jar://$PROJECT_DIR$/libs/lwjgl-opengles-javadoc.jar!/" />
-      <root url="jar://$PROJECT_DIR$/libs/lwjgl-openvr-javadoc.jar!/" />
-      <root url="jar://$PROJECT_DIR$/libs/lwjgl-par-javadoc.jar!/" />
-      <root url="jar://$PROJECT_DIR$/libs/lwjgl-sse-javadoc.jar!/" />
-      <root url="jar://$PROJECT_DIR$/libs/lwjgl-stb-javadoc.jar!/" />
-      <root url="jar://$PROJECT_DIR$/libs/lwjgl-tinyexr-javadoc.jar!/" />
-      <root url="jar://$PROJECT_DIR$/libs/lwjgl-tinyfd-javadoc.jar!/" />
-      <root url="jar://$PROJECT_DIR$/libs/lwjgl-vulkan-javadoc.jar!/" />
-      <root url="jar://$PROJECT_DIR$/libs/lwjgl-xxhash-javadoc.jar!/" />
-      <root url="jar://$PROJECT_DIR$/libs/lwjgl-yoga-javadoc.jar!/" />
-    </JAVADOC>
-    <NATIVE>
-      <root url="file://$PROJECT_DIR$/libs" />
-    </NATIVE>
+    <JAVADOC />
     <SOURCES>
       <root url="jar://$PROJECT_DIR$/libs/lwjgl-assimp-sources.jar!/" />
       <root url="jar://$PROJECT_DIR$/libs/lwjgl-bgfx-sources.jar!/" />

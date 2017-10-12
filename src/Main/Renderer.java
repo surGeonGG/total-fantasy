@@ -2,13 +2,16 @@ package Main;
 
 import Entities.Entity;
 import Gui.Gui;
+import Gui.GuiWindow;
 import Gui.GuiElement;
 import Entities.Light;
+import Shaders.*;
 import Terrains.Ocean;
 import Terrains.Terrain;
 import Utils.DiverseUtilities;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
@@ -22,20 +25,20 @@ import static org.lwjgl.opengl.GL13.*;
 public class Renderer {
 
     private Camera camera;
-    private Shader terrainShader;
-    private Shader lineShader;
-    private Shader entityShader;
-    private Shader oceanShader;
-    private Shader guiShader;
+    private ShaderProgram terrainShader;
+    private ShaderProgram lineShader;
+    private ShaderProgram entityShader;
+    private ShaderProgram oceanShader;
+    private ShaderProgram guiShader;
 
 
     public Renderer(Camera camera) {
         this.camera = camera;
-        terrainShader = new Shader("terrain");
-        entityShader = new Shader("entity");
-        oceanShader = new Shader("ocean");
-        guiShader = new Shader("gui");
-        lineShader = new Shader("line");
+        terrainShader = new TerrainShader("terrain");
+        entityShader = new EntityShader("entity");
+        oceanShader = new OceanShader("ocean");
+        guiShader = new GuiShader("gui");
+        lineShader = new LineShader("line");
         terrainShader.bind();
         terrainShader.setUniform("projectionMatrix", camera.getProjectionMatrix());
         entityShader.bind();
@@ -52,7 +55,7 @@ public class Renderer {
         GL11.glClearColor(1, 0, 0, 1);
     }
 
-    public void render(RawModel rawModel, Shader shader){
+    public void render(RawModel rawModel, ShaderProgram shader){
         GL30.glBindVertexArray(rawModel.getVaoID());
         GL20.glEnableVertexAttribArray(0);
         glActiveTexture(GL_TEXTURE0);
@@ -151,15 +154,21 @@ public class Renderer {
     }
 
     public void renderGui(Gui gui) {
-        List<GuiElement> guiElements = gui.getGuiElements();
+        List<GuiWindow> guiWindows = gui.getGuiWindows();
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glDisable(GL_DEPTH_TEST);
         guiShader.bind();
-        for (GuiElement guiElement : guiElements) {
+        for (GuiWindow guiWindow : guiWindows) {
 
-            TexturedModel boxModel = guiElement.getBoxModel();
-            TexturedModel textModel = guiElement.getTextModel();
+
+
+
+            if (!guiWindow.isShown()) {
+                continue;
+            }
+            TexturedModel boxModel = guiWindow.getBoxModel();
+            TexturedModel textModel = guiWindow.getTextModel();
 
             GL30.glBindVertexArray(boxModel.getVaoID());
             GL20.glEnableVertexAttribArray(0);
@@ -167,15 +176,27 @@ public class Renderer {
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, boxModel.getTexture().getTexID());
             guiShader.setUniform("textureSampler", 0);
-            guiShader.setUniform("color", guiElement.getBoxColor());
+            Vector4f color = guiWindow.getColor();
+            guiShader.setUniform("color", new Vector3f(color.x, color.y, color.z));
 
             glDrawElements(GL_TRIANGLES, boxModel.getVertexCount(), GL_UNSIGNED_INT, 0);
 
             GL30.glBindVertexArray(textModel.getVaoID());
             GL20.glEnableVertexAttribArray(0);
             GL20.glEnableVertexAttribArray(1);
+
+            guiWindow.render(guiShader);
+
+
+            for (GuiElement guiElement : guiWindow.getGuiElements()) {
+                glBindTexture(GL_TEXTURE_2D, guiElement.getTexturedModel().getTexID());
+                guiShader.setUniform("color", guiWindow.getTextColor());
+                guiShader.setUniform("textureSampler", 0);
+            }
+
+
             glBindTexture(GL_TEXTURE_2D, textModel.getTexture().getTexID());
-            guiShader.setUniform("color", guiElement.getTextColor());
+            guiShader.setUniform("color", guiWindow.getTextColor());
             guiShader.setUniform("textureSampler", 0);
 
             glDrawElements(GL_TRIANGLES, textModel.getVertexCount(), GL_UNSIGNED_INT, 0);

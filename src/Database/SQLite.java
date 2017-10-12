@@ -11,27 +11,20 @@ public class SQLite {
 
     public void getConnection() {
         try {
-
             Class.forName("org.sqlite.JDBC");
             connection = DriverManager.getConnection("jdbc:sqlite:test.db");
-
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         initialize();
-
     }
 
     private void initialize() {
-
         try {
-
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='events'");
-
             if (!resultSet.next()) {
                 System.out.println("Building table...");
                 statement.clearBatch();

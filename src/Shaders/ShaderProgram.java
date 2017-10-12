@@ -1,8 +1,10 @@
-package Main;
+package Shaders;
 
+import Main.Main;
 import org.joml.Matrix4f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
 
 import java.io.*;
@@ -10,11 +12,11 @@ import java.nio.FloatBuffer;
 
 import static org.lwjgl.opengl.GL20.*;
 
-public class Shader {
+public class ShaderProgram {
 
     private int program, vs, fs;
 
-    public Shader(String filename) {
+    public ShaderProgram(String filename) {
         program = glCreateProgram();
         vs = glCreateShader(GL_VERTEX_SHADER);
         fs = glCreateShader(GL_FRAGMENT_SHADER);
@@ -47,36 +49,38 @@ public class Shader {
 //        }
     }
 
-    public void setUniform(String name, int value) {
-        int location = glGetUniformLocation(program, name);
-        if (location != -1)
-            glUniform1i(location, value);
+    public void bindAttribute(String name, int index) {
+        glBindAttribLocation(program, index, name);
     }
 
-    public void setUniform(String name, float value) {
-        int location = glGetUniformLocation(program, name);
-        if (location != -1)
-            glUniform1f(location, value);
+    public int getUniformLocation(String name) {
+        return glGetUniformLocation(program, name);
     }
 
-    public void setUniform(String name, Vector2i value) {
-        int location = glGetUniformLocation(program, name);
-        if (location != -1)
-            glUniform2i(location, value.x, value.y);
+    public void setUniform(int location, int value) {
+        glUniform1i(location, value);
     }
 
-    public void setUniform(String name, Vector3f value) {
-        int location = glGetUniformLocation(program, name);
-        if (location != -1)
-            glUniform3f(location, value.x, value.y, value.z);
+    public void setUniform(int location, float value) {
+        glUniform1f(location, value);
     }
 
-    public void setUniform(String name, Matrix4f value) {
-        int location = glGetUniformLocation(program, name);
+    public void setUniform(int location, Vector2i value) {
+        glUniform2i(location, value.x, value.y);
+    }
+
+    public void setUniform(int location, Vector3f value) {
+        glUniform3f(location, value.x, value.y, value.z);
+    }
+
+    public void setUniform(int location, Vector4f value) {
+        glUniform4f(location, value.x, value.y, value.z, value.w);
+    }
+
+    public void setUniform(int location, Matrix4f value) {
         FloatBuffer buffer = BufferUtils.createFloatBuffer(16);
         value.get(buffer);
-        if (location != -1)
-            glUniformMatrix4fv(location, false, buffer);
+        glUniformMatrix4fv(location, false, buffer);
     }
 
     public void bind() {
@@ -89,7 +93,7 @@ public class Shader {
         String line;
         StringBuilder builder = new StringBuilder();
         try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(Shader.class.getClassLoader().getResourceAsStream(filename)));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(ShaderProgram.class.getClassLoader().getResourceAsStream(filename)));
             while ((line = reader.readLine()) != null) {
                 builder.append(line + "\n");
             }

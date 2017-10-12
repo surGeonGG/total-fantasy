@@ -42,10 +42,10 @@ public class Game {
     public Game(Window window) {
         this.window = window;
         camera = new Camera(Main.WINDOW_WIDTH, Main.WINDOW_HEIGHT);
-        light = new Light(new Vector3f(20000,50000,512), new Vector3f(1,1,1));
+        light = new Light(new Vector3f(20000, 50000, 512), new Vector3f(1, 1, 1));
         loader = new Loader();
         renderer = new Renderer(camera);
-        player = new Player(new Vector3f(WIDTH/2,0,HEIGHT/2), camera, loader, renderer);
+        player = new Player(new Vector3f(WIDTH / 2, 0, HEIGHT / 2), camera, loader, renderer);
         camera.followPlayer(player);
         Random random = new Random();
         Terrain[][] terrains = new Terrain[NUMBER_OF_TILES_X][NUMBER_OF_TILES_Y];
@@ -60,7 +60,7 @@ public class Game {
 
         long windowID = window.getWindowID();
         mousePicker = new MousePicker(camera, windowID, terrains);
-        input = new Input(camera, windowID, player, terrains, mousePicker, light);
+        input = new Input(camera, windowID, player, terrains, mousePicker, light, gui);
         gameLoop(entities, gui, terrains, ocean, light);
         cleanUp();
     }
@@ -73,13 +73,13 @@ public class Game {
             delta += (System.currentTimeMillis() - sysTime);
             sysTime = System.currentTimeMillis();
             if (delta > 1000 / 120) {
-                gui.getGuiElements().get(0).changeText(0, "framerate: " + delta + " ms");
+                gui.getGuiWindows().get(0).changeText(0, "framerate: " + delta + " ms");
 //                System.out.println("delta: " + String.valueOf(delta));
                 delta = 0;
                 glfwPollEvents();
                 camera.calculateCameraPosition();
                 player.update();
-                glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                 renderer.renderEntity(player, light);
                 for (Entity entity : entities) {
                     if (entity.getPosition().x < player.getPosition().x + 100

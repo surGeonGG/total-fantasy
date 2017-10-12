@@ -1,29 +1,24 @@
 package Gui;
 
-import Main.Loader;
-import Main.RawModel;
-import Main.Texture;
-import Main.TexturedModel;
+
 import org.joml.Vector2f;
 import org.joml.Vector3f;
-import org.joml.Vector4i;
+import org.joml.Vector4f;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Text {
+public class Text extends GuiElement {
 
     private List<Word> words;
     private Vector3f caret;
-    private Vector2f position;
-    private Vector2f dimensions;
     private String text;
     private Font font;
     private float fontSize;
 
-    public Text(String text, Vector2f position, Vector2f dimensions, Font font, float fontSize) {
+    public Text(String text, Vector2f position, Vector2f dimensions, Font font, float fontSize, Vector4f color) {
+        super(position, dimensions, color);
         words = new ArrayList<>();
-
         this.text = text;
         this.position = position;
         this.dimensions = dimensions;
@@ -71,5 +66,25 @@ public class Text {
     public void changeText(String text) {
         this.text = text;
         generateText();
+    }
+
+    @Override
+    public boolean coordWithinElement(float mouseX, float mouseY) {
+        return false;
+    }
+
+    @Override
+    public GuiElement getElementAt(float mouseX, float mouseY) {
+        return this;
+    }
+
+    @Override
+    public void handleMouseInput(int button, int action, int mods) {
+
+    }
+
+    @Override
+    public boolean handleKeyboardInput(int key, int scancode, int action, int mods) {
+        return false;
     }
 }

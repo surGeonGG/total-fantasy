@@ -30,10 +30,6 @@ public class Main {
         glEnable(GL_TEXTURE_2D);
         glEnable(GL_COLOR_MATERIAL);
         glEnable(GL_MULTISAMPLE);
-
-//        glEnable(GL_POLYGON_SMOOTH);
-//        glEnable(GL_BLEND);
-//        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glCullFace(GL_BACK);
         glClearColor(0.53f, 0.8f, 0.92f, 1);
         game = new Game(window);

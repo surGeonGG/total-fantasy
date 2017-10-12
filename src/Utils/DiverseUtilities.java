@@ -1,7 +1,6 @@
 package Utils;
 
 import Entities.Entity;
-import Gui.GuiElement;
 import Main.Camera;
 import Terrains.Ocean;
 import Terrains.Terrain;
@@ -74,7 +73,7 @@ public class DiverseUtilities {
         return targetMatrix;
     }
 
-//    public static Matrix4f createTransformationMatrix(GuiElement guiElement) {
+//    public static Matrix4f createTransformationMatrix(GuiWindow guiElement) {
 //        Matrix4f targetMatrix = new Matrix4f();
 //        targetMatrix.identity();
 //        targetMatrix.translate(guiElement.getPosition());

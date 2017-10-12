@@ -1,21 +1,28 @@
 package Gui;
 
+import Main.Window;
 import org.joml.Vector2f;
-
-import java.util.ArrayList;
+import org.joml.Vector4f;
+import org.lwjgl.BufferUtils;
+import java.nio.DoubleBuffer;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Stack;
+
+import static org.lwjgl.glfw.GLFW.glfwGetCursorPos;
 
 public class Gui {
 
-    List<GuiElement> guiElements = new ArrayList<>();
+    Stack<GuiWindow> guiWindows = new Stack<>();
     Hashtable<String, Font> fonts = new Hashtable<>();
+    Hashtable<String, Vector4f> colors = new Hashtable<>();
 
     public Gui() {
         initFonts();
+        initColors();
 
-        TextBox textBox1 = new TextBox(new Vector2f(-1f, 0.9f), new Vector2f(2f, 0.1f));
-        TextBox textBox2 = new TextBox(new Vector2f(-0.5f, -0.5f), new Vector2f(1f, 1f));
+        TextBox textBox1 = new TextBox(new Vector2f(-1f, 0.9f), new Vector2f(2f, 0.1f), colors.get("black"));
+        TextBox textBox2 = new TextBox(new Vector2f(-0.5f, -0.5f), new Vector2f(1f, 1f), colors.get("black"));
 
         textBox1.addText(0, "", fonts.get("garuda"), 1);
         textBox2.addText(0, "A constitutional monarchy is a form of monarchy in which the sovereign " +
@@ -26,8 +33,14 @@ public class Gui {
                 "the constitution grants substantial discretionary powers to the sovereign, to countries such as Sweden " +
                 "or Denmark where the monarch retains very few formal authorities.", fonts.get("garuda"), 1f);
 
-        guiElements.add(textBox1);
-        guiElements.add(textBox2);
+        guiWindows.push(textBox1);
+        guiWindows.add(textBox2);
+    }
+
+    private void initColors() {
+        colors.put("black", new Vector4f(0,0,0,1));
+        colors.put("white", new Vector4f(1,1,1,1));
+
     }
 
     private void initFonts() {
@@ -37,7 +50,35 @@ public class Gui {
         fonts.put("dejavu", dejavusans);
     }
 
-    public List<GuiElement> getGuiElements() {
-        return guiElements;
+    public List<GuiWindow> getGuiWindows() {
+        return guiWindows;
+    }
+
+    public boolean guiWindowAtMouseCoord() {
+        DoubleBuffer posX = BufferUtils.createDoubleBuffer(1);
+        DoubleBuffer posY = BufferUtils.createDoubleBuffer(1);
+        glfwGetCursorPos(Window.getWindowID(), posX, posY);
+        float mouseX = (float) posX.get();
+        float mouseY = (float) posY.get();
+        for (int i = guiWindows.size() - 1; i >= 0; i--) {
+            if (guiWindows.get(i).coordWithinWindow(mouseX, mouseY)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public GuiElement getGuiElementAtMouseCoord() {
+        DoubleBuffer posX = BufferUtils.createDoubleBuffer(1);
+        DoubleBuffer posY = BufferUtils.createDoubleBuffer(1);
+        glfwGetCursorPos(Window.getWindowID(), posX, posY);
+        float mouseX = (float) posX.get();
+        float mouseY = (float) posY.get();
+        for (int i = guiWindows.size() - 1; i >= 0; i--) {
+            if (guiWindows.get(i).coordWithinWindow(mouseX, mouseY)) {
+                return guiWindows.get(i).getElementAt(mouseX, mouseY);
+            }
+        }
+        return null;
     }
 }
